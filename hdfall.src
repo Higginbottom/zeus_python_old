@@ -1,0 +1,193 @@
+#include "zeus2d.def"
+c=======================================================================
+c/////////////////////////  SUBROUTINE HDFALL  \\\\\\\\\\\\\\\\\\\\\\\\\
+c
+      subroutine hdfall(filename)
+c
+c  PURPOSE: Makes an hdf dump of all the active field variables.  The
+c  set of field variables dumped is problem specific (depends on what
+c  physics is defined).  Data is written in the Scientific Data Set
+c  format to the file zhzNNXX.
+c  Note that data must be stored column major and contiguously in order
+c  to interface correctly to the C hdf routines.  All variables are
+c  dumped as zone centered quantities.
+c
+c  EXTERNALS: HDF library routines
+c
+c  LOCALS:
+c-----------------------------------------------------------------------
+      implicit NONE
+#include "param.h"
+#include "grid.h"
+#include "field.h"
+#include "root.h"
+#include "scratch.h"
+      integer  i,j
+#ifdef UNICOS
+      integer rank,shape(2),ret
+      real data(in*jn),xscale(in),yscale(jn)
+      integer  dssdims,dssdast,dssdisc,dsadata,dspdata
+#else
+      integer*4 rank,shape(2),ret
+      real*4 data(in*jn),xscale(in),yscale(jn)
+      integer*4 dssdims,dssdast,dssdisc,dsadata,dspdata
+#endif
+c
+      character*8  filename
+      character*16 coordsys
+      character*32 string
+c
+      equivalence (data,wb),(xscale,wi0),(yscale,wj0)
+c
+      external dssdims,dssdast,dssdisc,dsadata,dspdata
+c\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\///////////////////////////////
+c=======================================================================
+c
+#ifdef RT
+      coordsys = 'spherical polar' // char(0)
+#endif
+#ifdef RZ
+      coordsys = 'cylindrical' // char(0)
+#endif
+#ifdef XY
+      coordsys = 'cartesian' // char(0)
+#endif
+      do 10 i=is,ie
+        xscale(i-is+1) = real(x1b(i))
+10    continue
+      do 20 j=js,je
+        yscale(j-js+1) = real(x2b(j))
+20    continue
+c
+      print *,"Outputting hdf file for time=",time,100*time/tlim
+     &," % done"," dt currently ",dt
+      rank     = 2
+      shape(1) = nx1z
+      shape(2) = nx2z
+      ret = dssdims(rank,shape)
+      ret = dssdisc(1,shape(1),xscale)
+      ret = dssdisc(2,shape(2),yscale)
+c
+c  density
+c
+      do 110 j=js,je
+        do 100 i=is,ie
+          data((j-js)*nx1z + i -is+1) = real(d(i,j))
+100     continue
+110   continue
+      write(string,"('DENSITY AT TIME=',1pe8.2,'        ')") time
+      ret = dssdast(string,' ',' ',coordsys)
+      ret = dspdata(filename,rank,shape,data)
+c
+c  internal energy
+c
+      do 210 j=js,je
+        do 200 i=is,ie
+          data((j-js)*nx1z + i -is+1) = real(e(i,j))
+200     continue
+210   continue
+      write(string,"('TOTAL ENERGY AT TIME=',1pe8.2,'   ')") time
+      ret = dssdast(string,' ',' ',coordsys)
+      ret = dsadata(filename,rank,shape,data)
+c
+c  1-velocity
+c
+      do 310 j=js,je
+        do 300 i=is,ie
+	  wa(i,j) = 0.5*(v1(i,j) + v1(i+1,j))
+          data((j-js)*nx1z + i -is+1) = real(wa(i,j))
+300     continue
+310   continue
+      write(string,"('1-VELOCITY AT TIME=',1pe8.2,'     ')") time
+      ret = dssdast(string,' ',' ',coordsys)
+      ret = dsadata(filename,rank,shape,data)
+c
+c  2-velocity
+c
+      do 410 j=js,je
+        do 400 i=is,ie
+	  wa(i,j) = 0.5*(v2(i,j) + v2(i,j+1))
+          data((j-js)*nx1z + i -is+1) = real(wa(i,j))
+400     continue
+410   continue
+      write(string,"('2-VELOCITY AT TIME=',1pe8.2,'     ')") time
+      ret = dssdast(string,' ',' ',coordsys)
+      ret = dsadata(filename,rank,shape,data)
+c
+c  3-velocity
+c
+#ifdef ROTATE
+      do 510 j=js,je
+        do 500 i=is,ie
+          data((j-js)*nx1z + i -is+1) = real(v3(i,j))
+500     continue
+510   continue
+      write(string,"('3-VELOCITY AT TIME=',1pe8.2,'     ')") time
+      ret = dssdast(string,' ',' ',coordsys)
+      ret = dsadata(filename,rank,shape,data)
+#endif
+c
+c  gravitational potential
+c
+#ifdef GRAV
+      do 610 j=js,je
+        do 600 i=is,ie
+          data((j-js)*nx1z + i -is+1) = real(phi(i,j))
+600     continue
+610   continue
+      write(string,"('GRAV POT AT TIME=',1pe8.2,'       ')") time
+      ret = dssdast(string,' ',' ',coordsys)
+      ret = dsadata(filename,rank,shape,data)
+#endif
+c
+c  1-magnetic field
+c
+#ifdef MHD
+      do 710 j=js,je
+        do 700 i=is,ie
+	  wa(i,j) = 0.5*(b1(i,j) + b1(i+1,j))
+          data((j-js)*nx1z + i -is+1) = real(wa(i,j))
+700     continue
+710   continue
+      write(string,"('1-MAG FIELD AT TIME=',1pe8.2,'    ')") time
+      ret = dssdast(string,' ',' ',coordsys)
+      ret = dsadata(filename,rank,shape,data)
+c
+c  2-magnetic field
+c
+      do 810 j=js,je
+        do 800 i=is,ie
+	  wa(i,j) = 0.5*(b2(i,j) + b2(i,j+1))
+          data((j-js)*nx1z + i -is+1) = real(wa(i,j))
+800     continue
+810   continue
+      write(string,"('2-MAG FIELD AT TIME=',1pe8.2,'    ')") time
+      ret = dssdast(string,' ',' ',coordsys)
+      ret = dsadata(filename,rank,shape,data)
+c
+c  3-magnetic field
+c
+      do 910 j=js,je
+        do 900 i=is,ie
+          data((j-js)*nx1z + i -is+1) = real(b3(i,j))
+900     continue
+910   continue
+      write(string,"('3-MAG FIELD AT TIME=',1pe8.2,'    ')") time
+      ret = dssdast(string,' ',' ',coordsys)
+      ret = dsadata(filename,rank,shape,data)
+#endif
+c
+c  radiation internal energy
+c
+#ifdef RAD
+      do 1010 j=js,je
+        do 1000 i=is,ie
+          data((j-js)*nx1z + i -is+1) = real(er(i,j))
+1000    continue
+1010  continue
+      write(string,"('RADIATION E AT TIME=',1pe8.2,'    ')") time
+      ret = dssdast(string,' ',' ',coordsys)
+      ret = dsadata(filename,rank,shape,data)
+#endif
+      return
+      end

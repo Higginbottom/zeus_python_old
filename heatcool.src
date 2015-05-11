@@ -1,0 +1,227 @@
+#include "zeus2d.def"
+
+
+	subroutine hc_sub(rho,xi,e_0,e_1)
+
+       implicit NONE
+
+#include "cons.h"
+#include "param.h"
+#include "grid.h"
+#include "field.h"
+#include "root.h"
+#include "diskw.h"
+        REAL    xi,temp,hc_tot,rho,rho1,xi1,hc_tot1,e_0,e_1
+	REAL    t_0,t_1,hc_01
+	REAL 	e_01,t_01,sqsqxi1
+	double precision t_l,t_u,tol
+	REAL heatcool,zbrent,zfunc,n1
+	real test
+	common /hc_data/ rho1,xi1,e_01,t_01,hc_01,sqsqxi1,n1
+	external zfunc
+	t_01=e_0*(2.0/3.0)/((rho/(mu*mp))*boltz)
+c	print *,e_0,rho,t_01
+	rho1=rho
+	xi1=xi
+	e_01=e_0
+	sqsqxi1=sqrt(sqrt(xi))
+
+	n1=rho/(mu*mp)
+
+
+c stage one, bracket to find out where the zero point is
+
+
+c we use the heating rate at the originaltemperature a lot,
+c lets compute it first
+	hc_01=heatcool(t_01)
+
+	t_l=t_01*0.9
+	t_u=t_01*1.1
+	test=zfunc(t_l)*zfunc(t_u)
+	tol=1.0
+
+	  do while (test > 0)
+		t_l=t_l*0.9
+		t_u=t_u*1.1
+    		test=zfunc(t_l)*zfunc(t_u)
+  	end do
+c now we have worked out a bracket, find the correct value of new temperature
+c we search for the zero point of the equation e_old - e_old - dt(de(t(1/2)))
+
+	t_1=zbrent(zfunc,t_l,t_u,tol)
+
+c now we have a new temperature, we will return the new internal energy. 
+
+	e_1=t_1*1.5*n1*boltz
+
+	end
+
+
+
+      double precision function heatcool(temp)
+      implicit NONE
+#include "cons.h"
+#include "param.h"
+#include "grid.h"
+#include "field.h"
+#include "root.h"
+#include "diskw.h"
+      integer i,j
+      REAL    div1,div2,divv,del,pnew,pav,xi,temp,hc_tot,rho,e_0,t_0
+      REAL    gamma_comp,gamma_x,l_b,l_l,hc_0,sqsqxi,st,n
+	common /hc_data/ rho,xi,e_0,t_0,hc_0,sqsqxi,n
+
+	st=sqrt(temp)
+
+	
+
+	gamma_comp=8.9e-36*xi*(tx-(4.0*temp))
+c	gamma_x=sqrt(xi)
+c	gamma_x=sqrt(gamma_x)
+c	gamma_x=gamma_x*1.5e-21
+c	gamma_x=gamma_x/sqrt(temp)
+c	gamma_x=gamma_x*(1-temp/tx)
+	gamma_x=1.5e-21*(sqsqxi/st)*(1.0-temp/tx)
+	l_b=3.3e-27*st
+c	l_l=exp(-1.3e5/temp)
+c	l_l=l_l/xi
+c	l_l=l_l/sqrt(temp)
+c	l_l=l_l*1.7e-18
+c	l_l=l_l+1e-24
+	l_l=(1.7e-18*exp(-1.3e5/temp)/(xi*st)+1e-24)
+c	print *,temp,xi,gamma_comp,gamma_x,l_b,l_l
+	hc_tot=n*n*(gamma_comp+gamma_x-l_b-l_l)
+c	print *,temp,xi,gamma_comp,gamma_x,l_b,l_l,n,hc_tot
+	heatcool=hc_tot
+	end function
+
+
+
+	double precision function zfunc(temp) 
+	implicit NONE
+#include "cons.h"
+#include "param.h"
+#include "grid.h"
+#include "field.h"
+#include "root.h"
+#include "diskw.h"
+	REAL rho,xi,e_0,t_0,temp,heatcool,hc_0,logxi,sqsqxi,n
+	common /hc_data/ rho,xi,e_0,t_0,hc_0,sqsqxi,n
+	external heatcool
+	zfunc=(1.5*temp*n*boltz)-e_0-
+     &  dt*(hc_0+heatcool(temp))/2.0
+c	print *,temp,zfunc
+	end function
+
+
+c     this file contains the quasi-vanilla and slightly modified
+c     versions of FORTRAN Numerical Recipe routines
+
+c     DOUBLE PRECISION FUNCTION ZBRENT(FUNC,X1,X2,TOL)
+
+c     MODIFICATIONS from the vanilla Numerical Recipes: all of the
+c     following routines have been trivially modified in two ways from
+c     the original vanilla; (1) the declarations are now IMPLICIT NONE
+c     or IMPLICIT DOUBLE PRECISION; (2) communication of errors which
+c     may occur in the form of WRITE statements with hard STOPs; some of
+c     the routines have been further modified (see comments in each
+c     routine for details)
+
+c::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+      REAL FUNCTION ZBRENT(FUNC,X1,X2,TOL)
+
+c     return the root of the function FUNC using Brents method where
+c     the root of the function is assumed lie between X1 and X2; the
+c     root is refined until its accuracy is TOL and is returned as
+c     ZBRENT
+
+c..............................................................................
+
+      IMPLICIT DOUBLE PRECISION (A-H,O-Z)
+      PARAMETER (ITMAX=100,EPS=3.E-16)
+      A=X1
+      B=X2
+      FA=FUNC(A)
+      FB=FUNC(B)
+c     error: Root not bracketed 
+      IF(FB*FA.GT.0.) THEN
+       WRITE(6,*) 'ERROR(zbrent): root of FUNC not bracketed.'
+       WRITE(6,*) 'lower bracket A = ',A,' FUNC(A) = ',FUNC(A)
+       WRITE(6,*) 'upper bracket B = ',B,' FUNC(B) = ',FUNC(B)
+       WRITE(6,*) 'this can be remedied by changing A and/or B'
+       STOP
+      END IF
+      FC=FB
+      DO 11 ITER=1,ITMAX
+        IF(FB*FC.GT.0.) THEN
+          C=A
+          FC=FA
+          D=B-A
+          E=D
+        ENDIF
+        IF(ABS(FC).LT.ABS(FB)) THEN
+          A=B
+          B=C
+          C=A
+          FA=FB
+          FB=FC
+          FC=FA
+        ENDIF
+        TOL1=2.*EPS*ABS(B)+0.5*TOL
+        XM=.5*(C-B)
+        IF(ABS(XM).LE.TOL1 .OR. FB.EQ.0.)THEN
+          ZBRENT=B
+c	print *,"zbrent took ",ITER," iterations"
+          RETURN
+        ENDIF
+        IF(ABS(E).GE.TOL1 .AND. ABS(FA).GT.ABS(FB)) THEN
+          S=FB/FA
+          IF(A.EQ.C) THEN
+            P=2.*XM*S
+            Q=1.-S
+          ELSE
+            Q=FA/FC
+            R=FB/FC
+            P=S*(2.*XM*Q*(Q-R)-(B-A)*(R-1.))
+            Q=(Q-1.)*(R-1.)*(S-1.)
+          ENDIF
+          IF(P.GT.0.) Q=-Q
+          P=ABS(P)
+          IF(2.*P .LT. MIN(3.*XM*Q-ABS(TOL1*Q),ABS(E*Q))) THEN
+            E=D
+            D=P/Q
+          ELSE
+            D=XM
+            E=D
+          ENDIF
+        ELSE
+          D=XM
+          E=D
+        ENDIF
+        A=B
+        FA=FB
+        IF(ABS(D) .GT. TOL1) THEN
+          B=B+D
+        ELSE
+          B=B+SIGN(TOL1,XM)
+        ENDIF
+        FB=FUNC(B)
+11    CONTINUE
+c     error message for too many iterations
+      WRITE(6,*) 'ERROR(zbrent): number of iterations required to'
+      WRITE(6,*) 'converge on the root of FUNC exceeded maximum'
+      WRITE(6,*) 'allowed.  This can be remedied by increasing'
+      WRITE(6,*) 'parameter ITMAX in the file or by relaxing'
+      WRITE(6,*) 'the convrgence tolerance TOL'
+      WRITE(6,*) '*** terminating program  ***'
+      STOP
+      ZBRENT=B
+      RETURN
+      END
+
+
+
+
+
