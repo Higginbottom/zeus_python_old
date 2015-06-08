@@ -1,5 +1,6 @@
       REAL   d(in,jn),  e(in,jn),  p(in,jn), v1(in,jn), v2(in,jn)
-      REAL   pdv_heat(in,jn)
+	  REAL   xi(in,jn), e_old(in,jn), hc_comp(in,jn),hc_xray(in,jn)
+	  REAL   hc_line(in,jn),hc_brem(in,jn),t_old(in,jn)
 #ifdef ROTATE
       REAL  v3(in,jn)
 #endif
@@ -13,7 +14,9 @@
       REAL  er(in,jn) 
 #endif
 
-      common /fieldr/  d ,  e,  p, v1, v2, pdv_heat
+      common /fieldr/  d ,  e,  p, v1, v2
+	  common /fieldr/  xi , e_old, t_old
+	  common /fieldr/  hc_comp,hc_xray,hc_line,hc_brem
 #ifdef ROTATE
       common /fieldr/  v3
 #endif

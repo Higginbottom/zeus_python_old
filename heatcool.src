@@ -1,7 +1,7 @@
 #include "zeus2d.def"
 
 
-	subroutine hc_sub(rho,xi,e_0,e_1)
+	subroutine hc_sub(rho,xi0,e_0,e_1,i,j)
 
        implicit NONE
 
@@ -11,20 +11,22 @@
 #include "field.h"
 #include "root.h"
 #include "diskw.h"
-        REAL    xi,temp,hc_tot,rho,rho1,xi1,hc_tot1,e_0,e_1
+        REAL    xi0,temp,hc_tot,rho,rho1,xi1,hc_tot1,e_0,e_1
 	REAL    t_0,t_1,hc_01
 	REAL 	e_01,t_01,sqsqxi1
+	INTEGER i1,j1,i,j
 	double precision t_l,t_u,tol
 	REAL heatcool,zbrent,zfunc,n1
 	real test
-	common /hc_data/ rho1,xi1,e_01,t_01,hc_01,sqsqxi1,n1
+	common /hc_data/ xi1,e_01,hc_01,sqsqxi1,n1,i1,j1
 	external zfunc
 	t_01=e_0*(2.0/3.0)/((rho/(mu*mp))*boltz)
 c	print *,e_0,rho,t_01
-	rho1=rho
-	xi1=xi
+	xi1=xi0
+	i1=i
+	j1=j
 	e_01=e_0
-	sqsqxi1=sqrt(sqrt(xi))
+	sqsqxi1=sqrt(sqrt(xi0))
 
 	n1=rho/(mu*mp)
 
@@ -48,11 +50,16 @@ c lets compute it first
   	end do
 c now we have worked out a bracket, find the correct value of new temperature
 c we search for the zero point of the equation e_old - e_old - dt(de(t(1/2)))
-
+	
+	
 	t_1=zbrent(zfunc,t_l,t_u,tol)
+	
+c we will call heatcool one last time to compute the heating and cooling rates for old t	
+	
+	hc_01=heatcool(t_01)
+	
 
 c now we have a new temperature, we will return the new internal energy. 
-
 	e_1=t_1*1.5*n1*boltz
 
 	end
@@ -68,31 +75,36 @@ c now we have a new temperature, we will return the new internal energy.
 #include "root.h"
 #include "diskw.h"
       integer i,j
-      REAL    div1,div2,divv,del,pnew,pav,xi,temp,hc_tot,rho,e_0,t_0
+      REAL    div1,div2,divv,del,pnew,pav,xi0,temp,hc_tot,rho,e_0,t_0
       REAL    gamma_comp,gamma_x,l_b,l_l,hc_0,sqsqxi,st,n
-	common /hc_data/ rho,xi,e_0,t_0,hc_0,sqsqxi,n
+	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j
 
 	st=sqrt(temp)
 
-	
 
-	gamma_comp=8.9e-36*xi*(tx-(4.0*temp))
+	gamma_comp=8.9e-36*xi0*(tx-(4.0*temp))
+	hc_comp(i,j)=gamma_comp
 c	gamma_x=sqrt(xi)
 c	gamma_x=sqrt(gamma_x)
 c	gamma_x=gamma_x*1.5e-21
 c	gamma_x=gamma_x/sqrt(temp)
 c	gamma_x=gamma_x*(1-temp/tx)
 	gamma_x=1.5e-21*(sqsqxi/st)*(1.0-temp/tx)
+	hc_xray(i,j)=gamma_x
 	l_b=3.3e-27*st
+	hc_brem(i,j)=l_b
 c	l_l=exp(-1.3e5/temp)
 c	l_l=l_l/xi
 c	l_l=l_l/sqrt(temp)
 c	l_l=l_l*1.7e-18
 c	l_l=l_l+1e-24
-	l_l=(1.7e-18*exp(-1.3e5/temp)/(xi*st)+1e-24)
+	l_l=(1.7e-18*exp(-1.3e5/temp)/(xi0*st)+1e-24)
+	hc_line(i,j)=l_l
 c	print *,temp,xi,gamma_comp,gamma_x,l_b,l_l
 	hc_tot=n*n*(gamma_comp+gamma_x-l_b-l_l)
 c	print *,temp,xi,gamma_comp,gamma_x,l_b,l_l,n,hc_tot
+	
+	
 	heatcool=hc_tot
 	end function
 
@@ -106,8 +118,9 @@ c	print *,temp,xi,gamma_comp,gamma_x,l_b,l_l,n,hc_tot
 #include "field.h"
 #include "root.h"
 #include "diskw.h"
-	REAL rho,xi,e_0,t_0,temp,heatcool,hc_0,logxi,sqsqxi,n
-	common /hc_data/ rho,xi,e_0,t_0,hc_0,sqsqxi,n
+	REAL rho,xi0,e_0,t_0,temp,heatcool,hc_0,logxi,sqsqxi,n
+	INTEGER i,j
+	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j
 	external heatcool
 	zfunc=(1.5*temp*n*boltz)-e_0-
      &  dt*(hc_0+heatcool(temp))/2.0

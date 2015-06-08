@@ -23,6 +23,7 @@ c-----------------------------------------------------------------------
 #include "root.h"
 #include "scratch.h"
       integer  i,j
+	  real old_time
 #ifdef UNICOS
       integer rank,shape(2),ret
       real data(in*jn),xscale(in),yscale(jn)
@@ -78,23 +79,86 @@ c
       write(string,"('DENSITY AT TIME=',1pe8.2,'        ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dspdata(filename,rank,shape,data)
-
 c
-c  NSH mod 15/5/15 - write out pdv heating
+c  ionization parameter
 c
       do 111 j=js,je
         do 101 i=is,ie
-          data((j-js)*nx1z + i -is+1) = real(pdv_heat(i,j))
+          data((j-js)*nx1z + i -is+1) = real(xi(i,j))
 101     continue
 111   continue
-      write(string,"('PDV AT TIME=',1pe8.2,'        ')") time
+      write(string,"('XI AT TIME=',1pe8.2,'        ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
 c
-
-
-
-
+c  compton heating/cooling
+c
+      do 113 j=js,je
+        do 103 i=is,ie
+          data((j-js)*nx1z + i -is+1) = real(hc_comp(i,j))
+103     continue
+113   continue
+      write(string,"('COMPTON AT TIME=',1pe8.2,'        ')") time
+      ret = dssdast(string,' ',' ',coordsys)
+      ret = dsadata(filename,rank,shape,data)
+c
+c  xray heating/cooling
+c
+      do 114 j=js,je
+        do 104 i=is,ie
+          data((j-js)*nx1z + i -is+1) = real(hc_xray(i,j))
+104     continue
+114   continue
+      write(string,"('XRAY AT TIME=',1pe8.2,'        ')") time
+      ret = dssdast(string,' ',' ',coordsys)
+      ret = dsadata(filename,rank,shape,data)
+c
+c  line heating_cooling
+c
+      do 115 j=js,je
+        do 105 i=is,ie
+          data((j-js)*nx1z + i -is+1) = real(hc_line(i,j))
+105     continue
+115   continue
+      write(string,"('LINE AT TIME=',1pe8.2,'        ')") time
+      ret = dssdast(string,' ',' ',coordsys)
+      ret = dsadata(filename,rank,shape,data)
+c
+c  brem heating_cooling
+c
+      do 116 j=js,je
+        do 106 i=is,ie
+          data((j-js)*nx1z + i -is+1) = real(hc_brem(i,j))
+106     continue
+116   continue
+      write(string,"('BREM AT TIME=',1pe8.2,'        ')") time
+      ret = dssdast(string,' ',' ',coordsys)
+      ret = dsadata(filename,rank,shape,data)
+c
+c  old internal energy
+c
+      old_time=time-dt
+      do 112 j=js,je
+        do 102 i=is,ie
+          data((j-js)*nx1z + i -is+1) = real(e_old(i,j))
+102     continue
+112   continue
+      write(string,"('OLD ENERGY AT TIME=',1pe8.2,'   ')") old_time
+      ret = dssdast(string,' ',' ',coordsys)
+      ret = dsadata(filename,rank,shape,data)
+c
+c  old temp
+c
+      old_time=time-dt
+      do 117 j=js,je
+        do 107 i=is,ie
+          data((j-js)*nx1z + i -is+1) = real(t_old(i,j))
+107     continue
+117   continue
+      write(string,"('OLD TEMP AT TIME=',1pe8.2,'   ')") old_time
+      ret = dssdast(string,' ',' ',coordsys)
+      ret = dsadata(filename,rank,shape,data)
+c
 c  internal energy
 c
       do 210 j=js,je
