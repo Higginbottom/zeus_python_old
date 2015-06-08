@@ -78,7 +78,23 @@ c
       write(string,"('DENSITY AT TIME=',1pe8.2,'        ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dspdata(filename,rank,shape,data)
+
 c
+c  NSH mod 15/5/15 - write out pdv heating
+c
+      do 111 j=js,je
+        do 101 i=is,ie
+          data((j-js)*nx1z + i -is+1) = real(pdv_heat(i,j))
+101     continue
+111   continue
+      write(string,"('PDV AT TIME=',1pe8.2,'        ')") time
+      ret = dssdast(string,' ',' ',coordsys)
+      ret = dsadata(filename,rank,shape,data)
+c
+
+
+
+
 c  internal energy
 c
       do 210 j=js,je

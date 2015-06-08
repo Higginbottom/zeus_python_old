@@ -1,4 +1,5 @@
       REAL   d(in,jn),  e(in,jn),  p(in,jn), v1(in,jn), v2(in,jn)
+      REAL   pdv_heat(in,jn)
 #ifdef ROTATE
       REAL  v3(in,jn)
 #endif
@@ -12,7 +13,7 @@
       REAL  er(in,jn) 
 #endif
 
-      common /fieldr/  d ,  e,  p, v1, v2
+      common /fieldr/  d ,  e,  p, v1, v2, pdv_heat
 #ifdef ROTATE
       common /fieldr/  v3
 #endif

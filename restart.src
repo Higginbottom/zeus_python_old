@@ -25,8 +25,7 @@ c-----------------------------------------------------------------------
       REAL     dtrat
       external nudt
       namelist /pcon/ nlim,tlim
-      namelist /pgen/ d0,v10,v20,v30,dindex
-
+      namelist /pgen/ d0,v10,v20,v30,dindex,mdot,tx,lx,mu
 c
 #ifdef PROBRES
 c
@@ -37,6 +36,7 @@ c
 #include "gravity.h"
 #include "radiation.h"
 c
+		print *,"Probres is defined"
       external PROBRES
 c
       namelist /hycon/

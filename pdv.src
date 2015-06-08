@@ -73,6 +73,7 @@ c		print *,lx,d(i,j),mu,mp,x1b(i)
 c	      print *,hc_tot,(1.0 - del)/(1.0 + del)*e(i,j)-e(i,j)
 	      e_old=e(i,j)
               epv = (1.0 - del)/(1.0 + del)*e(i,j)
+		pdv_heat(i,j)=epv-e_old
 c		print *,i,j
 	      call hc_sub(d(i,j),xi,epv,e1)
 c		if (i.eq.74 .and. j.eq.20) then
