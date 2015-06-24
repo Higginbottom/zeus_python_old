@@ -202,6 +202,86 @@ c
       write(string,"('V2_PDV AT TIME=',1pe8.2,'   ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
+	  
+
+	  
+	  
+c
+c  soundspeed timescale
+c
+      do 122 j=js,je
+        do 132 i=is,ie
+          data((j-js)*nx1z + i -is+1) = real(dt_csound(i,j))
+132     continue
+122   continue
+      write(string,"('CS_TS AT TIME=',1pe8.2,'   ')") time
+      ret = dssdast(string,' ',' ',coordsys)
+      ret = dsadata(filename,rank,shape,data)	  
+  
+  
+c
+c  v1 timescale
+c
+      do 123 j=js,je
+        do 133 i=is,ie
+          data((j-js)*nx1z + i -is+1) = real(dt_v1(i,j))
+133     continue
+123   continue
+      write(string,"('V1_TS AT TIME=',1pe8.2,'   ')") time
+      ret = dssdast(string,' ',' ',coordsys)
+      ret = dsadata(filename,rank,shape,data)
+  
+c
+c  v2 timescale
+c
+      do 124 j=js,je
+        do 134 i=is,ie
+          data((j-js)*nx1z + i -is+1) = real(dt_v2(i,j))
+134     continue
+124   continue
+      write(string,"('V2_TS AT TIME=',1pe8.2,'   ')") time
+      ret = dssdast(string,' ',' ',coordsys)
+      ret = dsadata(filename,rank,shape,data)
+  
+  
+c
+c  alfen timescale
+c
+      do 125 j=js,je
+        do 135 i=is,ie
+          data((j-js)*nx1z + i -is+1) = real(dt_alfen(i,j))
+135     continue
+125   continue
+      write(string,"('ALFEN_TS AT TIME=',1pe8.2,'   ')") time
+      ret = dssdast(string,' ',' ',coordsys)
+      ret = dsadata(filename,rank,shape,data)
+  
+c
+c  viscosity timescale
+c
+      do 126 j=js,je
+        do 136 i=is,ie
+          data((j-js)*nx1z + i -is+1) = real(dt_viscosity(i,j))
+136     continue
+126   continue
+      write(string,"('VISCOUS__TS AT TIME=',1pe8.2,'   ')") time
+      ret = dssdast(string,' ',' ',coordsys)
+      ret = dsadata(filename,rank,shape,data)
+  
+  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
+	  
 c
 c  internal energy
 c

@@ -2,6 +2,8 @@
 	  REAL   xi(in,jn), e_old(in,jn), hc_comp(in,jn),hc_xray(in,jn)
 	  REAL   hc_line(in,jn),hc_brem(in,jn),t_old(in,jn),adiab(in,jn)
 	  REAL   divv1(in,jn),v1_pdv(in,jn),v2_pdv(in,jn)
+	  REAL   dt_csound(in,jn),dt_v1(in,jn),dt_v2(in,jn)
+	  REAL   dt_viscosity(in,jn),dt_alfen(in,jn)
 #ifdef ROTATE
       REAL  v3(in,jn)
 #endif
@@ -18,7 +20,8 @@
       common /fieldr/  d ,  e,  p, v1, v2
 	  common /fieldr/  xi , e_old, t_old,adiab
 	  common /fieldr/  hc_comp,hc_xray,hc_line,hc_brem
-		  common /fieldr/ divv1,v1_pdv,v2_pdv
+	  common /fieldr/ divv1,v1_pdv,v2_pdv
+	  common /fieldr/ dt_csound,dt_v1,dt_v2,dt_alfen,dt_viscosity
 #ifdef ROTATE
       common /fieldr/  v3
 #endif
