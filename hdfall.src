@@ -159,6 +159,50 @@ c
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
 c
+c  adiabatic heating
+c
+      do 118 j=js,je
+        do 108 i=is,ie
+          data((j-js)*nx1z + i -is+1) = real(adiab(i,j))
+108     continue
+118   continue
+      write(string,"('ADIABATIC AT TIME=',1pe8.2,'   ')") time
+      ret = dssdast(string,' ',' ',coordsys)
+      ret = dsadata(filename,rank,shape,data)
+c
+c  pdv
+c
+      do 119 j=js,je
+        do 109 i=is,ie
+          data((j-js)*nx1z + i -is+1) = real(divv1(i,j))
+109     continue
+119   continue
+      write(string,"('DIVV AT TIME=',1pe8.2,'   ')") time
+      ret = dssdast(string,' ',' ',coordsys)
+      ret = dsadata(filename,rank,shape,data)
+c
+c  v1 at time of pdv calc
+c
+      do 120 j=js,je
+        do 130 i=is,ie
+          data((j-js)*nx1z + i -is+1) = real(v1_pdv(i,j))
+130     continue
+120   continue
+      write(string,"('V1_PDV AT TIME=',1pe8.2,'   ')") time
+      ret = dssdast(string,' ',' ',coordsys)
+      ret = dsadata(filename,rank,shape,data)
+c
+c  v2 at time of pdv calc
+c
+      do 121 j=js,je
+        do 131 i=is,ie
+          data((j-js)*nx1z + i -is+1) = real(v2_pdv(i,j))
+131     continue
+121   continue
+      write(string,"('V2_PDV AT TIME=',1pe8.2,'   ')") time
+      ret = dssdast(string,' ',' ',coordsys)
+      ret = dsadata(filename,rank,shape,data)
+c
 c  internal energy
 c
       do 210 j=js,je

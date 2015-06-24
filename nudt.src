@@ -66,7 +66,7 @@ c
 c\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\///////////////////////////////////
 c=======================================================================
 c
-      call pgas
+      call pgas 
       do 20 j=js,je
         do 10 i=ii(j),io(j)
           sound(i,j) = gamma*p(i,j)/d(i,j)
@@ -112,10 +112,12 @@ c
       dtqq   = 1.0/ (sqrt(dtqqi2          ) + tiny)
       dtcsmn = 1.0/ (sqrt(dtcsi2mx(jmaxcs)) + tiny)
       dtc mn = 1.0/ (sqrt(dtc i2mx(jmaxc )) + tiny)
+	  print *,"dtcs=",dtcs," dtv1=",dtv1," dtv2=",dtv2," dtal="
+     &  ,dtal," dtqq=",dtqq
 c
       dtnew  = courno / sqrt(dttoi2j(jmax) + dtqqi2 + tiny)
       dt     =   min(dtnew, 1.26*dt)/4.0**nred
-c	print *,"******************* dt reset to ",dt
+	print *,"******************* dt reset to ",dt
       if ((time+dt) .gt. tlim) dt = tlim-time
       if (dt .gt. 5.0*dtmin) return
 c

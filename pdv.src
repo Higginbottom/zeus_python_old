@@ -68,11 +68,14 @@ c		print *,lx,d(i,j),mu,mp,x1b(i)
      &             -  g2a(i  )*g31a(i  )*v1(i  ,j))/dvl1a(i)
               div2 = (g32a(j+1)*v2(i,j+1)
      &             -  g32a(j  )*v2(i,j  ))/(g2b(i)*dvl2a(j))
-              divv = div1 + div2
-              del = 0.5*dt*(gamma-1.0)*divv
+              divv1(i,j) = div1 + div2
+			  v1_pdv(i,j)=v1(i,j)
+			  v2_pdv(i,j)=v2(i,j)
+              del = 0.5*dt*(gamma-1.0)*divv1(i,j)
 c	      print *,hc_tot,(1.0 - del)/(1.0 + del)*e(i,j)-e(i,j)
               epv = (1.0 - del)/(1.0 + del)*e(i,j)
 		      e_old(i,j)=epv
+			  adiab(i,j)=((epv-e(i,j))/dt)
 		      t_old(i,j)=epv*(2.0/3.0)/((d(i,j)/(mu*mp))*boltz)
 
 			  
