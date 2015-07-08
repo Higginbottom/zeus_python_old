@@ -43,11 +43,14 @@ c\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\///////////////////////////////////////
 c=======================================================================
 c
       namelist /pgen/ d0,v10,v20,v30, dindex,mdot,tx,lx,mu
+	  namelist /hc_pre/ comp_pre0,line_pre0,brem_pre0,xray_pre0
 c
 c  read parameters from input deck
 c
       read (1,pgen)
       write(2,pgen)
+	  read (1,hc_pre)
+	  write(2,hc_pre)
 c
 
 c
@@ -64,11 +67,18 @@ c
 c  Initialize density and velocity variables
 c
 
-      print *,js,je,is,ie,d0,dindex,ciso,ptmass,guniv,sb,mdot
+c      print *,js,je,is,ie,d0,dindex,ciso,ptmass,guniv,sb,mdot
 
 
         do  j=js,je
          do i=is,ie
+c			 print *,comp_pre0,xray_pre0,line_pre0,brem_pre0
+			 comp_pre(i,j)=comp_pre0
+			 xray_pre(i,j)=xray_pre0
+			 line_pre(i,j)=line_pre0
+			 brem_pre(i,j)=brem_pre0
+			 
+			 
 		v1(i,j)=v10
 	  	v2(i,j)=v20
 	  	v3(i,j)=sqrt((guniv*ptmass*sin(x2b(j))*sin(x2b(j)))/x1b(i))

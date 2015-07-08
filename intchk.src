@@ -2,11 +2,14 @@
 c=======================================================================
 c///////////////////////////  SUBROUTINE INTCHK  \\\\\\\\\\\\\\\\\\\\\\\
 c
-      subroutine intchk(iswres,iswhdf,iswhst,iswusr)
+      subroutine intchk(iswres,iswhdf,iswhst,iswusr,icode)
 c
 c  PURPOSE:  Reads the buffer for valid interrupt messages and takes
 c    appropriate action. Also checks stopping criteria, and sets ifsen=1
 c    if stop condition is detected.
+c
+c  Modified by NSH to include a returned exit code, so that zeus
+c    can communicate with a controlling python script
 c
 c  INPUT ARGUMENTS: none
 c
@@ -21,7 +24,7 @@ c-----------------------------------------------------------------------
 #include "param.h"
 #include "root.h"
 c-----------------------------------------------------------------------
-      integer iswres,iswhdf,iswhst,iswusr
+      integer iswres,iswhdf,iswhst,iswusr,icode
 c
       integer i,nchar,istrt,iend
       real*8 valnew
@@ -58,6 +61,7 @@ c-
      &  /1x,'tlim=',1pe12.5,'   nlim=',i7,
      &  /1x,'time=', 1e12.5,'  cycle=',i7,'  tused=',1e12.5)") 
      &  tlim,nlim,time,nhy,tused
+	    icode = 2
         ifsen = 1
       endif
       if (nlim .gt. 0    .and. nhy .ge. nlim) then
@@ -66,6 +70,7 @@ c-
      &  /1x,'time=', 1e12.5,'  cycle=',i7,'  tused=',1e12.5)") 
      &  tlim,nlim,time,nhy,tused
         ifsen = 1
+		icode = 3
       endif
       if (ifsen .eq. 1) return
 c
@@ -92,6 +97,7 @@ c
      &  /1x,'tlim=',1pe12.5,'   nlim=',i7,
      &  /1x,'time=', 1e12.5,'  cycle=',i7,'  tused=',1e12.5)") 
      &  msg,tlim,nlim,time,nhy,tused
+		icode = 2
         ifsen = 1
         return
       endif
@@ -114,6 +120,8 @@ c
      &  /1x,'time=', 1e12.5,'  cycle=',i7,'  tused=',1e12.5,
      &  /1x,'Hit any key to restart execution')") 
      &  msg,tlim,nlim,time,nhy,tused
+
+		icode = 0
         nchar = checkin(msg,0)
         return
       endif

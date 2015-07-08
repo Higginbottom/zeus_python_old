@@ -12,6 +12,8 @@
 #define ROTATE
 /* #define MHD  */
 /* #define RAD  */ 
+/* This is a new mode, defined by NSH 7/7/15 should permit connection to python */
+#define PYHYDRO
 /*========================  array dimensioning  ======================*/
 #define NUM_OF_I_ZONES    405
 #define NUM_OF_J_ZONES    405

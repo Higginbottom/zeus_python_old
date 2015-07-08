@@ -27,3 +27,8 @@
 #else
 #define RADIATION_OPTION "(1x,'      * radiation       OFF')"
 #endif
+#ifdef PYHYDRO
+#define PYTHON_OPTION "(1x,'      * py_connection   ON ')"
+#else
+#define PYTHON_OPTION "(1x,'      * py_connection   OFF')"
+#endif

@@ -82,23 +82,23 @@ c now we have a new temperature, we will return the new internal energy.
 	st=sqrt(temp)
 
 
-	gamma_comp=8.9e-36*xi0*(tx-(4.0*temp))
+	gamma_comp=comp_pre(i,j)*8.9e-36*xi0*(tx-(4.0*temp))
 	hc_comp(i,j)=gamma_comp
 c	gamma_x=sqrt(xi)
 c	gamma_x=sqrt(gamma_x)
 c	gamma_x=gamma_x*1.5e-21
 c	gamma_x=gamma_x/sqrt(temp)
 c	gamma_x=gamma_x*(1-temp/tx)
-	gamma_x=1.5e-21*(sqsqxi/st)*(1.0-temp/tx)
+	gamma_x=xray_pre(i,j)*1.5e-21*(sqsqxi/st)*(1.0-temp/tx)
 	hc_xray(i,j)=gamma_x
-	l_b=3.3e-27*st
+	l_b=brem_pre(i,j)*3.3e-27*st
 	hc_brem(i,j)=l_b
 c	l_l=exp(-1.3e5/temp)
 c	l_l=l_l/xi
 c	l_l=l_l/sqrt(temp)
 c	l_l=l_l*1.7e-18
 c	l_l=l_l+1e-24
-	l_l=(1.7e-18*exp(-1.3e5/temp)/(xi0*st)+1e-24)
+	l_l=line_pre(i,j)*(1.7e-18*exp(-1.3e5/temp)/(xi0*st)+1e-24)
 	hc_line(i,j)=l_l
 c	print *,temp,xi,gamma_comp,gamma_x,l_b,l_l
 	hc_tot=n*n*(gamma_comp+gamma_x-l_b-l_l)
@@ -164,7 +164,7 @@ c     error: Root not bracketed
        WRITE(6,*) 'lower bracket A = ',A,' FUNC(A) = ',FUNC(A)
        WRITE(6,*) 'upper bracket B = ',B,' FUNC(B) = ',FUNC(B)
        WRITE(6,*) 'this can be remedied by changing A and/or B'
-       STOP
+       call exit(5)
       END IF
       FC=FB
       DO 11 ITER=1,ITMAX
@@ -229,7 +229,7 @@ c     error message for too many iterations
       WRITE(6,*) 'parameter ITMAX in the file or by relaxing'
       WRITE(6,*) 'the convrgence tolerance TOL'
       WRITE(6,*) '*** terminating program  ***'
-      STOP
+      call exit(5)
       ZBRENT=B
       RETURN
       END

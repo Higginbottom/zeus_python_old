@@ -44,6 +44,10 @@ c
         call setup
       else
         call mget(resfile)
+		print *,"We are restarting"
+#ifdef PYHYDRO
+		print *,"We will be reading in a heating/cooling file"
+#endif 
         nwarn = 0
         ifsen = 0
         call restart
