@@ -24,6 +24,7 @@ c-----------------------------------------------------------------------
 #include "diskw.h"
       REAL     dtrat
       external nudt
+	  external hc_file_input
       namelist /pcon/ nlim,tlim
       namelist /pgen/ d0,v10,v20,v30,dindex,mdot,tx,lx,mu
 c
@@ -36,7 +37,6 @@ c
 #include "gravity.h"
 #include "radiation.h"
 c
-		print *,"Probres is defined"
       external PROBRES
 c
       namelist /hycon/
@@ -93,6 +93,12 @@ c  read parameters from input deck
 c
       read (1,pgen)
       write(2,pgen)
+	  
+	  
+#ifdef PYHYDRO
+		print *,"We will read in heating and cooling data here I think"
+		call hc_file_input
+#endif
 #ifdef PROBRES
 c
 c------------------------  HYDRO CONTROL  ------------------------------

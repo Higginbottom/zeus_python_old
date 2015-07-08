@@ -37,8 +37,13 @@ c-----------------------------------------------------------------------
       equivalence (rlgrdvr(1),x1a(1)) , (ntgrdvr(1),iim2(1))
 c-------------------------
 #include "field.h"
-      integer nfield1,nfield2,nfield3,nfield4,nfield5,nfieldr
+      integer nfield1,nfield2,nfield3,nfield4,nfield5,nfield6,nfieldr
       parameter(nfield1= 5*in*jn)
+#ifdef PYHYDRO
+	  parameter(nfield6= 21*in*jn)
+#else
+	  parameter(nfield6= 0)
+#endif
 #ifdef ROTATE
       parameter(nfield2=  in*jn)
 #else
@@ -60,7 +65,7 @@ c-------------------------
       parameter(nfield5 = 0)
 #endif
       parameter(nfieldr = nfield1 + nfield2 + nfield3
-     &                  + nfield4 + nfield5)
+     &                  + nfield4 + nfield5 + nfield6)
       REAL    rlfldvr(nfieldr)
       equivalence (rlfldvr(1),d(1,1))
 c-------------------------
@@ -99,7 +104,7 @@ c
      &         ,rl bdry vr , nt bdry vr
      &         ,rl rt   vr , nt rt   vr , ch rt   vr
      &         ,rl grv  vr , nt grv  vr
-      write(2,"(/1x,'restart dump wriiten at time=',1pe12.5,
+      write(2,"(/1x,'restart dump written at time=',1pe12.5,
      & ' cycle=',i6)") time,nhy
       close(unit=4)
       return

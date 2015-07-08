@@ -24,7 +24,10 @@ c-----------------------------------------------------------------------
 #include "field.h"
 #include "root.h"
 #include "diskw.h"
-      integer i,j
+#include "control.h"
+
+
+      integer i,j,icount
       REAL    div1,div2,divv,del,pnew,pav,temp
       REAL    hc_tot,dt_hc,e1,epv
 
@@ -60,10 +63,14 @@ c  pdv calculation with gamma-law gas
 c  edited by NSH to include radiative heating and cooling
 c
 	dt_hc=0.0
+	icount=0
+	
           do 40 j=js,je
             do 30 i=ii(j),io(j)
 c		print *,lx,d(i,j),mu,mp,x1b(i)
-	      xi(i,j)=(lx/((d(i,j)/(mu*mp))*x1b(i)**2))
+	  	      xi(i,j)=(lx/((d(i,j)/(mu*mp))*x1b(i)**2))
+				
+
               div1 = (g2a(i+1)*g31a(i+1)*v1(i+1,j)
      &             -  g2a(i  )*g31a(i  )*v1(i  ,j))/dvl1a(i)
               div2 = (g32a(j+1)*v2(i,j+1)
@@ -76,7 +83,6 @@ c	      print *,hc_tot,(1.0 - del)/(1.0 + del)*e(i,j)-e(i,j)
               epv = (1.0 - del)/(1.0 + del)*e(i,j)
 		      e_old(i,j)=epv
 			  adiab(i,j)=((epv-e(i,j))/dt)
-		      t_old(i,j)=epv*(2.0/3.0)/((d(i,j)/(mu*mp))*boltz)
 
 			  
 c		print *,i,j
@@ -84,12 +90,46 @@ c		print *,i,j
 
 c		endif
 		e(i,j)=e1
+        temp=e(i,j)*(2.0/3.0)/((d(i,j)/(mu*mp))*boltz)
+		
+#ifdef PYHYDRO
+				if (abs(d(i,j)-d_old(i,j))/d_old(i,j) .gt. 0.5) then
+					print *,d(i,j),d_old(i,j)
+					icount=icount+1
+				else if (abs(temp-t_old(i,j))/t_old(i,j) .gt. 0.5) then
+					print *,temp,t_old(i,j),abs(temp-t_old(i,j))/t_old(i,j)
+					icount=icount+1 
+				endif
+				if (irestart.eq.0) then
+					d_old(i,j)=d(i,j)
+					t_old(i,j)=temp
+				endif
+#endif
+		
+		
+		
+		
 c		print *,i,j,xi,d(i,j),e_old,e1-epv,epv-e_old
 c		if (j .eq. 90 .and. i .eq. 40) then
 c			print *,e_old,epv,e1
 c		endif 
 30          continue
 40        continue
+		print *,icount
+#ifdef PYHYDRO
+		if (irestart .eq.0) then
+			if (icount .lt. 10) then
+				call_py=2
+			endif
+		endif
+		if (irestart .eq.1)  then
+			if (icount.gt.10) then
+			call_py=1
+		endif
+		
+		endif
+			
+#endif
         endif
 c
       else if (nx1z.gt.1 .and. nx2z.le.1) then

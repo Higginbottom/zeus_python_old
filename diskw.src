@@ -67,7 +67,7 @@ c
 c  Initialize density and velocity variables
 c
 
-c      print *,js,je,is,ie,d0,dindex,ciso,ptmass,guniv,sb,mdot
+       print *,js,je,is,ie,d0,dindex,ciso,ptmass,guniv,sb,mdot
 
 
         do  j=js,je
@@ -95,12 +95,16 @@ c     &      x1b(i)*(1.-1./2./sin(x2b(j)))))
 	d(i,j)=d0*(x1b(i)/ric)**(-dindex)*
      & exp((-1.0*guniv*ptmass*(x1b(i)*cos(x2b(j)))**2)/
      & (cisosqrd*2.0*(x1b(i)*sin(x2b(j)))**3))
+	 d_old(i,j)=d(i,j)
+	 xi(i,j)=(lx/((d(i,j)/(mu*mp))*x1b(i)**2))
+
 	if (d(i,j).le. 1e-22) then
 		d(i,j)=1e-22
 		temp=tx/4.0
 	endif
          e(i,j)=(3.0*d(i,j)*boltz*temp)/(2.0*mp*mu)
-
+      	t_old(i,j)=temp
+	     
 
 cc     &      d0*x1b(i)**(-dindex)*exp(-1/(ciso*ciso)/
 cc     &      x1b(i)/tan(x2b(j))/tan(x2b(j))/2))

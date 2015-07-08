@@ -233,7 +233,41 @@ c     error message for too many iterations
       ZBRENT=B
       RETURN
       END
-
+	  
+	  
+	  subroutine hc_file_input()
+#include "cons.h"
+#include "param.h"
+#include "grid.h"
+#include "field.h"
+#include "root.h"
+#include "diskw.h"
+		  integer i,j
+		  real r,theta,c_heat,x_heat,b_heat,l_heat,c_cool,x_cool,b_cool,l_cool
+		  
+		  print *,"Got here OK"
+		  open(66,file='py_heatcool.dat',status='old')
+		  do 10, n=1,10000000
+		  read (66,*,end=20) i,j,r,theta,c_heat,x_heat,b_heat,l_heat,c_cool,x_cool,b_cool,l_cool
+c		  print *,hc_comp(i+3,j+3),hc_xray(i+3,j+3),hc_line(i+3,j+3),hc_brem(i+3,j+3)
+c		  do 10 i=is,ie
+c			  do 20 j=js,je
+c		  print *,is,i+2,ie,x1a(i+2)/r,js,j+3,je,x2a(j+3)/
+c     c  (theta/57.2957795)
+				  
+c		 comp_pre(i+3,j+3)=c_heat-c_cool
+c		 xray_pre(i+3,j+3)=xray_heat-xray_cool
+c		 line_pre(i+3,j+3)=line_cool
+c		 brem_pre(i+3,j+3)=brem_cool
+c		  print *,i+3,j+3,r,theta
+c 20 		continue
+ 10		continue
+ 20		print *,"There are ",n," records"		  
+		  close unit=66
+		  
+		  
+		  RETURN
+	  END
 
 
 

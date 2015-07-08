@@ -12,7 +12,8 @@ c  LOCALS:
 c-----------------------------------------------------------------------
       implicit NONE
 #include "root.h"
-      integer irestart
+#include "control.h"
+c      integer irestart
 c
       integer incr,strtoi
       external setup, mget, restart, strtoi
@@ -35,6 +36,7 @@ c
       irestart = 0
        tdump = 0.0
       dtdump = 0.0
+	  call_py = 0.0
       id     = 'aa'
       resfile= 'res000aa'
       read (1,rescon)
@@ -44,10 +46,7 @@ c
         call setup
       else
         call mget(resfile)
-		print *,"We are restarting"
-#ifdef PYHYDRO
-		print *,"We will be reading in a heating/cooling file"
-#endif 
+
         nwarn = 0
         ifsen = 0
         call restart
