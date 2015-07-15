@@ -78,7 +78,7 @@ LDR    = gfortran
 #LIB    = /opt/local/lib/libmfhdf.a /opt/local/lib/libdf.a \
 	/opt/local/lib/libjpeg.a /opt/local/lib/libz.a  
 LIB    = /opt/local/lib/libmfhdf.a /opt/local/lib/libdf.a \
-	/opt/local/lib/libjpeg.a /usr/lib/x86_64-linux-gnu/libz.a  
+	/usr/lib/x86_64-linux-gnu/libjpeg.a /usr/lib/x86_64-linux-gnu/libz.a  
 
 
 
