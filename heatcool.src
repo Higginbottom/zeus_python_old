@@ -18,7 +18,7 @@
 	double precision t_l,t_u,tol
 	REAL heatcool,zbrent,zfunc,n1
 	real test
-	common /hc_data/ xi1,e_01,hc_01,sqsqxi1,n1,i1,j1
+	common /hc_data/ xi1,e_01,hc_01,sqsqxi1,n1,i1,j1,nh1
 	external zfunc
 	t_01=e_0*(2.0/3.0)/((rho/(mu*mp))*boltz)
 c	print *,e_0,rho,t_01
@@ -28,7 +28,8 @@ c	print *,e_0,rho,t_01
 	e_01=e_0
 	sqsqxi1=sqrt(sqrt(xi0))
 
-	n1=rho/mp
+	n1=rho/(mu*mp)
+	nh1=rho/(1.42*mp)
 
 
 c stage one, bracket to find out where the zero point is
@@ -60,7 +61,7 @@ c we will call heatcool one last time to compute the heating and cooling rates f
 	
 
 c now we have a new temperature, we will return the new internal energy. 
-	e_1=t_1*1.5*n1/mu*boltz
+	e_1=t_1*1.5*n1*boltz
 
 	end
 
@@ -77,7 +78,7 @@ c now we have a new temperature, we will return the new internal energy.
       integer i,j
       REAL    div1,div2,divv,del,pnew,pav,xi0,temp,hc_tot,rho,e_0,t_0
       REAL    gamma_comp,gamma_x,l_b,l_l,hc_0,sqsqxi,st,n
-	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j
+	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j,nh
 
 	st=sqrt(temp)
 
@@ -101,7 +102,7 @@ c	l_l=l_l+1e-24
 	l_l=line_pre(i,j)*(1.7e-18*exp(-1.3e5/temp)/(xi0*st)+1e-24)
 	hc_line(i,j)=l_l
 c	print *,temp,xi,gamma_comp,gamma_x,l_b,l_l
-	hc_tot=n*n*(gamma_comp+gamma_x-l_b-l_l)
+	hc_tot=nh*nh*1.2*(gamma_comp+gamma_x-l_b-l_l)
 c	print *,temp,xi,gamma_comp,gamma_x,l_b,l_l,n,hc_tot
 	
 	
@@ -120,9 +121,9 @@ c	print *,temp,xi,gamma_comp,gamma_x,l_b,l_l,n,hc_tot
 #include "diskw.h"
 	REAL rho,xi0,e_0,t_0,temp,heatcool,hc_0,logxi,sqsqxi,n
 	INTEGER i,j
-	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j
+	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j,nh
 	external heatcool
-	zfunc=(1.5*temp*n/mu*boltz)-e_0-
+	zfunc=(1.5*temp*n*boltz)-e_0-
      &  dt*(hc_0+heatcool(temp))/2.0
 c	print *,temp,zfunc
 	end function
