@@ -68,7 +68,7 @@ c
           do 40 j=js,je
             do 30 i=ii(j),io(j)
 c		print *,lx,d(i,j),mu,mp,x1b(i)
-	  	      xi(i,j)=(lx/((d(i,j)/(mu*mp))*x1b(i)**2))
+	  	      xi(i,j)=(lx/((d(i,j)/(mp))*x1b(i)**2))
 				
 
               div1 = (g2a(i+1)*g31a(i+1)*v1(i+1,j)

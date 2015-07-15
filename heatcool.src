@@ -28,7 +28,7 @@ c	print *,e_0,rho,t_01
 	e_01=e_0
 	sqsqxi1=sqrt(sqrt(xi0))
 
-	n1=rho/(mu*mp)
+	n1=rho/mp
 
 
 c stage one, bracket to find out where the zero point is
@@ -60,7 +60,7 @@ c we will call heatcool one last time to compute the heating and cooling rates f
 	
 
 c now we have a new temperature, we will return the new internal energy. 
-	e_1=t_1*1.5*n1*boltz
+	e_1=t_1*1.5*n1/mu*boltz
 
 	end
 
@@ -122,7 +122,7 @@ c	print *,temp,xi,gamma_comp,gamma_x,l_b,l_l,n,hc_tot
 	INTEGER i,j
 	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j
 	external heatcool
-	zfunc=(1.5*temp*n*boltz)-e_0-
+	zfunc=(1.5*temp*n/mu*boltz)-e_0-
      &  dt*(hc_0+heatcool(temp))/2.0
 c	print *,temp,zfunc
 	end function
