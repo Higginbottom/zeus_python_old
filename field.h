@@ -1,10 +1,11 @@
       REAL   d(in,jn),  e(in,jn),  p(in,jn), v1(in,jn), v2(in,jn)
 #ifdef PYHYDRO		  
-	  REAL   xi(in,jn), e_old(in,jn), hc_comp(in,jn),hc_xray(in,jn)
-	  REAL   d_old(in,jn)
-	  REAL   hc_line(in,jn),hc_brem(in,jn),t_old(in,jn),adiab(in,jn)
-	  REAL   comp_pre(in,jn),brem_pre(in,jn)
-	  REAL   xray_pre(in,jn),line_pre(in,jn)
+	  REAL   xi(in,jn), e_old(in,jn), c_comp(in,jn),c_xray(in,jn)
+	  REAL   d_old(in,jn), h_comp(in,jn),h_xray(in,jn)
+	  REAL   c_line(in,jn),c_brem(in,jn),t_old(in,jn),adiab(in,jn)
+	  REAL   comp_h_pre(in,jn),comp_c_pre(in,jn)
+	  REAL   brem_pre(in,jn),line_pre(in,jn)
+	  REAL   xray_c_pre(in,jn),xray_h_pre(in,jn)
 	  REAL   divv1(in,jn),v1_pdv(in,jn),v2_pdv(in,jn)
 	  REAL   dt_csound(in,jn),dt_v1(in,jn),dt_v2(in,jn)
 	  REAL   dt_viscosity(in,jn),dt_alfen(in,jn)
@@ -25,8 +26,11 @@
       common /fieldr/  d ,  e,  p, v1, v2
 	  common /fieldr/  xi , e_old, t_old,adiab
 	  common /fieldr/  d_old
-	  common /fieldr/  hc_comp,hc_xray,hc_line,hc_brem
-	  common /fieldr/  comp_pre,xray_pre,line_pre,brem_pre
+	  common /fieldr/  c_comp,c_xray,c_line,c_brem
+	  common /fieldr/  h_comp,h_xray
+	  common /fieldr/  comp_c_pre,comp_h_pre
+	  common /fieldr/  xray_c_pre,xray_h_pre
+	  common /fieldr/  line_pre,brem_pre
 
 	  common /fieldr/ divv1,v1_pdv,v2_pdv
 	  common /fieldr/ dt_csound,dt_v1,dt_v2,dt_alfen,dt_viscosity

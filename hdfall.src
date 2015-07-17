@@ -90,48 +90,73 @@ c
       write(string,"('XI AT TIME=',1pe8.2,'        ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
+	  print *,"TEST1"
+	  
 c
-c  compton heating/cooling
+c  compton cooling
 c
       do 113 j=js,je
         do 103 i=is,ie
-          data((j-js)*nx1z + i -is+1) = real(hc_comp(i,j))
+          data((j-js)*nx1z + i -is+1) = real(c_comp(i,j))
 103     continue
 113   continue
-      write(string,"('COMPTON AT TIME=',1pe8.2,'        ')") time
+      write(string,"('COMP_C AT TIME=',1pe8.2,'        ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
+	  print *,"TEST2"
 c
-c  xray heating/cooling
+c  xray cooling
 c
       do 114 j=js,je
         do 104 i=is,ie
-          data((j-js)*nx1z + i -is+1) = real(hc_xray(i,j))
+          data((j-js)*nx1z + i -is+1) = real(c_xray(i,j))
 104     continue
 114   continue
-      write(string,"('XRAY AT TIME=',1pe8.2,'        ')") time
+      write(string,"('XRAY_C AT TIME=',1pe8.2,'        ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
 c
-c  line heating_cooling
+c  compton heating
+c
+      do 163 j=js,je
+        do 173 i=is,ie
+          data((j-js)*nx1z + i -is+1) = real(h_comp(i,j))
+173     continue
+163   continue
+      write(string,"('COMP_H AT TIME=',1pe8.2,'        ')") time
+      ret = dssdast(string,' ',' ',coordsys)
+      ret = dsadata(filename,rank,shape,data)
+c
+c  xray cooling
+c
+      do 164 j=js,je
+        do 174 i=is,ie
+          data((j-js)*nx1z + i -is+1) = real(h_xray(i,j))
+174     continue
+164   continue
+      write(string,"('XRAY_H AT TIME=',1pe8.2,'        ')") time
+      ret = dssdast(string,' ',' ',coordsys)
+      ret = dsadata(filename,rank,shape,data)
+c
+c  line cooling
 c
       do 115 j=js,je
         do 105 i=is,ie
-          data((j-js)*nx1z + i -is+1) = real(hc_line(i,j))
+          data((j-js)*nx1z + i -is+1) = real(c_line(i,j))
 105     continue
 115   continue
-      write(string,"('LINE AT TIME=',1pe8.2,'        ')") time
+      write(string,"('LINE_C AT TIME=',1pe8.2,'        ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
 c
-c  brem heating_cooling
+c  brem cooling
 c
       do 116 j=js,je
         do 106 i=is,ie
-          data((j-js)*nx1z + i -is+1) = real(hc_brem(i,j))
+          data((j-js)*nx1z + i -is+1) = real(c_brem(i,j))
 106     continue
 116   continue
-      write(string,"('BREM AT TIME=',1pe8.2,'        ')") time
+      write(string,"('BREM_C AT TIME=',1pe8.2,'        ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
 c
@@ -274,7 +299,7 @@ c  compton prefactor
 c
       do 127 j=js,je
         do 137 i=is,ie
-          data((j-js)*nx1z + i -is+1) = real(comp_pre(i,j))
+          data((j-js)*nx1z + i -is+1) = real(comp_c_pre(i,j))
 137     continue
 127   continue
       write(string,"('COMP_PRE AT TIME=',1pe8.2,'   ')") time
@@ -298,7 +323,7 @@ c  xray prefactor
 c
       do 129 j=js,je
         do 139 i=is,ie
-          data((j-js)*nx1z + i -is+1) = real(xray_pre(i,j))
+          data((j-js)*nx1z + i -is+1) = real(xray_c_pre(i,j))
 139     continue
 129   continue
       write(string,"('XRAY_PRE AT TIME=',1pe8.2,'   ')") time

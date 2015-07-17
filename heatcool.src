@@ -51,9 +51,10 @@ c lets compute it first
   	end do
 c now we have worked out a bracket, find the correct value of new temperature
 c we search for the zero point of the equation e_old - e_old - dt(de(t(1/2)))
-	
-	
-	t_1=zbrent(zfunc,t_l,t_u,tol)
+c	     print *,comp_h_pre(i,j),comp_c_pre(i,j),
+c     &   xray_h_pre(i,j),xray_c_pre(i,j),
+c     &   line_pre(i,j),brem_pre(i,j)	
+	     t_1=zbrent(zfunc,t_l,t_u,tol)
 	
 c we will call heatcool one last time to compute the heating and cooling rates for old t	
 	
@@ -83,24 +84,28 @@ c now we have a new temperature, we will return the new internal energy.
 	st=sqrt(temp)
 
 
-	gamma_comp=comp_pre(i,j)*8.9e-36*xi0*(tx-(4.0*temp))
-	hc_comp(i,j)=gamma_comp
+	h_comp(i,j)=comp_h_pre(i,j)*8.9e-36*xi0*tx
+	c_comp(i,j)=comp_c_pre(i,j)*8.9e-36*xi0*(4.0*temp)
+	gamma_comp=h_comp(i,j)-c_comp(i,j)
+
 c	gamma_x=sqrt(xi)
 c	gamma_x=sqrt(gamma_x)
 c	gamma_x=gamma_x*1.5e-21
 c	gamma_x=gamma_x/sqrt(temp)
 c	gamma_x=gamma_x*(1-temp/tx)
-	gamma_x=xray_pre(i,j)*1.5e-21*(sqsqxi/st)*(1.0-temp/tx)
-	hc_xray(i,j)=gamma_x
+	h_xray(i,j)=xray_h_pre(i,j)*1.5e-21*(sqsqxi/st)
+	c_xray(i,j)=xray_c_pre(i,j)*1.5e-21*(sqsqxi/st)*(temp/tx)
+	gamma_x=h_xray(i,j)-c_xray(i,j)
+
 	l_b=brem_pre(i,j)*3.3e-27*st
-	hc_brem(i,j)=l_b
+	c_brem(i,j)=l_b
 c	l_l=exp(-1.3e5/temp)
 c	l_l=l_l/xi
 c	l_l=l_l/sqrt(temp)
 c	l_l=l_l*1.7e-18
 c	l_l=l_l+1e-24
 	l_l=line_pre(i,j)*(1.7e-18*exp(-1.3e5/temp)/(xi0*st)+1e-24)
-	hc_line(i,j)=l_l
+	c_line(i,j)=l_l
 c	print *,temp,xi,gamma_comp,gamma_x,l_b,l_l
 	hc_tot=nh*nh*1.2*(gamma_comp+gamma_x-l_b-l_l)
 c	print *,temp,xi,gamma_comp,gamma_x,l_b,l_l,n,hc_tot
@@ -271,13 +276,20 @@ c			  do 20 j=js,je
 c		  print *,is,i+2,ie,x1b(i+2)/r,js,j+3,je,x2b(j+3)/
 c     &  (theta)
 				  
-		 comp_pre(i+2,j+3)=(c_heat-c_cool)/(n1*n1*1.2*hc_comp(i+2,j+3))
-		 xray_pre(i+2,j+3)=(x_heat-x_cool)/
-     &   (n1*n1*1.2*hc_xray(i+2,j+3))
-		 line_pre(i+2,j+3)=l_cool/(n1*n1*1.2*hc_line(i+2,j+3))
-		 brem_pre(i+2,j+3)=b_cool/(n1*n1*1.2*hc_brem(i+2,j+3))
-		 print *,comp_pre(i+2,j+3),xray_pre(i+2,j+3),line_pre(i+2,j+3),
-     &   brem_pre(i+2,j+3)
+		 comp_h_pre(i+2,j+3)=(c_heat)/(n1*n1*1.2*h_comp(i+2,j+3))
+		 comp_c_pre(i+2,j+3)=(c_cool)/(n1*n1*1.2*c_comp(i+2,j+3))
+		 
+		 xray_h_pre(i+2,j+3)=(x_heat)/
+     &   (n1*n1*1.2*h_xray(i+2,j+3))
+	 
+	 	 xray_c_pre(i+2,j+3)=(x_cool)/
+     &   (n1*n1*1.2*c_xray(i+2,j+3))
+	 
+	 
+		 line_pre(i+2,j+3)=l_cool/(n1*n1*1.2*c_line(i+2,j+3))
+		 brem_pre(i+2,j+3)=b_cool/(n1*n1*1.2*c_brem(i+2,j+3))
+		 print *,comp_h_pre(i+2,j+3),comp_c_pre(i+2,j+3),
+     &   xray_h_pre(i+2,j+3),xray_c_pre(i+2,j+3),line_pre(i+2,j+3),brem_pre(i+2,j+3)
 c		  print *,i+3,j+3,r,theta
 c 20 		continue
 10		continue
