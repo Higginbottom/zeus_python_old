@@ -90,8 +90,6 @@ c
       write(string,"('XI AT TIME=',1pe8.2,'        ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
-	  print *,"TEST1"
-	  
 c
 c  compton cooling
 c
@@ -103,7 +101,6 @@ c
       write(string,"('COMP_C AT TIME=',1pe8.2,'        ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
-	  print *,"TEST2"
 c
 c  xray cooling
 c
