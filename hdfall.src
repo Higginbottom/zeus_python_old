@@ -292,16 +292,29 @@ c
   
   
 c
-c  compton prefactor
+c  compton cooling prefactor
 c
       do 127 j=js,je
         do 137 i=is,ie
           data((j-js)*nx1z + i -is+1) = real(comp_c_pre(i,j))
 137     continue
 127   continue
-      write(string,"('COMP_PRE AT TIME=',1pe8.2,'   ')") time
+      write(string,"('COMP_C_PRE AT TIME=',1pe8.2,'   ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
+	  
+c
+c  compton heating prefactor
+c
+      do 152 j=js,je
+        do 142 i=is,ie
+          data((j-js)*nx1z + i -is+1) = real(comp_h_pre(i,j))
+142     continue
+152   continue
+      write(string,"('COMP_H_PRE AT TIME=',1pe8.2,'   ')") time
+      ret = dssdast(string,' ',' ',coordsys)
+      ret = dsadata(filename,rank,shape,data)	  
+	  
 	  
 c
 c  line prefactor
@@ -316,20 +329,34 @@ c
       ret = dsadata(filename,rank,shape,data)
 	  
 c
-c  xray prefactor
+c  xray cooling prefactor
 c
       do 129 j=js,je
         do 139 i=is,ie
           data((j-js)*nx1z + i -is+1) = real(xray_c_pre(i,j))
 139     continue
 129   continue
-      write(string,"('XRAY_PRE AT TIME=',1pe8.2,'   ')") time
+      write(string,"('XRAY_C_PRE AT TIME=',1pe8.2,'   ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
 	  
 	  
+	  
 c
-c  xray prefactor
+c  xray heating prefactor
+c
+      do 143 j=js,je
+        do 153 i=is,ie
+          data((j-js)*nx1z + i -is+1) = real(xray_h_pre(i,j))
+153     continue
+143   continue
+      write(string,"('XRAY_H_PRE AT TIME=',1pe8.2,'   ')") time
+      ret = dssdast(string,' ',' ',coordsys)
+      ret = dsadata(filename,rank,shape,data)	  
+	  
+	  
+c
+c  brem prefactor
 c
       do 141 j=js,je
         do 151 i=is,ie

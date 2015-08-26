@@ -292,9 +292,8 @@ c     &  (theta)
      &   (n1*n1*1.2*c_line(i+2,j+3))+1e-3
 		 brem_pre(i+2,j+3)=brem_pre(i+2,j+3)*b_cool/
      &   (n1*n1*1.2*c_brem(i+2,j+3))+1e-3
-		 print *,comp_h_pre(i+2,j+3),comp_c_pre(i+2,j+3),
-     &   xray_h_pre(i+2,j+3),xray_c_pre(i+2,j+3),line_pre(i+2,j+3),
-     &   brem_pre(i+2,j+3)
+
+
 c		  print *,i+3,j+3,r,theta
 c 20 		continue
 10		continue
