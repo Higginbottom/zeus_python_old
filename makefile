@@ -72,11 +72,24 @@ EXEDIR = ../exe/
 PROB   = planetw
 USER   = user
 FC     = gfortran
-OPTS   = -c -O3
+OPTS   = -c -O3 
 CC     = gcc
 LDR    = gfortran
-LIB    = /opt/local/lib/libmfhdf.a /opt/local/lib/libdf.a \
-	/opt/local/lib/libjpeg.a /opt/local/lib/libz.a  
+
+
+UNAME := $(shell uname)
+UNAME1 := $(shell uname -n)
+
+
+ifeq ($(UNAME), Darwin)
+LIB    = /usr/local/lib/libmfhdf.a /usr/local/lib/libdf.a /usr/local/lib/libjpeg.a /usr/local/lib/libz.a  
+endif
+ifeq ($(UNAME1), endjinn)
+LIB    = /usr/lib/libmfhdf.a /usr/lib/libdf.a \
+	/usr/lib/x86_64-linux-gnu/libjpeg.a /usr/lib/x86_64-linux-gnu/libz.a  
+endif
+
+
 #LIB    = /usr/lib/libmfhdf.a /usr/lib/libdf.a \
 	/usr/lib/x86_64-linux-gnu/libjpeg.a /usr/lib/x86_64-linux-gnu/libz.a  
 
