@@ -85,8 +85,10 @@ ifeq ($(UNAME), Darwin)
 LIB    = /usr/local/lib/libmfhdf.a /usr/local/lib/libdf.a /usr/local/lib/libjpeg.a /usr/local/lib/libz.a  
 endif
 ifeq ($(UNAME1), endjinn)
-LIB    = /usr/lib/libmfhdf.a /usr/lib/libdf.a \
-	/usr/lib/x86_64-linux-gnu/libjpeg.a /usr/lib/x86_64-linux-gnu/libz.a  
+LIB    = /usr/lib/libmfhdf.a /usr/lib/libdf.a /usr/lib/x86_64-linux-gnu/libjpeg.a /usr/lib/x86_64-linux-gnu/libz.a  
+endif
+ifeq ($(UNAME1), cyan01)
+LIB    = /usr/lib/libmfhdf.a /usr/lib/libdf.a /usr/lib64/libjpeg.so /usr/lib64/libz.so 
 endif
 
 
