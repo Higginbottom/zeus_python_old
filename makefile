@@ -88,7 +88,7 @@ ifeq ($(UNAME1), endjinn)
 LIB    = /usr/lib/libmfhdf.a /usr/lib/libdf.a /usr/lib/x86_64-linux-gnu/libjpeg.a /usr/lib/x86_64-linux-gnu/libz.a  
 endif
 ifeq ($(UNAME1), cyan01)
-LIB    = /usr/lib/libmfhdf.a /usr/lib/libdf.a /usr/lib64/libjpeg.so /usr/lib64/libz.so 
+LIB    = /local/software/hdf4/4.2.9/gcc/lib/libmfhdf.a /local/software/hdf4/4.2.9/gcc/lib/libdf.a /usr/lib64/libjpeg.so /usr/lib64/libz.so 
 endif
 
 
