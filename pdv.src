@@ -115,19 +115,19 @@ c			print *,e_old,epv,e1
 c		endif 
 30          continue
 40        continue
-c		print *,icount
+		print *,icount
 #ifdef PYHYDRO
-c		if (irestart .eq.0) then
-c			if (icount .lt. 10) then
-c				call_py=2
-c			endif
-c		endif
-c		if (irestart .eq.1)  then
-c			if (icount.gt.10) then
-c			call_py=1
-c		endif
+		if (irestart .eq.0) then
+			if (icount .lt. 10) then
+				call_py=2
+			endif
+		endif
+		if (irestart .eq.1)  then
+			if (icount.gt.10) then
+			call_py=1
+		endif
 		
-c		endif
+		endif
 			
 #endif
         endif

@@ -74,23 +74,24 @@ c-
 		icode = 3
       endif
       
-c  Liones below abort execution if the flag call_py has been set in pdv.src
-c  which will occur if mroe than a certain number of cells have changed rho or 
-c  xi since the last call to python. 
+c  Lines below abort execution if the flag call_py has been set in pdv.src
+c  which will occur if more than a certain number of cells have changed rho or 
+c  temperature since the last call to python. 
       
       
 #ifdef PYHYDRO
 		if (call_py .eq.1 ) then
-			ifsen=1
-			icode=4
+c			ifsen=1
+c			icode=4
 	        write(6,"(/1x,'terminating to call python for 2 run',
      &  /1x,'tlim=',1pe12.5,'   nlim=',i7,
      &  /1x,'time=', 1e12.5,'  cycle=',i7,'  tused=',1e12.5)") 
      &  tlim,nlim,time,nhy,tused
+		
 		endif
 		if (call_py .eq.2 ) then
-			ifsen=1
-			icode=5
+c			ifsen=1
+c			icode=5
 	        write(6,"(/1x,'terminating to call python for 1 run',
      &  /1x,'tlim=',1pe12.5,'   nlim=',i7,
      &  /1x,'time=', 1e12.5,'  cycle=',i7,'  tused=',1e12.5)") 
