@@ -85,6 +85,7 @@ c
 c   nlim   = cycles to run
 c   tlim   = physical (problem) time to stop calculation
 c
+      rewind 1
       read (1,pcon)
       write(2,pcon)
 

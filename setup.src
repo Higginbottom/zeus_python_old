@@ -91,6 +91,7 @@ c
       tlim   = 0.0
       nred   = 0
 c
+      rewind 1
       read (1,pcon)
       write(2,pcon)
 c

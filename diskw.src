@@ -33,6 +33,7 @@ c----------------------------------------------------------------------
 #include "bndry.h"
 #include "diskw.h"
 
+
       integer i,j,iprob
       real*8 e0,csound,cisosqrd
       real*8 ric,temp
@@ -44,7 +45,6 @@ c=======================================================================
 c
       namelist /pgen/ d0,v10,v20,v30, dindex,mdot,tx,lx,mu
 	  namelist /hc_pre/ comp_pre0,line_pre0,brem_pre0,xray_pre0
-	  namelist /py_hydro/ den_tol,nden
 c
 c  read parameters from input deck
 c
@@ -52,11 +52,7 @@ c
       write(2,pgen)
 	  read (1,hc_pre)
 	  write(2,hc_pre)
-#ifdef PYHYDRO	  
-	  read (1,py_hydro)
-	  write(2,py_hydro)
-#endif
-		print *,den_tol,nden
+
 c
 
 c

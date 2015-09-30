@@ -23,6 +23,7 @@ c
       integer incr,strtoi,i,j
       external setup, mget, restart, strtoi
       namelist /rescon/ irestart,tdump,dtdump,id,resfile
+      namelist /py_hydro/ den_tol,nden
       namelist /iocon/ thdf,dthdf,thist,dthist,tusr,dtusr
 c\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\///////////////////////////////
 c=======================================================================
@@ -46,6 +47,14 @@ c
       resfile= 'res000aa'
       read (1,rescon)
       write(2,rescon)
+      
+      
+      #ifdef PYHYDRO	  
+      	  read (1,py_hydro)
+      	  write(2,py_hydro)
+      #endif
+      		print *,den_tol,nden
+      
 c
       if (irestart .eq. 0) then
         call setup
