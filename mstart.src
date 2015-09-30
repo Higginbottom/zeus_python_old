@@ -49,10 +49,10 @@ c
       write(2,rescon)
       
       
-      #ifdef PYHYDRO	  
+#ifdef PYHYDRO	  
       	  read (1,py_hydro)
       	  write(2,py_hydro)
-      #endif
+#endif
       		print *,den_tol,nden
       
 c
