@@ -44,6 +44,7 @@ c=======================================================================
 c
       namelist /pgen/ d0,v10,v20,v30, dindex,mdot,tx,lx,mu
 	  namelist /hc_pre/ comp_pre0,line_pre0,brem_pre0,xray_pre0
+	  namelist /py_hydro/ den_tol,nden
 c
 c  read parameters from input deck
 c
@@ -51,6 +52,11 @@ c
       write(2,pgen)
 	  read (1,hc_pre)
 	  write(2,hc_pre)
+#ifdef PYHYDRO	  
+	  read (1,py_hydro)
+	  write(2,py_hydro)
+#endif
+		print *,den_tol,nden
 c
 
 c
@@ -97,7 +103,7 @@ c     &      x1b(i)*(1.-1./2./sin(x2b(j)))))
 	d(i,j)=d0*(x1b(i)/ric)**(-dindex)*
      & exp((-1.0*guniv*ptmass*(x1b(i)*cos(x2b(j)))**2)/
      & (cisosqrd*2.0*(x1b(i)*sin(x2b(j)))**3))
-	 d_old(i,j)=d(i,j)
+c	 d_old(i,j)=d(i,j)
 	 xi(i,j)=(lx/((d(i,j)/(mu*mp))*x1b(i)**2))
 
 	if (d(i,j).le. 1e-22) then

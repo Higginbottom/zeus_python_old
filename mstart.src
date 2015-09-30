@@ -13,9 +13,14 @@ c-----------------------------------------------------------------------
       implicit NONE
 #include "root.h"
 #include "control.h"
+#include "param.h"
+#include "grid.h"
+#include "field.h"
+
+
 c      integer irestart
 c
-      integer incr,strtoi
+      integer incr,strtoi,i,j
       external setup, mget, restart, strtoi
       namelist /rescon/ irestart,tdump,dtdump,id,resfile
       namelist /iocon/ thdf,dthdf,thist,dthist,tusr,dtusr
@@ -53,6 +58,15 @@ c
       endif
 C D. Proga , 17, Sept. 2002
       tdump=0. 
+	  
+	  
+c  A quick loop to store the initial density conditions - used in py_hydro mode to see 
+c  if the heating and coolinf rates are still likely to be realistic	  
+      do 40 j=js,je
+        do 30 i=ii(j),io(j)	  
+	  d_init(i,j)=d(i,j)
+30      continue
+40		continue
 C
 
 c

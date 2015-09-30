@@ -81,22 +81,22 @@ c  temperature since the last call to python.
       
 #ifdef PYHYDRO
 		if (call_py .eq.1 ) then
-c			ifsen=1
-c			icode=4
-	        write(6,"(/1x,'terminating to call python for 2 run',
+			ifsen=1
+			icode=0
+	        write(6,"(/1x,'terminating to call python',
      &  /1x,'tlim=',1pe12.5,'   nlim=',i7,
      &  /1x,'time=', 1e12.5,'  cycle=',i7,'  tused=',1e12.5)") 
      &  tlim,nlim,time,nhy,tused
 		
 		endif
-		if (call_py .eq.2 ) then
+c		if (call_py .eq.2 ) then
 c			ifsen=1
 c			icode=5
-	        write(6,"(/1x,'terminating to call python for 1 run',
-     &  /1x,'tlim=',1pe12.5,'   nlim=',i7,
-     &  /1x,'time=', 1e12.5,'  cycle=',i7,'  tused=',1e12.5)") 
-     &  tlim,nlim,time,nhy,tused
-		endif
+c	        write(6,"(/1x,'terminating to call python for 1 run',
+c     &  /1x,'tlim=',1pe12.5,'   nlim=',i7,
+c     &  /1x,'time=', 1e12.5,'  cycle=',i7,'  tused=',1e12.5)") 
+c     &  tlim,nlim,time,nhy,tused
+c		endif
 #endif
       if (ifsen .eq. 1) return
 c

@@ -93,16 +93,16 @@ c		endif
         temp=e(i,j)*(2.0/3.0)/((d(i,j)/(mu*mp))*boltz)
 		
 #ifdef PYHYDRO
-				if (abs(d(i,j)-d_old(i,j))/d_old(i,j) .gt. 0.01) then
+				if (abs(d(i,j)-d_init(i,j))/d_init(i,j) .gt. 0.01) then
 c					print *,d(i,j),d_old(i,j)
 					icount=icount+1
-				else if (abs(temp-t_old(i,j))/t_old(i,j) .gt. 0.01) then
+c				else if (abs(temp-t_old(i,j))/t_old(i,j) .gt. 0.01) then
 c					print *,temp,t_old(i,j),abs(temp-t_old(i,j))/t_old(i,j)
-					icount=icount+1 
+c					icount=icount+1 
 				endif
 c				if (irestart.eq.0) then
-					d_old(i,j)=d(i,j)
-					t_old(i,j)=temp
+c					d_old(i,j)=d(i,j)
+c					t_old(i,j)=temp
 c				endif
 #endif
 		
@@ -115,19 +115,20 @@ c			print *,e_old,epv,e1
 c		endif 
 30          continue
 40        continue
-		print *,icount
+		print *,nhy,(float(icount)/(je*io(je)))*100.0,den_tol,nden
 #ifdef PYHYDRO
-		if (irestart .eq.0) then
-			if (icount .lt. 10) then
-				call_py=2
-			endif
-		endif
-		if (irestart .eq.1)  then
-			if (icount.gt.10) then
+c		if (irestart .eq.0) then
+c			if (icount .lt. 10) then
+c				call_py=2
+c			endif
+c		endif
+c		if (irestart .eq.1)  then
+			if (((float(icount)/(je*io(je)))*100.0).gt.10.) then
+				print *,"Oh no, 10% have changed, panic"
 			call_py=1
 		endif
 		
-		endif
+c		endif
 			
 #endif
         endif
