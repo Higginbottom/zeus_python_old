@@ -52,7 +52,7 @@ c lets compute it first
 c now we have worked out a bracket, find the correct value of new temperature
 c we search for the zero point of the equation e_old - e_old - dt(de(t(1/2)))
 c	     print *,comp_h_pre(i,j),comp_c_pre(i,j),
-c     &   xray_h_pre(i,j),xray_c_pre(i,j),
+c     &   xray_pre(i,j),
 c     &   line_pre(i,j),brem_pre(i,j)	
 	     t_1=zbrent(zfunc,t_l,t_u,tol)
 	
@@ -93,9 +93,8 @@ c	gamma_x=sqrt(gamma_x)
 c	gamma_x=gamma_x*1.5e-21
 c	gamma_x=gamma_x/sqrt(temp)
 c	gamma_x=gamma_x*(1-temp/tx)
-	h_xray(i,j)=xray_h_pre(i,j)*1.5e-21*(sqsqxi/st)
-	c_xray(i,j)=xray_c_pre(i,j)*1.5e-21*(sqsqxi/st)*(temp/tx)
-	gamma_x=h_xray(i,j)-c_xray(i,j)
+	h_xray(i,j)=xray_pre(i,j)*1.5e-21*(sqsqxi/st)*(1-(temp/tx))
+	gamma_x=h_xray(i,j)
 
 	l_b=brem_pre(i,j)*3.3e-27*st
 	c_brem(i,j)=l_b
@@ -281,15 +280,10 @@ c     &  (theta)
 		 comp_c_pre(i+2,j+3)=comp_c_pre(i+2,j+3)*(c_cool)/
      &   (n1*n1*1.2*c_comp(i+2,j+3))+1e-3
 		 
-		 xray_h_pre(i+2,j+3)=xray_h_pre(i+2,j+3)*(x_heat)/
+		 xray_pre(i+2,j+3)=xray_pre(i+2,j+3)*(x_heat)/
      &   (n1*n1*1.2*h_xray(i+2,j+3))+1e-3
-	 
-	 	 xray_c_pre(i+2,j+3)=xray_c_pre(i+2,j+3)*(x_cool)/
-     &   (n1*n1*1.2*c_xray(i+2,j+3))+1e-3
-	 
-	 
-		 line_pre(i+2,j+3)=line_pre(i+2,j+3)*l_cool/
-     &   (n1*n1*1.2*c_line(i+2,j+3))+1e-3
+ 		 line_pre(i+2,j+3)=line_pre(i+2,j+3)*l_cool/
+     &   (n1*n1*1.2*(c_line(i+2,j+3)+c_xray(i+2,j+3)))+1e-3
 		 brem_pre(i+2,j+3)=brem_pre(i+2,j+3)*b_cool/
      &   (n1*n1*1.2*c_brem(i+2,j+3))+1e-3
 

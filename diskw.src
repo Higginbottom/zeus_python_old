@@ -76,9 +76,8 @@ c
          do i=is,ie
 c			 print *,comp_pre0,xray_pre0,line_pre0,brem_pre0
 			 comp_c_pre(i,j)=comp_pre0
-			 xray_c_pre(i,j)=xray_pre0
 			 comp_h_pre(i,j)=comp_pre0
-			 xray_h_pre(i,j)=xray_pre0
+			 xray_pre(i,j)=xray_pre0
 			 line_pre(i,j)=line_pre0
 			 brem_pre(i,j)=brem_pre0
 			 

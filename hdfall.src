@@ -102,17 +102,6 @@ c
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
 c
-c  xray cooling
-c
-      do 114 j=js,je
-        do 104 i=is,ie
-          data((j-js)*nx1z + i -is+1) = real(c_xray(i,j))
-104     continue
-114   continue
-      write(string,"('XRAY_C AT TIME=',1pe8.2,'        ')") time
-      ret = dssdast(string,' ',' ',coordsys)
-      ret = dsadata(filename,rank,shape,data)
-c
 c  compton heating
 c
       do 163 j=js,je
@@ -328,29 +317,16 @@ c
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
 	  
+  
 c
-c  xray cooling prefactor
-c
-      do 129 j=js,je
-        do 139 i=is,ie
-          data((j-js)*nx1z + i -is+1) = real(xray_c_pre(i,j))
-139     continue
-129   continue
-      write(string,"('XRAY_C_PRE AT TIME=',1pe8.2,'   ')") time
-      ret = dssdast(string,' ',' ',coordsys)
-      ret = dsadata(filename,rank,shape,data)
-	  
-	  
-	  
-c
-c  xray heating prefactor
+c  xray prefactor
 c
       do 143 j=js,je
         do 153 i=is,ie
-          data((j-js)*nx1z + i -is+1) = real(xray_h_pre(i,j))
+          data((j-js)*nx1z + i -is+1) = real(xray_pre(i,j))
 153     continue
 143   continue
-      write(string,"('XRAY_H_PRE AT TIME=',1pe8.2,'   ')") time
+      write(string,"('XRAY_PRE AT TIME=',1pe8.2,'   ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)	  
 	  
