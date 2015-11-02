@@ -58,8 +58,10 @@ c     &   line_pre(i,j),brem_pre(i,j)
 	
 c we will call heatcool one last time to compute the heating and cooling rates for old t	
 	
-	hc_01=heatcool(t_01)
+	hc_01=heatcool(t_1)
 	
+
+
 
 c now we have a new temperature, we will return the new internal energy. 
 	e_1=t_1*1.5*n1*boltz
@@ -259,6 +261,8 @@ c     error message for too many iterations
          INQUIRE( FILE='py_heatcool.dat', EXIST=THERE ) 
           IF ( THERE ) then
 		 	 open(66,file='py_heatcool.dat',status='old')
+	  	   	read (66,*,end=20)
+                   
 		  	 do 10, n=1,10000000
  
 		  	   	read (66,*,end=20) i,j,r,theta,x_heat,c_heat,l_heat,
