@@ -33,7 +33,7 @@ c   n1 is the particle density (including electrons)
 c   nh1 is the hydrogen density (based upon solar abundances)	
 	nh1=rho/(1.43*mp)
 c   ne1 is the electron density 	
-	ne1=nh1*1.42
+	ne1=nh1*1.21
 
 
 c stage one, bracket to find out where the zero point is
@@ -63,6 +63,8 @@ c     &   line_pre(i,j),brem_pre(i,j)
 c we will call heatcool one last time to compute the heating and cooling rates for old t	
 	
 	hc_01=heatcool(t_1)
+
+
 
 
 c now we have a new temperature, we will return the new internal energy. 
@@ -101,7 +103,7 @@ c	gamma_x=gamma_x*(1-temp/tx)
 	h_xray(i,j)=xray_pre(i,j)*1.5e-21*(sqsqxi/st)*(1-(temp/tx))
 	gamma_x=h_xray(i,j)
 
-	l_b=brem_pre(i,j)*2.29e-27*st
+	l_b=brem_pre(i,j)*3.3e-27*st
 	c_brem(i,j)=l_b
 c	l_l=exp(-1.3e5/temp)
 c	l_l=l_l/xi
@@ -264,8 +266,8 @@ c     error message for too many iterations
          INQUIRE( FILE='py_heatcool.dat', EXIST=THERE ) 
           IF ( THERE ) then
 		 	 open(66,file='py_heatcool.dat',status='old')
-			 read (66,*)
-		  	 do 10, n=1,10000000
+	  	   	read (66,*,end=20)
+   		  	 do 10, n=1,10000000
  
 		  	   	read (66,*,end=20) i,j,r,theta,py_vol,py_temp,py_xi,py_ne,
      &			x_heat,c_heat,l_heat,
@@ -277,7 +279,7 @@ c     error message for too many iterations
 				n1=d(i+2,j+3)/(mu*mp)
 				
 				nh=d(i+2,j+3)/(1.43*mp)
-				ne=nh*1.42
+				ne=nh*1.21
 				
 c		  print *,hc_xray(i+2,j+3),x_heat/(n1*n1*1.2),x_cool/(n1*n1*1.2),
 c     &   x_heat/(n1*n1*1.2)-x_cool/(n1*n1*1.2)
