@@ -68,7 +68,9 @@ c
           do 40 j=js,je
             do 30 i=ii(j),io(j)
 c		print *,lx,d(i,j),mu,mp,x1b(i)
-	  	      xi(i,j)=(lx/((d(i,j)/(mp*1.42))*x1b(i)**2))
+				
+c   This next line computes the ionization parameter  - rho/1.43mp is the hydrogen number density.				
+	  	      xi(i,j)=(lx/((d(i,j)/(mp*1.43))*x1b(i)**2))
 				
 
               div1 = (g2a(i+1)*g31a(i+1)*v1(i+1,j)
@@ -115,7 +117,7 @@ c			print *,e_old,epv,e1
 c		endif 
 30          continue
 40        continue
-		print *,nhy,(float(icount)/(je*io(je))),den_tol,nden,irestart
+c		print *,nhy,(float(icount)/(je*io(je))),den_tol,nden,irestart
 #ifdef PYHYDRO
 c		if (irestart .eq.0) then
 c			if (icount .lt. 10) then
