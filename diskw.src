@@ -64,7 +64,7 @@ c iprob =1 spherical wind problem
 
       iprob=1
       if (iprob.eq.1) then   
-      ric=48.2e10
+	      ric=48.246764e10
 c
 c  Initialize density and velocity variables
 c
