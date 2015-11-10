@@ -30,7 +30,7 @@ c-----------------------------------------------------------------------
       integer i,j,icount
       REAL    div1,div2,divv,del,pnew,pav,temp
       REAL    hc_tot,dt_hc,e1,epv
-
+	  REAL 	max_d_change
       external heatcool
 c\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\////////////////////////////////////
 c=======================================================================
@@ -64,6 +64,7 @@ c  edited by NSH to include radiative heating and cooling
 c
 	dt_hc=0.0
 	icount=0
+	max_d_change=0.0
 	
           do 40 j=js,je
             do 30 i=ii(j),io(j)
@@ -109,10 +110,13 @@ c				else if (abs(temp-t_old(i,j))/t_old(i,j) .gt. 0.01) then
 c					print *,temp,t_old(i,j),abs(temp-t_old(i,j))/t_old(i,j)
 c					icount=icount+1 
 				endif
-				if (abs(d(i,j)-d_init(i,j))/d_init(i,j) .gt. 0.5) then
-					print *,"Oh no, 1 cell changed density by  >50% PANIC"
-				call_py=1
-			endif
+				if (abs(d(i,j)-d_init(i,j))/d_init(i,j) .gt. max_d_change) then
+					max_d_change=abs(d(i,j)-d_init(i,j))/d_init(i,j)
+				endif
+c				if (abs(d(i,j)-d_init(i,j))/d_init(i,j) .gt. 0.5) then
+c					print *,"Oh no, 1 cell changed density by  >50% PANIC"
+c				call_py=1
+c			endif
 c				if (irestart.eq.0) then
 c					d_old(i,j)=d(i,j)
 c					t_old(i,j)=temp
@@ -128,7 +132,8 @@ c			print *,e_old,epv,e1
 c		endif 
 30          continue
 40        continue
-		print *,nhy,(float(icount)/(je*io(je))),den_tol,nden,irestart
+		print *,"Cycle ",nhy,(float(icount)/(je*io(je)))*100.,
+     +   "% exceed density tol. Max dens change=",max_d_change
 #ifdef PYHYDRO
 c		if (irestart .eq.0) then
 c			if (icount .lt. 10) then
