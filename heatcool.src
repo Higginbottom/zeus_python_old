@@ -20,12 +20,16 @@
 	real test
 	common /hc_data/ xi1,e_01,hc_01,sqsqxi1,n1,i1,j1,nh1,ne1
 	external zfunc
+	
+c   first calculate the current temperature of the cell	
+	
 	t_01=e_0*(2.0/3.0)/((rho/(mu*mp))*boltz)
-c	print *,e_0,rho,t_01
 	xi1=xi0
 	i1=i
 	j1=j
 	e_01=e_0
+	
+c   compute xi to the quater power, this is used a lot and doing this now saves time	
 	sqsqxi1=sqrt(sqrt(xi0))
 
 c   n1 is the particle density (including electrons)
@@ -43,6 +47,8 @@ c we use the heating rate at the originaltemperature a lot,
 c lets compute it first
 	hc_01=heatcool(t_01)
 
+
+c   the next few lines bracket the solution temperature
 	t_l=t_01*0.9
 	t_u=t_01*1.1
 	test=zfunc(t_l)*zfunc(t_u)
@@ -54,13 +60,11 @@ c lets compute it first
     		test=zfunc(t_l)*zfunc(t_u)
   	end do
 c now we have worked out a bracket, find the correct value of new temperature
-c we search for the zero point of the equation e_old - e_old - dt(de(t(1/2)))
-c	     print *,comp_h_pre(i,j),comp_c_pre(i,j),
-c     &   xray_pre(i,j),
-c     &   line_pre(i,j),brem_pre(i,j)	
+c we search for the zero point of the equation e_old - e_old - dt(de(t(1/2)))	
+	
 	     t_1=zbrent(zfunc,t_l,t_u,tol)
 	
-c we will call heatcool one last time to compute the heating and cooling rates for old t	
+c we will call heatcool one last time to compute the heating and cooling rates for the new temperature	
 	
 	hc_01=heatcool(t_1)
 
