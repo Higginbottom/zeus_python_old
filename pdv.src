@@ -109,6 +109,10 @@ c				else if (abs(temp-t_old(i,j))/t_old(i,j) .gt. 0.01) then
 c					print *,temp,t_old(i,j),abs(temp-t_old(i,j))/t_old(i,j)
 c					icount=icount+1 
 				endif
+				if (abs(d(i,j)-d_init(i,j))/d_init(i,j) .gt. 0.5) then
+					print *,"Oh no, 1 cell changed density by  >50% PANIC"
+				call_py=1
+			endif
 c				if (irestart.eq.0) then
 c					d_old(i,j)=d(i,j)
 c					t_old(i,j)=temp
@@ -124,7 +128,7 @@ c			print *,e_old,epv,e1
 c		endif 
 30          continue
 40        continue
-c		print *,nhy,(float(icount)/(je*io(je))),den_tol,nden,irestart
+		print *,nhy,(float(icount)/(je*io(je))),den_tol,nden,irestart
 #ifdef PYHYDRO
 c		if (irestart .eq.0) then
 c			if (icount .lt. 10) then
