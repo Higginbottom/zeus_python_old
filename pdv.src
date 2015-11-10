@@ -96,7 +96,7 @@ c    and we also storethe adiabatic heating/cooling rates
 			  
 c		we now send the current energy, density, and ionization parameter to hc_sub, which will compute the radiative heating/cooling
 	      call hc_sub(d(i,j),xi(i,j),epv,e1,i,j)
-
+c		  print *,"returned e1=",e1
 c		the new energy in the cell is the returned energy 
 		e(i,j)=e1
 
