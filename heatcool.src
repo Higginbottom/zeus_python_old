@@ -169,7 +169,7 @@ c     ZBRENT
 c..............................................................................
 
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
-      PARAMETER (ITMAX=100,EPS=3.E-16)
+      PARAMETER (ITMAX=100,EPS=3.E-10)
       A=X1
       B=X2
       FA=FUNC(A)
