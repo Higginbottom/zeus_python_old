@@ -132,8 +132,9 @@ c			print *,e_old,epv,e1
 c		endif 
 30          continue
 40        continue
-		print *,"Cycle ",nhy,(float(icount)/(je*io(je)))*100.,
-     +   "% exceed density tol. Max dens change=",max_d_change
+
+c		print *,"Cycle ",nhy,(float(icount)/(je*io(je)))*100.,
+c    +   "% exceed density tol. Max dens change=",max_d_change
 #ifdef PYHYDRO
 c		if (irestart .eq.0) then
 c			if (icount .lt. 10) then
