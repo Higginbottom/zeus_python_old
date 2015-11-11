@@ -270,6 +270,8 @@ c     error message for too many iterations
    
 		  real r,theta,c_heat,x_heat,b_heat,l_heat,c_cool,x_cool,py_xi
           real b_cool,l_cool,n1,py_temp,py_ne,py_vol,ne,nh
+          real comp_c_pre_old,comp_h_pre_old,xray_pre_old,line_pre_old,
+     +     brem_pre_old,ratio
 		  
 		  print *,"Got here OK"
          INQUIRE( FILE='py_heatcool.dat', EXIST=THERE ) 
@@ -296,7 +298,16 @@ c		  do 10 i=is,ie
 c			  do 20 j=js,je
 c		  print *,is,i+2,ie,x1b(i+2)/r,js,j+3,je,x2b(j+3)/
 c     &  (theta)
-				  
+				comp_c_pre_old=comp_c_pre(i+2,j+3) 
+                  	comp_h_pre_old=comp_h_pre(i+2,j+3)
+                        xray_pre_old=xray_pre(i+2,j+3)
+                        line_pre_old=line_pre(i+2,j+3)
+                        brem_cool_pre_old=brem_pre(i+2,j+3)      
+                        
+                        
+                        
+                        
+                         
 		 comp_h_pre(i+2,j+3)=comp_h_pre(i+2,j+3)*(c_heat)/
      &   (ne*nh*h_comp(i+2,j+3))+1e-3
 		 comp_c_pre(i+2,j+3)=comp_c_pre(i+2,j+3)*(c_cool)/
@@ -308,7 +319,54 @@ c     &  (theta)
      &   (ne*nh*(c_line(i+2,j+3)+c_xray(i+2,j+3)))+1e-3
 		 brem_pre(i+2,j+3)=brem_pre(i+2,j+3)*b_cool/
      &   (ne*nh*c_brem(i+2,j+3))+1e-3
-
+     
+      ratio=0.9
+     
+      if (comp_h_pre(i+2,j+3)/comp_h_pre_old .lt. ratio) then
+           comp_h_pre(i+2,j+3)=comp_h_pre_old*ratio
+      endif
+      if (comp_c_pre(i+2,j+3)/comp_c_pre_old .lt. ratio) then
+           comp_c_pre(i+2,j+3)=comp_c_pre_old*ratio
+      endif
+      if (xray_pre(i+2,j+3)/xray_pre_old .lt. ratio) then
+           xray_pre(i+2,j+3)=xray_pre_old*ratio
+      endif
+      if (line_pre(i+2,j+3)/line_pre_old .lt. ratio) then
+            line_pre(i+2,j+3)=line_pre_old*ratio
+      endif
+      if (brem_pre(i+2,j+3)/brem_pre_old .lt. ratio) then
+            brem_pre(i+2,j+3)=brem_pre_old*ratio
+      endif
+      
+      
+      ratio=1.1
+     
+      if (comp_h_pre(i+2,j+3)/comp_h_pre_old .gt. ratio) then
+           comp_h_pre(i+2,j+3)=comp_h_pre_old*ratio
+      endif
+      if (comp_c_pre(i+2,j+3)/comp_c_pre_old .gt. ratio) then
+           comp_c_pre(i+2,j+3)=comp_c_pre_old*ratio
+      endif
+      if (xray_pre(i+2,j+3)/xray_pre_old .gt. ratio) then
+           xray_pre(i+2,j+3)=xray_pre_old*ratio
+      endif
+      if (line_pre(i+2,j+3)/line_pre_old .gt. ratio) then
+            line_pre(i+2,j+3)=line_pre_old*ratio
+      endif
+      if (brem_pre(i+2,j+3)/brem_pre_old .gt. ratio) then
+            brem_pre(i+2,j+3)=brem_pre_old*ratio
+      endif
+     
+     
+     
+     
+     
+c      print *,i,j,ne,py_ne,comp_cool_pre_old,comp_c_pre(i+2,j+3),
+c     +  ne*nh*c_comp(i+2,j+3),c_cool
+c      print *,x_heat,c_heat,l_heat,
+c     &   b_heat,c_cool,l_cool,b_cool
+c      print *,i,j,py_temp,e(i+2,j+3)/(1.5*n1*boltz),
+c     + comp_cool_pre_old,comp_c_pre(i+2,j+3)
 
 c		  print *,i+3,j+3,r,theta
 c 20 		continue
