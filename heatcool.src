@@ -272,6 +272,10 @@ c     error message for too many iterations
           real b_cool,l_cool,n1,py_temp,py_ne,py_vol,ne,nh
           real comp_c_pre_old,comp_h_pre_old,xray_pre_old,line_pre_old,
      +     brem_pre_old,ratio
+	 integer pre_limit,pre_limit_tmp
+	 
+	 pre_limit_tmp=0
+	 pre_limit=0
 		  
 		  print *,"Got here OK"
          INQUIRE( FILE='py_heatcool.dat', EXIST=THERE ) 
@@ -299,10 +303,10 @@ c			  do 20 j=js,je
 c		  print *,is,i+2,ie,x1b(i+2)/r,js,j+3,je,x2b(j+3)/
 c     &  (theta)
 				comp_c_pre_old=comp_c_pre(i+2,j+3) 
-                  	comp_h_pre_old=comp_h_pre(i+2,j+3)
-                        xray_pre_old=xray_pre(i+2,j+3)
-                        line_pre_old=line_pre(i+2,j+3)
-                        brem_cool_pre_old=brem_pre(i+2,j+3)      
+                comp_h_pre_old=comp_h_pre(i+2,j+3)
+                xray_pre_old=xray_pre(i+2,j+3)
+                line_pre_old=line_pre(i+2,j+3)
+                brem_pre_old=brem_pre(i+2,j+3)      
                         
                         
                         
@@ -313,6 +317,9 @@ c     &  (theta)
 		 comp_c_pre(i+2,j+3)=comp_c_pre(i+2,j+3)*(c_cool)/
      &   (ne*nh*c_comp(i+2,j+3))+1e-3
 		 
+		 
+	  print *,"XRAY test",x1b(i+2),x2b(j+3),ne*nh*h_xray(i+2,j+3),
+     +  x_heat
 		 xray_pre(i+2,j+3)=xray_pre(i+2,j+3)*(x_heat)/
      &   (ne*nh*h_xray(i+2,j+3))+1e-3
  		 line_pre(i+2,j+3)=line_pre(i+2,j+3)*l_cool/
@@ -321,40 +328,79 @@ c     &  (theta)
      &   (ne*nh*c_brem(i+2,j+3))+1e-3
      
       ratio=0.9
-     
+	  print *,"CHECKING ",i,j
       if (comp_h_pre(i+2,j+3)/comp_h_pre_old .lt. ratio) then
+		  print *,"comp_h_pre=",comp_h_pre(i+2,j+3),' LIMITING LO'
            comp_h_pre(i+2,j+3)=comp_h_pre_old*ratio
+		   pre_limit_tmp=pre_limit_tmp+1
       endif
       if (comp_c_pre(i+2,j+3)/comp_c_pre_old .lt. ratio) then
+		  print *,"comp_c_pre=",comp_c_pre(i+2,j+3),' LIMITING LO'
+		  
            comp_c_pre(i+2,j+3)=comp_c_pre_old*ratio
+		   pre_limit_tmp=pre_limit_tmp+1
+		   
       endif
       if (xray_pre(i+2,j+3)/xray_pre_old .lt. ratio) then
+		  print *,"xray_pre=",xray_pre(i+2,j+3),' LIMITING LO'
+		  
            xray_pre(i+2,j+3)=xray_pre_old*ratio
+		   pre_limit_tmp=pre_limit_tmp+1
+		   
       endif
       if (line_pre(i+2,j+3)/line_pre_old .lt. ratio) then
+		  print *,"line_pre=",line_pre(i+2,j+3),' LIMITING LO'
+		  
             line_pre(i+2,j+3)=line_pre_old*ratio
+ 		   pre_limit_tmp=pre_limit_tmp+1
+			
       endif
+	  print *,brem_pre(i+2,j+3),brem_pre_old,ratio
       if (brem_pre(i+2,j+3)/brem_pre_old .lt. ratio) then
+		  print *,"brem_pre=",brem_pre(i+2,j+3),' LIMITING LO'
+		  
             brem_pre(i+2,j+3)=brem_pre_old*ratio
+ 		   pre_limit_tmp=pre_limit_tmp+1
+			
       endif
       
       
       ratio=1.1
      
       if (comp_h_pre(i+2,j+3)/comp_h_pre_old .gt. ratio) then
+		  print *,"comp_h_pre=",comp_h_pre(i+2,j+3),' LIMITING HI'
+		  
            comp_h_pre(i+2,j+3)=comp_h_pre_old*ratio
+		   pre_limit_tmp=pre_limit_tmp+1
+		   
       endif
       if (comp_c_pre(i+2,j+3)/comp_c_pre_old .gt. ratio) then
+		  print *,"comp_h_pre=",comp_c_pre(i+2,j+3),' LIMITING HI'
+		  
            comp_c_pre(i+2,j+3)=comp_c_pre_old*ratio
+		   pre_limit_tmp=pre_limit_tmp+1
+		   
       endif
       if (xray_pre(i+2,j+3)/xray_pre_old .gt. ratio) then
+		  print *,"xray_pre=",xray_pre(i+2,j+3),' LIMITING HI'
+		  
            xray_pre(i+2,j+3)=xray_pre_old*ratio
+		   pre_limit_tmp=pre_limit_tmp+1
+		   
       endif
       if (line_pre(i+2,j+3)/line_pre_old .gt. ratio) then
+		  print *,"line_pre=",line_pre(i+2,j+3),' LIMITING HI'
+		  
             line_pre(i+2,j+3)=line_pre_old*ratio
+ 		   pre_limit_tmp=pre_limit_tmp+1
+			
       endif
       if (brem_pre(i+2,j+3)/brem_pre_old .gt. ratio) then
-            brem_pre(i+2,j+3)=brem_pre_old*ratio
+		  print *,"brem_pre=",brem_pre(i+2,j+3),' LIMITING HI'
+		  
+            brem_pre(i+2,j+3)=brem_pre_old*ratio		
+			   pre_limit_tmp=pre_limit_tmp+1
+
       endif
      
      
@@ -370,8 +416,15 @@ c     + comp_cool_pre_old,comp_c_pre(i+2,j+3)
 
 c		  print *,i+3,j+3,r,theta
 c 20 		continue
+		if (pre_limit_tmp .gt. 0) then
+			pre_limit=pre_limit+1
+			pre_limit_tmp=0
+		endif
 10		continue
-20		print *,"There are ",n," records"		  
+		
+20		print *,"There are ",n," records"	
+		print *,pre_limit," cells had HC prefactor change limited"
+		
 		  close unit=66
 	  else
 		  print *,"There is no heatcool file - continuuing normally"
