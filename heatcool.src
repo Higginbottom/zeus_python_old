@@ -318,8 +318,8 @@ c     &  (theta)
      &   (ne*nh*c_comp(i+2,j+3))+1e-3
 		 
 		 
-	  print *,"XRAY test",x1b(i+2),x2b(j+3),ne*nh*h_xray(i+2,j+3),
-     +  x_heat
+c	  print *,"XRAY test",x1b(i+2),x2b(j+3),ne*nh*h_xray(i+2,j+3),
+c     +  x_heat
 		 xray_pre(i+2,j+3)=xray_pre(i+2,j+3)*(x_heat)/
      &   (ne*nh*h_xray(i+2,j+3))+1e-3
  		 line_pre(i+2,j+3)=line_pre(i+2,j+3)*l_cool/
@@ -328,28 +328,28 @@ c     &  (theta)
      &   (ne*nh*c_brem(i+2,j+3))+1e-3
      
       ratio=0.9
-	  print *,"CHECKING ",i,j
+c	  print *,"CHECKING ",i,j
       if (comp_h_pre(i+2,j+3)/comp_h_pre_old .lt. ratio) then
-		  print *,"comp_h_pre=",comp_h_pre(i+2,j+3),' LIMITING LO'
+c		  print *,"comp_h_pre=",comp_h_pre(i+2,j+3),' LIMITING LO'
            comp_h_pre(i+2,j+3)=comp_h_pre_old*ratio
 		   pre_limit_tmp=pre_limit_tmp+1
       endif
       if (comp_c_pre(i+2,j+3)/comp_c_pre_old .lt. ratio) then
-		  print *,"comp_c_pre=",comp_c_pre(i+2,j+3),' LIMITING LO'
+c		  print *,"comp_c_pre=",comp_c_pre(i+2,j+3),' LIMITING LO'
 		  
            comp_c_pre(i+2,j+3)=comp_c_pre_old*ratio
 		   pre_limit_tmp=pre_limit_tmp+1
 		   
       endif
       if (xray_pre(i+2,j+3)/xray_pre_old .lt. ratio) then
-		  print *,"xray_pre=",xray_pre(i+2,j+3),' LIMITING LO'
+c		  print *,"xray_pre=",xray_pre(i+2,j+3),' LIMITING LO'
 		  
            xray_pre(i+2,j+3)=xray_pre_old*ratio
 		   pre_limit_tmp=pre_limit_tmp+1
 		   
       endif
       if (line_pre(i+2,j+3)/line_pre_old .lt. ratio) then
-		  print *,"line_pre=",line_pre(i+2,j+3),' LIMITING LO'
+c		  print *,"line_pre=",line_pre(i+2,j+3),' LIMITING LO'
 		  
             line_pre(i+2,j+3)=line_pre_old*ratio
  		   pre_limit_tmp=pre_limit_tmp+1
@@ -357,7 +357,7 @@ c     &  (theta)
       endif
 	  print *,brem_pre(i+2,j+3),brem_pre_old,ratio
       if (brem_pre(i+2,j+3)/brem_pre_old .lt. ratio) then
-		  print *,"brem_pre=",brem_pre(i+2,j+3),' LIMITING LO'
+c		  print *,"brem_pre=",brem_pre(i+2,j+3),' LIMITING LO'
 		  
             brem_pre(i+2,j+3)=brem_pre_old*ratio
  		   pre_limit_tmp=pre_limit_tmp+1
@@ -368,35 +368,35 @@ c     &  (theta)
       ratio=1.1
      
       if (comp_h_pre(i+2,j+3)/comp_h_pre_old .gt. ratio) then
-		  print *,"comp_h_pre=",comp_h_pre(i+2,j+3),' LIMITING HI'
+c		  print *,"comp_h_pre=",comp_h_pre(i+2,j+3),' LIMITING HI'
 		  
            comp_h_pre(i+2,j+3)=comp_h_pre_old*ratio
 		   pre_limit_tmp=pre_limit_tmp+1
 		   
       endif
       if (comp_c_pre(i+2,j+3)/comp_c_pre_old .gt. ratio) then
-		  print *,"comp_h_pre=",comp_c_pre(i+2,j+3),' LIMITING HI'
+c		  print *,"comp_h_pre=",comp_c_pre(i+2,j+3),' LIMITING HI'
 		  
            comp_c_pre(i+2,j+3)=comp_c_pre_old*ratio
 		   pre_limit_tmp=pre_limit_tmp+1
 		   
       endif
       if (xray_pre(i+2,j+3)/xray_pre_old .gt. ratio) then
-		  print *,"xray_pre=",xray_pre(i+2,j+3),' LIMITING HI'
+c		  print *,"xray_pre=",xray_pre(i+2,j+3),' LIMITING HI'
 		  
            xray_pre(i+2,j+3)=xray_pre_old*ratio
 		   pre_limit_tmp=pre_limit_tmp+1
 		   
       endif
       if (line_pre(i+2,j+3)/line_pre_old .gt. ratio) then
-		  print *,"line_pre=",line_pre(i+2,j+3),' LIMITING HI'
+c		  print *,"line_pre=",line_pre(i+2,j+3),' LIMITING HI'
 		  
             line_pre(i+2,j+3)=line_pre_old*ratio
  		   pre_limit_tmp=pre_limit_tmp+1
 			
       endif
       if (brem_pre(i+2,j+3)/brem_pre_old .gt. ratio) then
-		  print *,"brem_pre=",brem_pre(i+2,j+3),' LIMITING HI'
+c		  print *,"brem_pre=",brem_pre(i+2,j+3),' LIMITING HI'
 		  
             brem_pre(i+2,j+3)=brem_pre_old*ratio		
 			   pre_limit_tmp=pre_limit_tmp+1
@@ -404,6 +404,18 @@ c     &  (theta)
       endif
      
      
+	  print *,'COMP_C_PRE    old=',comp_c_pre_old,
+     c' new=',comp_c_pre(i+2,j+3) 
+      print *,'COMP_H_PRE    old=',comp_h_pre_old,
+     c' new=',comp_h_pre(i+2,j+3)
+      print *,'XRAY_PRE    old=',xray_pre_old,
+     c' new=',xray_pre(i+2,j+3)
+      print *,'LINE_PRE    old=',line_pre_old,
+     c' new=',line_pre(i+2,j+3)
+      print *,'BREM_PRE    old=',brem_pre_old,
+     c' new=',brem_pre(i+2,j+3)  
+	 
+	 
      
      
      
