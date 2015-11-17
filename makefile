@@ -24,9 +24,9 @@ OBJ =   msave.o    \
 	lorentz.o  \
 	maxmin.o   \
 	moment.o   \
- 	momx1.o    \
+	momx1.o    \
 	momx2.o    \
-        movie.o    \
+	movie.o    \
 	mprops.o   \
 	mstart.o   \
 	newgrid.o  \
@@ -118,11 +118,11 @@ clean:
 
 
 
-compile: zeus2d.src ${EXEDIR}zeus2d.exe
+compile: zeus2d.src ${EXEDIR}HP15_zeus2d.exe
 
 zeus2d.src: zeus2d.def
 	touch *.src *.c
 
-${EXEDIR}zeus2d.exe: ${OBJ}  ${ADDN}
-	${LDR} -o ${EXEDIR}zeus2d.exe ${OBJ}  ${ADDN} ${LIB}
+${EXEDIR}HP15_zeus2d.exe: ${OBJ}  ${ADDN}
+	${LDR} -o ${EXEDIR}HP15_zeus2d.exe ${OBJ}  ${ADDN} ${LIB}
 

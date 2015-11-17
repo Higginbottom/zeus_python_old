@@ -30,7 +30,7 @@ c-----------------------------------------------------------------------
       integer i,j,icount
       REAL    div1,div2,divv,del,pnew,pav,temp
       REAL    hc_tot,dt_hc,e1,epv
-	  REAL 	max_d_change
+
       external heatcool
 c\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\////////////////////////////////////
 c=======================================================================
@@ -64,93 +64,41 @@ c  edited by NSH to include radiative heating and cooling
 c
 	dt_hc=0.0
 	icount=0
-	max_d_change=0.0
 	
           do 40 j=js,je
             do 30 i=ii(j),io(j)
 c		print *,lx,d(i,j),mu,mp,x1b(i)
 				
 c   This next line computes the ionization parameter  - rho/1.43mp is the hydrogen number density.				
-	  	      xi(i,j)=(lx/((d(i,j)/(mp*1.43))*x1b(i)**2))
+	  	      xi(i,j)=(lx/((d(i,j)/(mp*mu))*x1b(i)**2))
 				
-c    We calculate the divergence of the velocity field in this cell, to permit the adiabatic heating or cooling to be computed
+
               div1 = (g2a(i+1)*g31a(i+1)*v1(i+1,j)
      &             -  g2a(i  )*g31a(i  )*v1(i  ,j))/dvl1a(i)
               div2 = (g32a(j+1)*v2(i,j+1)
      &             -  g32a(j  )*v2(i,j  ))/(g2b(i)*dvl2a(j))
               divv1(i,j) = div1 + div2
-			  
-c     Just a couple of lines to store the velocities used to compute the divergence, for comparison with python		  
 			  v1_pdv(i,j)=v1(i,j)
 			  v2_pdv(i,j)=v2(i,j)
- 
               del = 0.5*dt*(gamma-1.0)*divv1(i,j)
 c	      print *,hc_tot,(1.0 - del)/(1.0 + del)*e(i,j)-e(i,j)
-c   this computes the new energy, based upon adiabatic effects			  
               epv = (1.0 - del)/(1.0 + del)*e(i,j)
-c    we store it so we can output it for diagnostic purposes			  
 		      e_old(i,j)=epv
-c    and we also storethe adiabatic heating/cooling rates
 			  adiab(i,j)=((epv-e(i,j))/dt)
 
 			  
-c		we now send the current energy, density, and ionization parameter to hc_sub, which will compute the radiative heating/cooling
+c		print *,i,j
 	      call hc_sub(d(i,j),xi(i,j),epv,e1,i,j)
-c		  print *,"returned e1=",e1
-c		the new energy in the cell is the returned energy 
-		e(i,j)=e1
 
+c		endif
+		e(i,j)=e1
         temp=e(i,j)*(2.0/3.0)/((d(i,j)/(mu*mp))*boltz)
 		
-#ifdef PYHYDRO
-				if (abs(d(i,j)-d_init(i,j))/d_init(i,j) .gt. den_tol) then
-c					print *,d(i,j),d_old(i,j)
-					icount=icount+1
-c				else if (abs(temp-t_old(i,j))/t_old(i,j) .gt. 0.01) then
-c					print *,temp,t_old(i,j),abs(temp-t_old(i,j))/t_old(i,j)
-c					icount=icount+1 
-				endif
-				if (abs(d(i,j)-d_init(i,j))/d_init(i,j) .gt. max_d_change) then
-					max_d_change=abs(d(i,j)-d_init(i,j))/d_init(i,j)
-				endif
-c				if (abs(d(i,j)-d_init(i,j))/d_init(i,j) .gt. 0.5) then
-c					print *,"Oh no, 1 cell changed density by  >50% PANIC"
-c				call_py=1
-c			endif
-c				if (irestart.eq.0) then
-c					d_old(i,j)=d(i,j)
-c					t_old(i,j)=temp
-c				endif
-#endif
-		
-		
-		
-		
-c		print *,i,j,xi,d(i,j),e_old,e1-epv,epv-e_old
-c		if (j .eq. 90 .and. i .eq. 40) then
-c			print *,e_old,epv,e1
-c		endif 
+
 30          continue
 40        continue
-        if (nden.lt.1.0) then
-			print *,"Cycle ",nhy,(float(icount)/(je*io(je)))*100.,
-     + "% exceed density tol. Max dens change=",max_d_change
-		endif
-#ifdef PYHYDRO
-c		if (irestart .eq.0) then
-c			if (icount .lt. 10) then
-c				call_py=2
-c			endif
-c		endif
-c		if (irestart .eq.1)  then
-			if (((float(icount)/(je*io(je)))).gt.nden) then
-				print *,"Oh no, ",nden*100.,"% have changed, panic"
-			call_py=1
-		endif
-		
-c		endif
-			
-#endif
+c		print *,nhy,(float(icount)/(je*io(je))),den_tol,nden,irestart
+
         endif
 c
       else if (nx1z.gt.1 .and. nx2z.le.1) then

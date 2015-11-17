@@ -18,57 +18,46 @@
 	double precision t_l,t_u,tol,nh1,ne1
 	REAL heatcool,zbrent,zfunc,n1
 	real test
-	common /hc_data/ xi1,e_01,hc_01,sqsqxi1,n1,i1,j1,nh1,ne1
+	common /hc_data/ xi1,e_01,hc_01,sqsqxi1,n1,i1,j1
 	external zfunc
-	
-c   first calculate the current temperature of the cell	
-	
 	t_01=e_0*(2.0/3.0)/((rho/(mu*mp))*boltz)
+c	print *,e_0,rho,t_01
 	xi1=xi0
 	i1=i
 	j1=j
 	e_01=e_0
-	
-c   compute xi to the quater power, this is used a lot and doing this now saves time	
 	sqsqxi1=sqrt(sqrt(xi0))
 
 c   n1 is the particle density (including electrons)
 	n1=rho/(mu*mp)
-c   nh1 is the hydrogen density (based upon solar abundances)	
-	nh1=rho/(1.43*mp)
-c   ne1 is the electron density 	
-	ne1=nh1*1.21
+
 
 
 c stage one, bracket to find out where the zero point is
 
 
-c we use the heating rate at the   originaltemperature a lot,
+c we use the heating rate at the originaltemperature a lot,
 c lets compute it first
 	hc_01=heatcool(t_01)
 
-
-c   the next few lines bracket the solution temperature
 	t_l=t_01*0.9
-	t_u=t_01*1.1	
-c	print *,"Bracketing temp=",t_01,i,j,rho,e_0
+	t_u=t_01*1.1
 	test=zfunc(t_l)*zfunc(t_u)
 	tol=1.0
-c	if (test.gt.0) then
-c		print *,"PANIC"
-c	endif
-c	print *,"New run"
+
 	  do while (test > 0)
 		t_l=t_l*0.9
 		t_u=t_u*1.1
     		test=zfunc(t_l)*zfunc(t_u)
   	end do
 c now we have worked out a bracket, find the correct value of new temperature
-c we search for the zero point of the equation e_old - e_old - dt(de(t(1/2)))	
-c	print *,"XXXXXX calling zbrent"
+c we search for the zero point of the equation e_old - e_old - dt(de(t(1/2)))
+c	     print *,comp_h_pre(i,j),comp_c_pre(i,j),
+c     &   xray_pre(i,j),
+c     &   line_pre(i,j),brem_pre(i,j)	
 	     t_1=zbrent(zfunc,t_l,t_u,tol)
-c		 print *,"XXXXX finished, ans=",t_1
-c we will call heatcool one last time to compute the heating and cooling rates for the new temperature	
+	
+c we will call heatcool one last time to compute the heating and cooling rates for old t	
 	
 	hc_01=heatcool(t_1)
 
@@ -93,8 +82,8 @@ c now we have a new temperature, we will return the new internal energy.
 #include "diskw.h"
       integer i,j
       REAL    div1,div2,divv,del,pnew,pav,xi0,temp,hc_tot,rho,e_0,t_0
-      REAL    gamma_comp,gamma_x,l_b,l_l,hc_0,sqsqxi,st,n,nh,ne
-	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j,nh,ne
+      REAL    gamma_comp,gamma_x,l_b,l_l,hc_0,sqsqxi,st,n
+	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j
 
 	st=sqrt(temp)
 
@@ -102,12 +91,6 @@ c now we have a new temperature, we will return the new internal energy.
 	h_comp(i,j)=comp_h_pre(i,j)*8.9e-36*xi0*tx
 	c_comp(i,j)=comp_c_pre(i,j)*8.9e-36*xi0*(4.0*temp)
 	gamma_comp=h_comp(i,j)-c_comp(i,j)
-
-c	gamma_x=sqrt(xi)
-c	gamma_x=sqrt(gamma_x)
-c	gamma_x=gamma_x*1.5e-21
-c	gamma_x=gamma_x/sqrt(temp)
-c	gamma_x=gamma_x*(1-temp/tx)
 	h_xray(i,j)=xray_pre(i,j)*1.5e-21*(sqsqxi/st)*(1-(temp/tx))
 	gamma_x=h_xray(i,j)
 
@@ -121,9 +104,8 @@ c	l_l=l_l+1e-24
 	l_l=line_pre(i,j)*(1.7e-18*exp(-1.3e5/temp)/(xi0*st)+1e-24)
 	c_line(i,j)=l_l
 c	print *,temp,xi,gamma_comp,gamma_x,l_b,l_l
-	hc_tot=ne*nh*(gamma_comp+gamma_x-l_b-l_l)
-c	print *,ne,nh,gamma_comp,gamma_x,l_b,l_l
-c	print *,ne*nh*(gamma_comp+gamma_x-l_b-l_l),hc_tot
+	hc_tot=n*n*(gamma_comp+gamma_x-l_b-l_l)
+c	print *,temp,xi,gamma_comp,gamma_x,l_b,l_l,n,hc_tot
 	
 	
 	heatcool=hc_tot
@@ -139,9 +121,9 @@ c	print *,ne*nh*(gamma_comp+gamma_x-l_b-l_l),hc_tot
 #include "field.h"
 #include "root.h"
 #include "diskw.h"
-	REAL rho,xi0,e_0,t_0,temp,heatcool,hc_0,logxi,sqsqxi,n,nh,ne
+	REAL rho,xi0,e_0,t_0,temp,heatcool,hc_0,logxi,sqsqxi,n
 	INTEGER i,j
-	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j,nh,ne
+	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j
 	external heatcool
 	zfunc=(1.5*temp*n*boltz)-e_0-
      &  dt*(hc_0+heatcool(temp))/2.0
@@ -174,7 +156,7 @@ c     ZBRENT
 c..............................................................................
 
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
-      PARAMETER (ITMAX=100,EPS=3.E-14)
+      PARAMETER (ITMAX=100,EPS=3.E-16)
       A=X1
       B=X2
       FA=FUNC(A)
@@ -256,195 +238,7 @@ c     error message for too many iterations
       END
 	  
 	  
-	  subroutine hc_file_input()
-#include "cons.h"
-#include "param.h"
-#include "grid.h"
-#include "field.h"
-#include "root.h"
-#include "diskw.h"
-		  integer i,j
-		  
-		  
-		  LOGICAL THERE 
-   
-		  real r,theta,c_heat,x_heat,b_heat,l_heat,c_cool,x_cool,py_xi
-          real b_cool,l_cool,n1,py_temp,py_ne,py_vol,ne,nh
-          real comp_c_pre_old,comp_h_pre_old,xray_pre_old,line_pre_old,
-     +     brem_pre_old,ratio
-	 integer pre_limit,pre_limit_tmp
-	 
-	 pre_limit_tmp=0
-	 pre_limit=0
-		  
-		  print *,"Got here OK"
-         INQUIRE( FILE='py_heatcool.dat', EXIST=THERE ) 
-          IF ( THERE ) then
-		 	 open(66,file='py_heatcool.dat',status='old')
-	  	   	read (66,*,end=20)
-   		  	 do 10, n=1,10000000
- 
-		  	   	read (66,*,end=20) i,j,r,theta,py_vol,py_temp,py_xi,py_ne,
-     &			x_heat,c_heat,l_heat,
-     &   b_heat,c_cool,l_cool,b_cool
 
-c				print *,i,j,r,theta,x_heat,c_heat,l_heat,b_heat,x_cool,
-c     &   c_cool,l_cool,b_cool,py_xi	   
-				
-				n1=d(i+2,j+3)/(mu*mp)
-				
-				nh=d(i+2,j+3)/(1.43*mp)
-				ne=nh*1.21
-				
-c		  print *,hc_xray(i+2,j+3),x_heat/(n1*n1*1.2),x_cool/(n1*n1*1.2),
-c     &   x_heat/(n1*n1*1.2)-x_cool/(n1*n1*1.2)
-c		  do 10 i=is,ie
-c			  do 20 j=js,je
-c		  print *,is,i+2,ie,x1b(i+2)/r,js,j+3,je,x2b(j+3)/
-c     &  (theta)
-				comp_c_pre_old=comp_c_pre(i+2,j+3) 
-                comp_h_pre_old=comp_h_pre(i+2,j+3)
-                xray_pre_old=xray_pre(i+2,j+3)
-                line_pre_old=line_pre(i+2,j+3)
-                brem_pre_old=brem_pre(i+2,j+3)      
-                        
-                        
-                        
-                        
-                         
-		 comp_h_pre(i+2,j+3)=comp_h_pre(i+2,j+3)*(c_heat)/
-     &   (ne*nh*h_comp(i+2,j+3))+1e-3
-		 comp_c_pre(i+2,j+3)=comp_c_pre(i+2,j+3)*(c_cool)/
-     &   (ne*nh*c_comp(i+2,j+3))+1e-3
-		 
-		 
-c	  print *,"XRAY test",x1b(i+2),x2b(j+3),ne*nh*h_xray(i+2,j+3),
-c     +  x_heat
-		 xray_pre(i+2,j+3)=xray_pre(i+2,j+3)*(x_heat)/
-     &   (ne*nh*h_xray(i+2,j+3))+1e-3
- 		 line_pre(i+2,j+3)=line_pre(i+2,j+3)*l_cool/
-     &   (ne*nh*(c_line(i+2,j+3)+c_xray(i+2,j+3)))+1e-3
-		 brem_pre(i+2,j+3)=brem_pre(i+2,j+3)*b_cool/
-     &   (ne*nh*c_brem(i+2,j+3))+1e-3
-     
-      ratio=0.9
-c	  print *,"CHECKING ",i,j
-      if (comp_h_pre(i+2,j+3)/comp_h_pre_old .lt. ratio) then
-c		  print *,"comp_h_pre=",comp_h_pre(i+2,j+3),' LIMITING LO'
-           comp_h_pre(i+2,j+3)=comp_h_pre_old*ratio
-		   pre_limit_tmp=pre_limit_tmp+1
-      endif
-      if (comp_c_pre(i+2,j+3)/comp_c_pre_old .lt. ratio) then
-c		  print *,"comp_c_pre=",comp_c_pre(i+2,j+3),' LIMITING LO'
-		  
-           comp_c_pre(i+2,j+3)=comp_c_pre_old*ratio
-		   pre_limit_tmp=pre_limit_tmp+1
-		   
-      endif
-      if (xray_pre(i+2,j+3)/xray_pre_old .lt. ratio) then
-c		  print *,"xray_pre=",xray_pre(i+2,j+3),' LIMITING LO'
-		  
-           xray_pre(i+2,j+3)=xray_pre_old*ratio
-		   pre_limit_tmp=pre_limit_tmp+1
-		   
-      endif
-      if (line_pre(i+2,j+3)/line_pre_old .lt. ratio) then
-c		  print *,"line_pre=",line_pre(i+2,j+3),' LIMITING LO'
-		  
-            line_pre(i+2,j+3)=line_pre_old*ratio
- 		   pre_limit_tmp=pre_limit_tmp+1
-			
-      endif
-	  print *,brem_pre(i+2,j+3),brem_pre_old,ratio
-      if (brem_pre(i+2,j+3)/brem_pre_old .lt. ratio) then
-c		  print *,"brem_pre=",brem_pre(i+2,j+3),' LIMITING LO'
-		  
-            brem_pre(i+2,j+3)=brem_pre_old*ratio
- 		   pre_limit_tmp=pre_limit_tmp+1
-			
-      endif
-      
-      
-      ratio=1.1
-     
-      if (comp_h_pre(i+2,j+3)/comp_h_pre_old .gt. ratio) then
-c		  print *,"comp_h_pre=",comp_h_pre(i+2,j+3),' LIMITING HI'
-		  
-           comp_h_pre(i+2,j+3)=comp_h_pre_old*ratio
-		   pre_limit_tmp=pre_limit_tmp+1
-		   
-      endif
-      if (comp_c_pre(i+2,j+3)/comp_c_pre_old .gt. ratio) then
-c		  print *,"comp_h_pre=",comp_c_pre(i+2,j+3),' LIMITING HI'
-		  
-           comp_c_pre(i+2,j+3)=comp_c_pre_old*ratio
-		   pre_limit_tmp=pre_limit_tmp+1
-		   
-      endif
-      if (xray_pre(i+2,j+3)/xray_pre_old .gt. ratio) then
-c		  print *,"xray_pre=",xray_pre(i+2,j+3),' LIMITING HI'
-		  
-           xray_pre(i+2,j+3)=xray_pre_old*ratio
-		   pre_limit_tmp=pre_limit_tmp+1
-		   
-      endif
-      if (line_pre(i+2,j+3)/line_pre_old .gt. ratio) then
-c		  print *,"line_pre=",line_pre(i+2,j+3),' LIMITING HI'
-		  
-            line_pre(i+2,j+3)=line_pre_old*ratio
- 		   pre_limit_tmp=pre_limit_tmp+1
-			
-      endif
-      if (brem_pre(i+2,j+3)/brem_pre_old .gt. ratio) then
-c		  print *,"brem_pre=",brem_pre(i+2,j+3),' LIMITING HI'
-		  
-            brem_pre(i+2,j+3)=brem_pre_old*ratio		
-			   pre_limit_tmp=pre_limit_tmp+1
-
-      endif
-     
-     
-	  print *,'COMP_C_PRE    old=',comp_c_pre_old,
-     c' new=',comp_c_pre(i+2,j+3) 
-      print *,'COMP_H_PRE    old=',comp_h_pre_old,
-     c' new=',comp_h_pre(i+2,j+3)
-      print *,'XRAY_PRE    old=',xray_pre_old,
-     c' new=',xray_pre(i+2,j+3)
-      print *,'LINE_PRE    old=',line_pre_old,
-     c' new=',line_pre(i+2,j+3)
-      print *,'BREM_PRE    old=',brem_pre_old,
-     c' new=',brem_pre(i+2,j+3)  
-	 
-	 
-     
-     
-     
-c      print *,i,j,ne,py_ne,comp_cool_pre_old,comp_c_pre(i+2,j+3),
-c     +  ne*nh*c_comp(i+2,j+3),c_cool
-c      print *,x_heat,c_heat,l_heat,
-c     &   b_heat,c_cool,l_cool,b_cool
-c      print *,i,j,py_temp,e(i+2,j+3)/(1.5*n1*boltz),
-c     + comp_cool_pre_old,comp_c_pre(i+2,j+3)
-
-c		  print *,i+3,j+3,r,theta
-c 20 		continue
-		if (pre_limit_tmp .gt. 0) then
-			pre_limit=pre_limit+1
-			pre_limit_tmp=0
-		endif
-10		continue
-		
-20		print *,"There are ",n," records"	
-		print *,pre_limit," cells had HC prefactor change limited"
-		
-		  close unit=66
-	  else
-		  print *,"There is no heatcool file - continuuing normally"
-	  endif
-		  
-		  
-		  RETURN
-	  END
 
 
 
