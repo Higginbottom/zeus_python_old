@@ -51,7 +51,7 @@
      .,nlim    ,nred
      .,nwarn
 
-      character*2  id
-      character*8  hdffile, hstfile, resfile, usrfile
+      character*8  id
+      character*16  hdffile, hstfile, resfile, usrfile
       common /chroot2/  id
       common /chroot1/  hdffile, hstfile, resfile, usrfile

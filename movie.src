@@ -23,7 +23,7 @@ c-----------------------------------------------------------------------
 #include "field.h"
 #include "root.h"
 #include "scratch.h"
-      character*8  filename
+      character*16  filename
 c
       integer  i,j,irecl
       real dmin,dmax,dden
