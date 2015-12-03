@@ -100,19 +100,19 @@ c
       write(2,iocon)
 c
       if (irestart .eq. 0) then
-        write(resfile,"(a3,i3.3,a2)") 'res',0,id
-        write(hdffile,"(a3,i3.3,a2)") 'hdf',0,id
-        write(hstfile,"(a3,i3.3,a2)") 'hst',0,id
-        write(usrfile,"(a3,i3.3,a2)") 'usr',0,id
+        write(resfile,"(a3,i3.3,a8)") 'res',0,id
+        write(hdffile,"(a3,i3.3,a8)") 'hdf',0,id
+        write(hstfile,"(a3,i3.3,a8)") 'hst',0,id
+        write(usrfile,"(a3,i3.3,a8)") 'usr',0,id
       else
         incr = strtoi(resfile,4,6) + 1
-        write(resfile,"(a3,i3.3,a2)") 'res',incr,id
+        write(resfile,"(a3,i3.3,a8)") 'res',incr,id
         incr = strtoi(hdffile,4,6) + 1
-        write(hdffile,"(a3,i3.3,a2)") 'hdf',incr,id
+        write(hdffile,"(a3,i3.3,a8)") 'hdf',incr,id
         incr = strtoi(hstfile,4,6) + 1
-        write(hstfile,"(a3,i3.3,a2)") 'hst',incr,id
+        write(hstfile,"(a3,i3.3,a8)") 'hst',incr,id
         incr = strtoi(usrfile,4,6) + 1
-        write(usrfile,"(a3,i3.3,a2)") 'usr',incr,id
+        write(usrfile,"(a3,i3.3,a8)") 'usr',incr,id
       endif
 c
 c  Close unit=1 (input deck).  Unit=2 (zeuslp) is kept open throughout

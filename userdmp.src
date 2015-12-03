@@ -36,6 +36,7 @@ c
 c Write out the coordinates and the density for each zone in the
 c computational domain to unit 12 (usrfile).
 c
+      print *,"BLAH",usrfile
       open(12,file=usrfile)
       write(12,"('ZEUS2D field variables at time = ',e15.9)") time
       write(12,"(a)")

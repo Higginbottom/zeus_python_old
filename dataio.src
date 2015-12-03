@@ -48,7 +48,7 @@ c
       if (iswres .eq. 1) then
         call msave(resfile)
         incr = strtoi(resfile,4,6) + 1
-        write(resfile,"(a3,i3.3,a2)") 'res',incr,id
+        write(resfile,"(a3,i3.3,a8)") 'res',incr,id
         iswres=0
       endif
 c
@@ -57,7 +57,7 @@ c
       if (iswhdf .eq. 1) then
         call hdfall(hdffile)
         incr = strtoi(hdffile,4,6) + 1
-        write(hdffile,"(a3,i3.3,a2)") 'hdf',incr,id
+        write(hdffile,"(a3,i3.3,a8)") 'hdf',incr,id
         iswhdf=0
       endif
 c
@@ -74,7 +74,7 @@ c
 c        call USERDUMP(usrfile)
         call movie(usrfile)
         incr = strtoi(usrfile,4,6) + 1
-        write(usrfile,"(a3,i3.3,a2)") 'usr',incr,id
+        write(usrfile,"(a3,i3.3,a8)") 'usr',incr,id
         iswusr=0
       endif
 c
