@@ -45,7 +45,7 @@ c	print *,dfloor*d0
         d (i,je)=djop1(i)  
         v1(i,je)=0.0
         v3(i,je)=v3jop1(i)
-         e(i,je)=ejop1(i)
+         if (e(i,je).le.ejop1(i)) e(i,je)=ejop1(i) 
        enddo 
 
        call bvald
