@@ -94,7 +94,7 @@ c     &      d0*x1b(i)**(-dindex)*exp(1./(ciso*ciso)/
 c     &      x1b(i)*(1.-1./2./sin(x2b(j)))))
 c	temp=((3.0*ptmass*mdot*guniv)/  (8.0*pi*sb*
 c     &   (x1b(i)*sin(x2b(j)))**3.0) )**0.25
-		temp=1e5
+		temp=1e4
 	cisosqrd=1.66666*boltz*temp/mp
 	d(i,j)=d0*(x1b(i)/ric)**(-dindex)*
      & exp((-1.0*guniv*ptmass*(x1b(i)*cos(x2b(j)))**2)/
