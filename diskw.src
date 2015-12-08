@@ -92,8 +92,9 @@ c	d(i,j)=d0*1e-4
 c            d(i,j)=dmax1(d0*1e-4,            
 c     &      d0*x1b(i)**(-dindex)*exp(1./(ciso*ciso)/
 c     &      x1b(i)*(1.-1./2./sin(x2b(j)))))
-	temp=((3.0*ptmass*mdot*guniv)/  (8.0*pi*sb*
-     &   (x1b(i)*sin(x2b(j)))**3.0) )**0.25
+c	temp=((3.0*ptmass*mdot*guniv)/  (8.0*pi*sb*
+c     &   (x1b(i)*sin(x2b(j)))**3.0) )**0.25
+		temp=1e5
 	cisosqrd=1.66666*boltz*temp/mp
 	d(i,j)=d0*(x1b(i)/ric)**(-dindex)*
      & exp((-1.0*guniv*ptmass*(x1b(i)*cos(x2b(j)))**2)/
@@ -143,11 +144,13 @@ c          d(i,je) = d0*x1b(i)**(-dindex)
 c         v3(i,je) = sqrt(1./x1b(i))
          v3jop1(i)= v3(i,je)
          v1jop1(i)= v1(i,je)
+         ejop1(i)=e(i,je)
        enddo
 
       endif
 
       call bvald
+	  call bvale
       call bvalv1
       call bvalv2
       call bvalv3
