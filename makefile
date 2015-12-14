@@ -118,11 +118,11 @@ clean:
 
 
 
-compile: zeus2d.src ${EXEDIR}HP15_zeus2d.exe
+compile: zeus2d.src ${EXEDIR}luketic_zeus2d.exe
 
 zeus2d.src: zeus2d.def
 	touch *.src *.c
 
-${EXEDIR}HP15_zeus2d.exe: ${OBJ}  ${ADDN}
-	${LDR} -o ${EXEDIR}HP15_zeus2d.exe ${OBJ}  ${ADDN} ${LIB}
+${EXEDIR}luketic_zeus2d.exe: ${OBJ}  ${ADDN}
+	${LDR} -o ${EXEDIR}luketic_zeus2d.exe ${OBJ}  ${ADDN} ${LIB}
 
