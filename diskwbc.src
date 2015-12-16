@@ -26,6 +26,7 @@ c----------------------------------------------------------------------
          
 
       integer i,j
+	  real*8 tfloor
 c
       external bvalv1,bvalv2,bvalv3,bvald,bvale
 c\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\///////////////////////////////////////
@@ -34,10 +35,14 @@ c
 c  set d, e, velocity at last cell in j
 c
        dfloor=1d-6
+	   tfloor=1e4
 c	print *,dfloor*d0
        do  i=is,ie
         do  j=is,je
-        if (d (i,j).le.1e-22) d (i,j)=1e-22
+        if (d (i,j).le.1e-22) d (i,j)=1e-22 
+		if (e (i,j) .le. (3.0*d(i,j)*boltz*tfloor)/(2.0*mp*mu)) then
+			e(i,j)=(3.0*d(i,j)*boltz*tfloor)/(2.0*mp*mu)
+		endif
         enddo 
        enddo 
 
@@ -45,7 +50,7 @@ c	print *,dfloor*d0
         d (i,je)=djop1(i)  
         v1(i,je)=0.0
         v3(i,je)=v3jop1(i)
-		if (e(i,je).le.ejop1(i)) e(i,je)=ejop1(i) 
+c		if (e(i,je).le.ejop1(i)) e(i,je)=ejop1(i) 
        enddo 
 
        call bvald
