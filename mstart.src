@@ -44,7 +44,7 @@ c
       dtdump = 0.0
 	  call_py = 0.0
       id     = 'aa'
-      resfile= 'res000aa'
+      resfile= 'res0000aa'
       read (1,rescon)
       write(2,rescon)
       
@@ -100,10 +100,10 @@ c
       write(2,iocon)
 c
       if (irestart .eq. 0) then
-        write(resfile,"(a3,i3.3,a8)") 'res',0,id
-        write(hdffile,"(a3,i3.3,a8)") 'hdf',0,id
-        write(hstfile,"(a3,i3.3,a8)") 'hst',0,id
-        write(usrfile,"(a3,i3.3,a8)") 'usr',0,id
+        write(resfile,"(a3,i4.4,a8)") 'res',0,id
+        write(hdffile,"(a3,i4.4,a8)") 'hdf',0,id
+        write(hstfile,"(a3,i4.4,a8)") 'hst',0,id
+        write(usrfile,"(a3,i4.4,a8)") 'usr',0,id
       else
         incr = strtoi(resfile,4,6) + 1
         write(resfile,"(a3,i3.3,a8)") 'res',incr,id
