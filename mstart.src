@@ -105,14 +105,14 @@ c
         write(hstfile,"(a3,i4.4,a8)") 'hst',0,id
         write(usrfile,"(a3,i4.4,a8)") 'usr',0,id
       else
-        incr = strtoi(resfile,4,6) + 1
-        write(resfile,"(a3,i3.3,a8)") 'res',incr,id
-        incr = strtoi(hdffile,4,6) + 1
-        write(hdffile,"(a3,i3.3,a8)") 'hdf',incr,id
-        incr = strtoi(hstfile,4,6) + 1
-        write(hstfile,"(a3,i3.3,a8)") 'hst',incr,id
-        incr = strtoi(usrfile,4,6) + 1
-        write(usrfile,"(a3,i3.3,a8)") 'usr',incr,id
+        incr = strtoi(resfile,5,7) + 1
+        write(resfile,"(a3,i4.4,a8)") 'res',incr,id
+        incr = strtoi(hdffile,5,7) + 1
+        write(hdffile,"(a3,i4.4,a8)") 'hdf',incr,id
+        incr = strtoi(hstfile,5,7) + 1
+        write(hstfile,"(a3,i4.4,a8)") 'hst',incr,id
+        incr = strtoi(usrfile,5,7) + 1
+        write(usrfile,"(a3,i4.4,a8)") 'usr',incr,id
       endif
 c
 c  Close unit=1 (input deck).  Unit=2 (zeuslp) is kept open throughout
