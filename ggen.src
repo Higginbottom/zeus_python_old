@@ -107,6 +107,7 @@ c  Set up x1a grid lines from i=imin to imax, using known values of
 c  x1min, x1rat.  Then go back and read another block of x1 grid zones,
 c  if needed.
 c
+      print *,x1min,x1max,float(nbl),dx1a(imin)
       x1a(imin) = x1min
       do 40 i=imin+1,imax
         dx1a(i) = dx1a(i-1) * x1rat
