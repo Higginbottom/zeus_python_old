@@ -64,7 +64,6 @@ c  edited by NSH to include radiative heating and cooling
 c
 	dt_hc=0.0
 	icount=0
-	
           do 40 j=js,je
 			  column=0.0
             do 30 i=ii(j),io(j)
@@ -81,7 +80,7 @@ c   This next line computes the ionization parameter  - rho/1.43mp is the hydrog
 				
 				
 				
-	  	      xi(i,j)=((lx*exp(-1.0*column*0.4))/((d(i,j)/(mp*mu))*
+	  	      xi(i,j)=((lx*exp(-1.0*column*kappa_x))/((d(i,j)/(mp*mu))*
      &         x1b(i)**2))
 				
 
