@@ -47,7 +47,7 @@ c  restart dump
 c
       if (iswres .eq. 1) then
         call msave(resfile)
-        incr = strtoi(resfile,5,7) + 1
+        incr = strtoi(resfile,4,7) + 1
         write(resfile,"(a3,i4.4,a8)") 'res',incr,id
         iswres=0
       endif
@@ -56,7 +56,8 @@ c  HDF dump
 c
       if (iswhdf .eq. 1) then
         call hdfall(hdffile)
-        incr = strtoi(hdffile,5,7) + 1
+        incr = strtoi(hdffile,4,7) + 1
+		print *,"TEST ",hdffile,incr
         write(hdffile,"(a3,i4.4,a8)") 'hdf',incr,id
         iswhdf=0
       endif
@@ -73,7 +74,7 @@ c
       if (iswusr .eq. 1) then
 c        call USERDUMP(usrfile)
         call movie(usrfile)
-        incr = strtoi(usrfile,5,7) + 1
+        incr = strtoi(usrfile,4,7) + 1
         write(usrfile,"(a3,i4.4,a8)") 'usr',incr,id
         iswusr=0
       endif

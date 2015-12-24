@@ -105,13 +105,14 @@ c
         write(hstfile,"(a3,i4.4,a8)") 'hst',0,id
         write(usrfile,"(a3,i4.4,a8)") 'usr',0,id
       else
-        incr = strtoi(resfile,5,7) + 1
+        incr = strtoi(resfile,4,7) + 1
         write(resfile,"(a3,i4.4,a8)") 'res',incr,id
-        incr = strtoi(hdffile,5,7) + 1
+        incr = strtoi(hdffile,4,7) + 1
+		print *,resfile,incr
         write(hdffile,"(a3,i4.4,a8)") 'hdf',incr,id
-        incr = strtoi(hstfile,5,7) + 1
+        incr = strtoi(hstfile,4,7) + 1
         write(hstfile,"(a3,i4.4,a8)") 'hst',incr,id
-        incr = strtoi(usrfile,5,7) + 1
+        incr = strtoi(usrfile,4,7) + 1
         write(usrfile,"(a3,i4.4,a8)") 'usr',incr,id
       endif
 c
