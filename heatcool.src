@@ -277,7 +277,7 @@ c     error message for too many iterations
 	 pre_limit_tmp=0
 	 pre_limit=0
 		  
-		  print *,"Got here OK"
+c		  print *,"Got here OK"
          INQUIRE( FILE='py_heatcool.dat', EXIST=THERE ) 
           IF ( THERE ) then
 		 	 open(66,file='py_heatcool.dat',status='old')
@@ -324,10 +324,14 @@ c     +  x_heat
      &   (ne*nh*h_xray(i+2,j+3))+1e-3
  		 line_pre(i+2,j+3)=line_pre(i+2,j+3)*l_cool/
      &   (ne*nh*(c_line(i+2,j+3)+c_xray(i+2,j+3)))+1e-3
-		 brem_pre(i+2,j+3)=brem_pre(i+2,j+3)*b_cool/
+ 		 brem_pre(i+2,j+3)=brem_pre(i+2,j+3)*b_cool/
      &   (ne*nh*c_brem(i+2,j+3))+1e-3
-     
-      ratio=0.9
+	 
+        if (hc_lim.gt.0.0) then
+        ratio=hc_lim
+	  
+	  
+c hc_lim is negative, which means we dont want to limit hc changes	  
 c	  print *,"CHECKING ",i,j
       if (comp_h_pre(i+2,j+3)/comp_h_pre_old .lt. ratio) then
 c		  print *,"comp_h_pre=",comp_h_pre(i+2,j+3),' LIMITING LO'
@@ -355,7 +359,6 @@ c		  print *,"line_pre=",line_pre(i+2,j+3),' LIMITING LO'
  		   pre_limit_tmp=pre_limit_tmp+1
 			
       endif
-	  print *,brem_pre(i+2,j+3),brem_pre_old,ratio
       if (brem_pre(i+2,j+3)/brem_pre_old .lt. ratio) then
 c		  print *,"brem_pre=",brem_pre(i+2,j+3),' LIMITING LO'
 		  
@@ -365,7 +368,7 @@ c		  print *,"brem_pre=",brem_pre(i+2,j+3),' LIMITING LO'
       endif
       
       
-      ratio=1.1
+      ratio=1.0/hc_lim
      
       if (comp_h_pre(i+2,j+3)/comp_h_pre_old .gt. ratio) then
 c		  print *,"comp_h_pre=",comp_h_pre(i+2,j+3),' LIMITING HI'
@@ -382,9 +385,7 @@ c		  print *,"comp_h_pre=",comp_c_pre(i+2,j+3),' LIMITING HI'
 		   
       endif
       if (xray_pre(i+2,j+3)/xray_pre_old .gt. ratio) then
-c		  print *,"xray_pre=",xray_pre(i+2,j+3),' LIMITING HI'
-		  
-           xray_pre(i+2,j+3)=xray_pre_old*ratio
+		   xray_pre(i+2,j+3)=xray_pre_old*ratio
 		   pre_limit_tmp=pre_limit_tmp+1
 		   
       endif
@@ -402,18 +403,20 @@ c		  print *,"brem_pre=",brem_pre(i+2,j+3),' LIMITING HI'
 			   pre_limit_tmp=pre_limit_tmp+1
 
       endif
+      else
+		  print *,"We are not limiting changes in HC rates"
+	  endif
      
-     
-	  print *,'COMP_C_PRE    old=',comp_c_pre_old,
-     c' new=',comp_c_pre(i+2,j+3) 
-      print *,'COMP_H_PRE    old=',comp_h_pre_old,
-     c' new=',comp_h_pre(i+2,j+3)
-      print *,'XRAY_PRE    old=',xray_pre_old,
-     c' new=',xray_pre(i+2,j+3)
-      print *,'LINE_PRE    old=',line_pre_old,
-     c' new=',line_pre(i+2,j+3)
-      print *,'BREM_PRE    old=',brem_pre_old,
-     c' new=',brem_pre(i+2,j+3)  
+c	  print *,'COMP_C_PRE    old=',comp_c_pre_old,
+c     c' new=',comp_c_pre(i+2,j+3) 
+c      print *,'COMP_H_PRE    old=',comp_h_pre_old,
+c     c' new=',comp_h_pre(i+2,j+3)
+c      print *,'XRAY_PRE    old=',xray_pre_old,
+c     c' new=',xray_pre(i+2,j+3)
+c      print *,'LINE_PRE    old=',line_pre_old,
+c     c' new=',line_pre(i+2,j+3)
+c      print *,'BREM_PRE    old=',brem_pre_old,
+c     c' new=',brem_pre(i+2,j+3)  
 	 
 	 
      

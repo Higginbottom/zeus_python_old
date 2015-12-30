@@ -23,7 +23,7 @@ c
       integer incr,strtoi,i,j
       external setup, mget, restart, strtoi
       namelist /rescon/ irestart,tdump,dtdump,id,resfile
-      namelist /py_hydro/ den_tol,nden
+      namelist /py_hydro/ den_tol,nden,hc_lim
       namelist /iocon/ thdf,dthdf,thist,dthist,tusr,dtusr
 c\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\///////////////////////////////
 c=======================================================================
@@ -53,7 +53,7 @@ c
       	  read (1,py_hydro)
       	  write(2,py_hydro)
 #endif
-      		print *,den_tol,nden
+      		print *,den_tol,nden,hc_lim
       
 c
       if (irestart .eq. 0) then
