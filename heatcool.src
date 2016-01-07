@@ -271,7 +271,7 @@ c     error message for too many iterations
 		  real r,theta,c_heat,x_heat,b_heat,l_heat,c_cool,x_cool,py_xi
           real b_cool,l_cool,n1,py_temp,py_ne,py_vol,ne,nh
           real comp_c_pre_old,comp_h_pre_old,xray_pre_old,line_pre_old,
-     +     brem_pre_old,ratio
+     +     brem_pre_old,ratio,py_rho,py_nh
 	 integer pre_limit,pre_limit_tmp
 	 
 	 pre_limit_tmp=0
@@ -286,7 +286,7 @@ c		  print *,"Got here OK"
  
 		  	   	read (66,*,end=20) i,j,r,theta,py_vol,py_temp,py_xi,py_ne,
      &			x_heat,c_heat,l_heat,
-     &   b_heat,c_cool,l_cool,b_cool
+     &   b_heat,c_cool,l_cool,b_cool,py_rho,py_nh
 
 c				print *,i,j,r,theta,x_heat,c_heat,l_heat,b_heat,x_cool,
 c     &   c_cool,l_cool,b_cool,py_xi	   
