@@ -263,6 +263,7 @@ c     error message for too many iterations
 #include "field.h"
 #include "root.h"
 #include "diskw.h"
+#include "control.h"
 		  integer i,j
 		  
 		  
