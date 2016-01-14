@@ -326,7 +326,7 @@ c     +  x_heat
      &   (ne*nh*(c_line(i+2,j+3)+c_xray(i+2,j+3)))+1e-3
  		 brem_pre(i+2,j+3)=brem_pre(i+2,j+3)*b_cool/
      &   (ne*nh*c_brem(i+2,j+3))+1e-3
-	 
+	 print *,"HCLIM=",hc_lim
         if (hc_lim.gt.0.0) then
         ratio=hc_lim
 	  
