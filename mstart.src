@@ -53,7 +53,7 @@ c
       	  read (1,py_hydro)
       	  write(2,py_hydro)
 #endif
-      		print *,den_tol,nden,hc_lim
+      		print *,"python_controls input",den_tol,nden,hc_lim
       
 c
       if (irestart .eq. 0) then
