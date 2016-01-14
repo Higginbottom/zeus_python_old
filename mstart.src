@@ -108,7 +108,6 @@ c
         incr = strtoi(resfile,4,7) + 1
         write(resfile,"(a3,i4.4,a8)") 'res',incr,id
         incr = strtoi(hdffile,4,7) + 1
-		print *,resfile,incr
         write(hdffile,"(a3,i4.4,a8)") 'hdf',incr,id
         incr = strtoi(hstfile,4,7) + 1
         write(hstfile,"(a3,i4.4,a8)") 'hst',incr,id

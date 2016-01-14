@@ -18,10 +18,8 @@ c=======================================================================
 c
       ishift = 1
       ival   = 0
-	  print *,"test2",string
       do 10 i=iend,istrt,-1
         ival = ival + ishift*asciic(ichar(string(i:i)))
-		print *,i,ival
         ishift = ishift*10
 10    continue
       strtoi = ival
