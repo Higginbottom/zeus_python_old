@@ -11,14 +11,15 @@
 #include "field.h"
 #include "root.h"
 #include "diskw.h"
-        REAL    xi0,temp,hc_tot,rho,rho1,xi1,hc_tot1,e_0,e_1
-	REAL    t_0,t_1,hc_01
-	REAL 	e_01,t_01,sqsqxi1
-	INTEGER i1,j1,i,j
-	double precision t_l,t_u,tol,nh1,ne1
-	REAL heatcool,zbrent,zfunc,n1
+#include "zeus_python.h"
+        REAL    xi0,temp,hc_tot,rho,rho1,hc_tot1,e_0,e_1
+	REAL    t_0,t_1
+	REAL 	t_01
+	INTEGER i,j
+	double precision t_l,t_u,tol
+	REAL heatcool,zbrent,zfunc
 	real test
-	common /hc_data/ xi1,e_01,hc_01,sqsqxi1,n1,i1,j1,nh1,ne1
+
 	external zfunc
 	
 c   first calculate the current temperature of the cell	

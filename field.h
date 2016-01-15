@@ -1,6 +1,7 @@
       REAL   d(in,jn),  e(in,jn),  p(in,jn), v1(in,jn), v2(in,jn)
 #ifdef PYHYDRO		  
 	  REAL   xi(in,jn), e_old(in,jn), c_comp(in,jn),c_xray(in,jn)
+	  REAL h_init(in,jn),c_init(in,jn)
 	  REAL   d_init(in,jn), h_comp(in,jn),h_xray(in,jn)
 	  REAL   c_line(in,jn),c_brem(in,jn),t_old(in,jn),adiab(in,jn)
 	  REAL   comp_h_pre(in,jn),comp_c_pre(in,jn)
@@ -25,7 +26,7 @@
 
       common /fieldr/  d ,  e,  p, v1, v2
 	  common /fieldr/  xi , e_old, t_old,adiab
-	  common /fieldr/  d_init
+	  common /fieldr/  d_init,h_init,c_init
 	  common /fieldr/  c_comp,c_line,c_brem
 	  common /fieldr/  h_comp,h_xray
 	  common /fieldr/  comp_c_pre,comp_h_pre
