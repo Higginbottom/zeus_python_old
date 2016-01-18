@@ -23,6 +23,7 @@
 	
 c   first calculate the current temperature of the cell	
 	
+	
 	t_01=e_0*(2.0/3.0)/((rho/(mu*mp))*boltz)
 	xi1=xi0
 	i1=i
