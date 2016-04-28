@@ -36,7 +36,7 @@ c-----------------------------------------------------------------------
 c
       character*15  filename
       character*16 coordsys
-      character*32 string
+      character*36 string
 c
       equivalence (data,wb),(xscale,wi0),(yscale,wj0)
 c
@@ -76,7 +76,7 @@ c
           data((j-js)*nx1z + i -is+1) = real(d(i,j))
 100     continue
 110   continue
-      write(string,"('DENSITY AT TIME=',1pe8.2,'        ')") time
+      write(string,"('DENSITY AT TIME=',1pe12.6,'        ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dspdata(filename,rank,shape,data)
 c
@@ -87,7 +87,7 @@ c
           data((j-js)*nx1z + i -is+1) = real(xi(i,j))
 101     continue
 111   continue
-      write(string,"('XI AT TIME=',1pe8.2,'        ')") time
+      write(string,"('XI AT TIME=',1pe12.6,'        ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
 c
@@ -98,7 +98,7 @@ c
           data((j-js)*nx1z + i -is+1) = real(c_comp(i,j))
 103     continue
 113   continue
-      write(string,"('COMP_C AT TIME=',1pe8.2,'        ')") time
+      write(string,"('COMP_C AT TIME=',1pe12.6,'        ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
 c
@@ -109,7 +109,7 @@ c
           data((j-js)*nx1z + i -is+1) = real(h_comp(i,j))
 173     continue
 163   continue
-      write(string,"('COMP_H AT TIME=',1pe8.2,'        ')") time
+      write(string,"('COMP_H AT TIME=',1pe12.6,'        ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
 c
@@ -120,7 +120,7 @@ c
           data((j-js)*nx1z + i -is+1) = real(h_xray(i,j))
 174     continue
 164   continue
-      write(string,"('XRAY_H AT TIME=',1pe8.2,'        ')") time
+      write(string,"('XRAY_H AT TIME=',1pe12.6,'        ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
 c
@@ -131,7 +131,7 @@ c
           data((j-js)*nx1z + i -is+1) = real(c_line(i,j))
 105     continue
 115   continue
-      write(string,"('LINE_C AT TIME=',1pe8.2,'        ')") time
+      write(string,"('LINE_C AT TIME=',1pe12.6,'        ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
 c
@@ -142,7 +142,7 @@ c
           data((j-js)*nx1z + i -is+1) = real(c_brem(i,j))
 106     continue
 116   continue
-      write(string,"('BREM_C AT TIME=',1pe8.2,'        ')") time
+      write(string,"('BREM_C AT TIME=',1pe12.6,'        ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
 c
@@ -154,7 +154,7 @@ c
           data((j-js)*nx1z + i -is+1) = real(e_old(i,j))
 102     continue
 112   continue
-      write(string,"('OLD ENERGY AT TIME=',1pe8.2,'   ')") old_time
+      write(string,"('OLD ENERGY AT TIME=',1pe12.6,'   ')") old_time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
 c
@@ -166,7 +166,7 @@ c
           data((j-js)*nx1z + i -is+1) = real(t_old(i,j))
 107     continue
 117   continue
-      write(string,"('OLD TEMP AT TIME=',1pe8.2,'   ')") old_time
+      write(string,"('OLD TEMP AT TIME=',1pe12.6,'   ')") old_time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
 c
@@ -177,7 +177,7 @@ c
           data((j-js)*nx1z + i -is+1) = real(adiab(i,j))
 108     continue
 118   continue
-      write(string,"('ADIABATIC AT TIME=',1pe8.2,'   ')") time
+      write(string,"('ADIABATIC AT TIME=',1pe12.6,'   ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
 c
@@ -188,7 +188,7 @@ c
           data((j-js)*nx1z + i -is+1) = real(divv1(i,j))
 109     continue
 119   continue
-      write(string,"('DIVV AT TIME=',1pe8.2,'   ')") time
+      write(string,"('DIVV AT TIME=',1pe12.6,'   ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
 c
@@ -199,7 +199,7 @@ c
           data((j-js)*nx1z + i -is+1) = real(v1_pdv(i,j))
 130     continue
 120   continue
-      write(string,"('V1_PDV AT TIME=',1pe8.2,'   ')") time
+      write(string,"('V1_PDV AT TIME=',1pe12.6,'   ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
 c
@@ -210,7 +210,7 @@ c
           data((j-js)*nx1z + i -is+1) = real(v2_pdv(i,j))
 131     continue
 121   continue
-      write(string,"('V2_PDV AT TIME=',1pe8.2,'   ')") time
+      write(string,"('V2_PDV AT TIME=',1pe12.6,'   ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
 	  
@@ -225,7 +225,7 @@ c
           data((j-js)*nx1z + i -is+1) = real(dt_csound(i,j))
 132     continue
 122   continue
-      write(string,"('CS_TS AT TIME=',1pe8.2,'   ')") time
+      write(string,"('CS_TS AT TIME=',1pe12.6,'   ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)	  
   
@@ -238,7 +238,7 @@ c
           data((j-js)*nx1z + i -is+1) = real(dt_v1(i,j))
 133     continue
 123   continue
-      write(string,"('V1_TS AT TIME=',1pe8.2,'   ')") time
+      write(string,"('V1_TS AT TIME=',1pe12.6,'   ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
   
@@ -250,7 +250,7 @@ c
           data((j-js)*nx1z + i -is+1) = real(dt_v2(i,j))
 134     continue
 124   continue
-      write(string,"('V2_TS AT TIME=',1pe8.2,'   ')") time
+      write(string,"('V2_TS AT TIME=',1pe12.6,'   ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
   
@@ -263,7 +263,7 @@ c
           data((j-js)*nx1z + i -is+1) = real(dt_alfen(i,j))
 135     continue
 125   continue
-      write(string,"('ALFEN_TS AT TIME=',1pe8.2,'   ')") time
+      write(string,"('ALFEN_TS AT TIME=',1pe12.6,'   ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
   
@@ -275,7 +275,7 @@ c
           data((j-js)*nx1z + i -is+1) = real(dt_viscosity(i,j))
 136     continue
 126   continue
-      write(string,"('VISCOUS__TS AT TIME=',1pe8.2,'   ')") time
+      write(string,"('VISCOUS__TS AT TIME=',1pe12.6,'   ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
   
@@ -288,7 +288,7 @@ c
           data((j-js)*nx1z + i -is+1) = real(comp_c_pre(i,j))
 137     continue
 127   continue
-      write(string,"('COMP_C_PRE AT TIME=',1pe8.2,'   ')") time
+      write(string,"('COMP_C_PRE AT TIME=',1pe12.6,'   ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
 	  
@@ -300,7 +300,7 @@ c
           data((j-js)*nx1z + i -is+1) = real(comp_h_pre(i,j))
 142     continue
 152   continue
-      write(string,"('COMP_H_PRE AT TIME=',1pe8.2,'   ')") time
+      write(string,"('COMP_H_PRE AT TIME=',1pe12.6,'   ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)	  
 	  
@@ -313,7 +313,7 @@ c
           data((j-js)*nx1z + i -is+1) = real(line_pre(i,j))
 138     continue
 128   continue
-      write(string,"('LINE_PRE AT TIME=',1pe8.2,'   ')") time
+      write(string,"('LINE_PRE AT TIME=',1pe12.6,'   ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
 	  
@@ -326,7 +326,7 @@ c
           data((j-js)*nx1z + i -is+1) = real(xray_pre(i,j))
 153     continue
 143   continue
-      write(string,"('XRAY_PRE AT TIME=',1pe8.2,'   ')") time
+      write(string,"('XRAY_PRE AT TIME=',1pe12.6,'   ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)	  
 	  
@@ -339,7 +339,7 @@ c
           data((j-js)*nx1z + i -is+1) = real(brem_pre(i,j))
 151     continue
 141   continue
-      write(string,"('BREM_PRE AT TIME=',1pe8.2,'   ')") time
+      write(string,"('BREM_PRE AT TIME=',1pe12.6,'   ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
 	  
@@ -360,7 +360,7 @@ c
           data((j-js)*nx1z + i -is+1) = real(e(i,j))
 200     continue
 210   continue
-      write(string,"('TOTAL ENERGY AT TIME=',1pe8.2,'   ')") time
+      write(string,"('TOTAL ENERGY AT TIME=',1pe12.6,'   ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
 c
@@ -372,7 +372,7 @@ c
           data((j-js)*nx1z + i -is+1) = real(wa(i,j))
 300     continue
 310   continue
-      write(string,"('1-VELOCITY AT TIME=',1pe8.2,'     ')") time
+      write(string,"('1-VELOCITY AT TIME=',1pe12.6,'     ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
 c
@@ -384,7 +384,7 @@ c
           data((j-js)*nx1z + i -is+1) = real(wa(i,j))
 400     continue
 410   continue
-      write(string,"('2-VELOCITY AT TIME=',1pe8.2,'     ')") time
+      write(string,"('2-VELOCITY AT TIME=',1pe12.6,'     ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
 c
@@ -396,7 +396,7 @@ c
           data((j-js)*nx1z + i -is+1) = real(v3(i,j))
 500     continue
 510   continue
-      write(string,"('3-VELOCITY AT TIME=',1pe8.2,'     ')") time
+      write(string,"('3-VELOCITY AT TIME=',1pe12.6,'     ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
 #endif
@@ -409,7 +409,7 @@ c
           data((j-js)*nx1z + i -is+1) = real(phi(i,j))
 600     continue
 610   continue
-      write(string,"('GRAV POT AT TIME=',1pe8.2,'       ')") time
+      write(string,"('GRAV POT AT TIME=',1pe12.6,'       ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
 #endif
@@ -423,7 +423,7 @@ c
           data((j-js)*nx1z + i -is+1) = real(wa(i,j))
 700     continue
 710   continue
-      write(string,"('1-MAG FIELD AT TIME=',1pe8.2,'    ')") time
+      write(string,"('1-MAG FIELD AT TIME=',1pe12.6,'    ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
 c
@@ -435,7 +435,7 @@ c
           data((j-js)*nx1z + i -is+1) = real(wa(i,j))
 800     continue
 810   continue
-      write(string,"('2-MAG FIELD AT TIME=',1pe8.2,'    ')") time
+      write(string,"('2-MAG FIELD AT TIME=',1pe12.6,'    ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
 c
@@ -446,7 +446,7 @@ c
           data((j-js)*nx1z + i -is+1) = real(b3(i,j))
 900     continue
 910   continue
-      write(string,"('3-MAG FIELD AT TIME=',1pe8.2,'    ')") time
+      write(string,"('3-MAG FIELD AT TIME=',1pe12.6,'    ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
 #endif
@@ -459,7 +459,7 @@ c
           data((j-js)*nx1z + i -is+1) = real(er(i,j))
 1000    continue
 1010  continue
-      write(string,"('RADIATION E AT TIME=',1pe8.2,'    ')") time
+      write(string,"('RADIATION E AT TIME=',1pe12.6,'    ')") time
       ret = dssdast(string,' ',' ',coordsys)
       ret = dsadata(filename,rank,shape,data)
 #endif
