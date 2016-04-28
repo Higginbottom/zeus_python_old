@@ -69,14 +69,17 @@ c
             do 30 i=ii(j),io(j)
 c		print *,lx,d(i,j),mu,mp,x1b(i)
 				if (i.eq.ii(j)) then
-				column=column+d(i,j)*(x1b(i))
+c We are in the first cell, assume density of first cell carries on to the origin					
+				column=column+d(i,j)*(x1b(i)) 
 			else
+c Add in the next little bit of column
 				column=column+d(i,j)*(x1b(i)-x1a(i))+
      &                d(i-1,j)*(x1a(i)-x1b(i-1))
  			endif
 c	print *,x2b(j),x1b(i),column,column*0.4
 	 
-c   This next line computes the ionization parameter  - rho/1.43mp is the hydrogen number density.				
+c   This next line computes the ionization parameter  - rho/1.43mp is the hydrogen number density.		
+c   We azttenuate the luminosity by electron scattering cross section times the column					
 				
 				
 				
