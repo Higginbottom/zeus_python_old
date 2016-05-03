@@ -70,7 +70,9 @@ c
 c		print *,lx,d(i,j),mu,mp,x1b(i)
 				if (i.eq.ii(j)) then
 c We are in the first cell, assume density of first cell carries on to the origin					
-				column=column+d(i,j)*(x1b(i)) 
+c				column=column+d(i,j)*(x1b(i))
+c We are in the first cell, assume vacuum from inner edge of first cell to origin					
+                        column=column+d(i,j)*(x1b(i)-x1a(i)) 
 			else
 c Add in the next little bit of column
 				column=column+d(i,j)*(x1b(i)-x1a(i))+
@@ -80,7 +82,6 @@ c	print *,x2b(j),x1b(i),column,column*0.4
 	 
 c   This next line computes the ionization parameter  - rho/1.43mp is the hydrogen number density.		
 c   We azttenuate the luminosity by electron scattering cross section times the column					
-				
 				
 				
 	  	      xi(i,j)=((lx*exp(-1.0*column*kappa_x))/((d(i,j)/(mp*mu))*

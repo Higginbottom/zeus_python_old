@@ -43,7 +43,7 @@ c
 c\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\///////////////////////////////////////
 c=======================================================================
 c
-      namelist /pgen/ d0,v10,v20,v30, dindex,mdot,tx,lx,mu
+      namelist /pgen/ d0,v10,v20,v30, dindex,mdot,tx,lx,mu,kappa_x
 	  namelist /hc_pre/ comp_pre0,line_pre0,brem_pre0,xray_pre0
 c
 c  read parameters from input deck

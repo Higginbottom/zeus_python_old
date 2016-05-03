@@ -26,7 +26,7 @@ c-----------------------------------------------------------------------
       external nudt
 	  external hc_file_input
       namelist /pcon/ nlim,tlim
-      namelist /pgen/ d0,v10,v20,v30,dindex,mdot,tx,lx,mu
+      namelist /pgen/ d0,v10,v20,v30,dindex,mdot,tx,lx,mu,kappa_x
 c
 #ifdef PROBRES
 c
