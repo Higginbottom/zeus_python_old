@@ -78,8 +78,7 @@ c Add in the next little bit of column
 				column=column+d(i,j)*(x1b(i)-x1a(i))+
      &                d(i-1,j)*(x1a(i)-x1b(i-1))
  			endif
-c	print *,x2b(j),x1b(i),column,column*0.4
-	 
+
 c   This next line computes the ionization parameter  - rho/1.43mp is the hydrogen number density.		
 c   We azttenuate the luminosity by electron scattering cross section times the column					
 				
@@ -100,13 +99,21 @@ c	      print *,hc_tot,(1.0 - del)/(1.0 + del)*e(i,j)-e(i,j)
               epv = (1.0 - del)/(1.0 + del)*e(i,j)
 		      e_old(i,j)=epv
 			  adiab(i,j)=((epv-e(i,j))/dt)
-
-			  
+			  e(i,j)=epv
+c The next line tests to see if it is likely that radiation will be important in this cell	
+c if it is then we call the heating and cooling code, otherwise we just 		  
+  			if (column*kappa_x.lt.10.) then
+	  	      call hc_sub(d(i,j),xi(i,j),epv,e1,i,j)
+			  		e(i,j)=e1
+		  endif
+c		  else
+c			  e1=1e4/((2.0/3.0)/((d(i,j)/(mu*mp))*boltz))
+c		  endif
 c		print *,i,j
-	      call hc_sub(d(i,j),xi(i,j),epv,e1,i,j)
+c	      call hc_sub(d(i,j),xi(i,j),epv,e1,i,j)
 
 c		endif
-		e(i,j)=e1
+
         temp=e(i,j)*(2.0/3.0)/((d(i,j)/(mu*mp))*boltz)
 		
 
