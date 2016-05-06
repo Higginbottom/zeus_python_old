@@ -31,7 +31,11 @@ c	print *,e_0,rho,t_01
 c   n1 is the particle density (including electrons)
 	n1=rho/(mu*mp)
 
+c a somewhat arbitrary limit here - if xi0 is very small, then
+c line cooling will become huge and the temperature will drop
+c to the floor. 	
 
+	if (xi0.gt.1e-10) then
 
 c stage one, bracket to find out where the zero point is
 
@@ -67,6 +71,10 @@ c we will call heatcool one last time to compute the heating and cooling rates f
 
 c now we have a new temperature, we will return the new internal energy. 
 	e_1=t_1*1.5*n1*boltz
+	else
+c if xi is tiny, we set the temperature to 10000K		
+		e_1=1e4*1.5*n1*boltz
+	endif
 
 
 	end

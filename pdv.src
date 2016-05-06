@@ -97,15 +97,19 @@ c   We azttenuate the luminosity by electron scattering cross section times the 
               del = 0.5*dt*(gamma-1.0)*divv1(i,j)
 c	      print *,hc_tot,(1.0 - del)/(1.0 + del)*e(i,j)-e(i,j)
               epv = (1.0 - del)/(1.0 + del)*e(i,j)
+c     store the energy of the cell following adiabatic heating/cooling
 		      e_old(i,j)=epv
+c  store the adiabatic heating/cooling rate
 			  adiab(i,j)=((epv-e(i,j))/dt)
+c  the new energy of the cell			  
 			  e(i,j)=epv
 c The next line tests to see if it is likely that radiation will be important in this cell	
 c if it is then we call the heating and cooling code, otherwise we just 		  
-  			if (column*kappa_x.lt.10.) then
+c  			if (column*kappa_x.lt.10.) then
 	  	      call hc_sub(d(i,j),xi(i,j),epv,e1,i,j)
+c   Set the energy of the cell to that computed following heating and cooling			  
 			  		e(i,j)=e1
-		  endif
+c		  endif
 c		  else
 c			  e1=1e4/((2.0/3.0)/((d(i,j)/(mu*mp))*boltz))
 c		  endif
