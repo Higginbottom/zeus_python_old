@@ -12,7 +12,7 @@
 #include "root.h"
 #include "diskw.h"
         REAL    xi0,temp,hc_tot,rho,rho1,xi1,hc_tot1,e_0,e_1
-	REAL    t_0,t_1,hc_01
+	REAL    t_0,t_1,hc_01,nh,ne
 	REAL 	e_01,t_01,sqsqxi1
 	INTEGER i1,j1,i,j
 	double precision t_l,t_u,tol,nh1,ne1
@@ -30,7 +30,8 @@ c	print *,e_0,rho,t_01
 
 c   n1 is the particle density (including electrons)
 	n1=rho/(mu*mp)
-
+	nh=rho/(1.43*mp)
+	ne=nh*1.2
 
 
 c stage one, bracket to find out where the zero point is

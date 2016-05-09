@@ -70,8 +70,8 @@ c
 c		print *,lx,d(i,j),mu,mp,x1b(i)
 				
 c   This next line computes the ionization parameter  - rho/1.43mp is the hydrogen number density.				
-	  	      xi(i,j)=(lx/((d(i,j)/(mp*mu))*x1b(i)**2))
-				
+c	  	      xi(i,j)=(lx/((d(i,j)/(mp*mu))*x1b(i)**2))
+				xi(i,j)=(lx/((d(i,j)/(mp*1.43))*x1b(i)**2))
 
               div1 = (g2a(i+1)*g31a(i+1)*v1(i+1,j)
      &             -  g2a(i  )*g31a(i  )*v1(i  ,j))/dvl1a(i)
