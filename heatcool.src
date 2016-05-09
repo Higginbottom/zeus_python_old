@@ -32,7 +32,7 @@ c   n1 is the particle density (including electrons)
 	n1=rho/(mu*mp)
 	nh=rho/(1.43*mp)
 	ne=nh*1.2
-
+	n1=sqrt(nh*ne)
 
 c stage one, bracket to find out where the zero point is
 
@@ -59,6 +59,7 @@ c     &   line_pre(i,j),brem_pre(i,j)
 	     t_1=zbrent(zfunc,t_l,t_u,tol)
 	
 c we will call heatcool one last time to compute the heating and cooling rates for old t	
+	 	n1=rho/(mu*mp)
 	
 	hc_01=heatcool(t_1)
 
@@ -66,6 +67,7 @@ c we will call heatcool one last time to compute the heating and cooling rates f
 
 
 c now we have a new temperature, we will return the new internal energy. 
+	
 	e_1=t_1*1.5*n1*boltz
 
 
