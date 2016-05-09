@@ -320,8 +320,8 @@ c     &  (theta)
      &   (ne*nh*c_comp(i+2,j+3))+1e-3
 		 
 		 
-c	  print *,"XRAY test",x1b(i+2),x2b(j+3),ne*nh*h_xray(i+2,j+3),
-c     +  x_heat
+c	  print *,"COMP test",x1b(i+2),x2b(j+3),ne*nh*c_comp(i+2,j+3),
+c     +  c_comp(i+2,j+3),c_cool,d(i+2,j+3),xi(i+2,j+3)
 		 xray_pre(i+2,j+3)=xray_pre(i+2,j+3)*(x_heat)/
      &   (ne*nh*h_xray(i+2,j+3))+1e-3
  		 line_pre(i+2,j+3)=line_pre(i+2,j+3)*l_cool/
