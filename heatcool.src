@@ -12,13 +12,13 @@
 #include "root.h"
 #include "diskw.h"
         REAL    xi0,temp,hc_tot,rho,rho1,xi1,hc_tot1,e_0,e_1
-	REAL    t_0,t_1,hc_01,nh,ne
+	REAL    t_0,t_1,hc_01
 	REAL 	e_01,t_01,sqsqxi1
 	INTEGER i1,j1,i,j
 	double precision t_l,t_u,tol,nh1,ne1
 	REAL heatcool,zbrent,zfunc,n1
 	real test
-	common /hc_data/ xi1,e_01,hc_01,sqsqxi1,n1,i1,j1,ne,nh
+	common /hc_data/ xi1,e_01,hc_01,sqsqxi1,n1,i1,j1
 	external zfunc
 	t_01=e_0*(2.0/3.0)/((rho/(mu*mp))*boltz)
 c	print *,e_0,rho,t_01
@@ -30,11 +30,9 @@ c	print *,e_0,rho,t_01
 
 c   n1 is the particle density (including electrons)
 	n1=rho/(mu*mp)
-	nh=rho/(1.43*mp)
-	ne=nh*1.2
-c	print *,n1
-c	n1=sqrt(nh*ne)
-c	print *,n1
+
+
+
 c stage one, bracket to find out where the zero point is
 
 
@@ -60,7 +58,6 @@ c     &   line_pre(i,j),brem_pre(i,j)
 	     t_1=zbrent(zfunc,t_l,t_u,tol)
 	
 c we will call heatcool one last time to compute the heating and cooling rates for old t	
-	 	n1=rho/(mu*mp)
 	
 	hc_01=heatcool(t_1)
 
@@ -68,7 +65,6 @@ c we will call heatcool one last time to compute the heating and cooling rates f
 
 
 c now we have a new temperature, we will return the new internal energy. 
-	
 	e_1=t_1*1.5*n1*boltz
 
 
@@ -86,8 +82,8 @@ c now we have a new temperature, we will return the new internal energy.
 #include "diskw.h"
       integer i,j
       REAL    div1,div2,divv,del,pnew,pav,xi0,temp,hc_tot,rho,e_0,t_0
-      REAL    gamma_comp,gamma_x,l_b,l_l,hc_0,sqsqxi,st,n,ne,nh
-	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j,ne,nh
+      REAL    gamma_comp,gamma_x,l_b,l_l,hc_0,sqsqxi,st,n
+	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j
 
 	st=sqrt(temp)
 
@@ -108,7 +104,7 @@ c	l_l=l_l+1e-24
 	l_l=line_pre(i,j)*(1.7e-18*exp(-1.3e5/temp)/(xi0*st)+1e-24)
 	c_line(i,j)=l_l
 c	print *,temp,xi,gamma_comp,gamma_x,l_b,l_l
-	hc_tot=ne*nh*(gamma_comp+gamma_x-l_b-l_l)
+	hc_tot=n*n*(gamma_comp+gamma_x-l_b-l_l)
 c	print *,temp,xi,gamma_comp,gamma_x,l_b,l_l,n,hc_tot
 	
 	
@@ -125,9 +121,9 @@ c	print *,temp,xi,gamma_comp,gamma_x,l_b,l_l,n,hc_tot
 #include "field.h"
 #include "root.h"
 #include "diskw.h"
-	REAL rho,xi0,e_0,t_0,temp,heatcool,hc_0,logxi,sqsqxi,n,ne,nh
+	REAL rho,xi0,e_0,t_0,temp,heatcool,hc_0,logxi,sqsqxi,n
 	INTEGER i,j
-	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j,ne,nh
+	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j
 	external heatcool
 	zfunc=(1.5*temp*n*boltz)-e_0-
      &  dt*(hc_0+heatcool(temp))/2.0
