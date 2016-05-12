@@ -121,9 +121,16 @@ c
 	  dtcsmn = 1.0/ (sqrt(dtcsi2mx(jmaxcs)) + tiny)
       dtc mn = 1.0/ (sqrt(dtc i2mx(jmaxc )) + tiny)
 c	  print *,"dtcs=",dtcs," dtv1=",dtv1," dtv2=",dtv2," dtal="
-c     &  ,dtal," dtqq=",dtqq
-c
-c      print *,nred
+c     &  ,dtal," dtqq=",dtqq,"1/sum=",1./
+c     &(1./dtcs+1./dtv1+1./dtv2+1./dtal+1./dtqq)
+c  
+c	  print *,"imax=",imax,"jmax=",jmax,"cs=",sound(imax,jmax),
+c    &"size=",dx_test(3,202),"dt=",
+c     &1./sqrt(sound(imax,jmax)/dx_test(imax,jmax)),
+c     &dx1a(3),g2b(3),dx2a(202)
+	 
+c      print *,"nred=",nred,"courno=",courno,"tiny=",tiny,
+c     &"dttoi2j(jmax)=",dttoi2j(jmax),"dtqqi2=",dtqqi2
       dtnew  = courno / sqrt(dttoi2j(jmax) + dtqqi2 + tiny)
       dt     =   min(dtnew, 1.26*dt)/4.0**nred
 c	print *,"******************* dt set to ",dt,time
