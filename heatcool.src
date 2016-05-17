@@ -101,7 +101,7 @@ c	l_l=l_l/xi
 c	l_l=l_l/sqrt(temp)
 c	l_l=l_l*1.7e-18
 c	l_l=l_l+1e-24
-	l_l=line_pre(i,j)*(1.7e-18*exp(-1.3e5/temp)/(xi0*st)+1e-24)
+	l_l=line_pre(i,j)*(1.7e-18*exp(-1.3e5/temp)/(xi0*st))+1e-24
 	c_line(i,j)=l_l
 c	print *,temp,xi,gamma_comp,gamma_x,l_b,l_l
 	hc_tot=n*n*(gamma_comp+gamma_x-l_b-l_l)
