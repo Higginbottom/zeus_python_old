@@ -9,13 +9,15 @@
 #include "param.h"
 #include "grid.h"
 #include "field.h"
+#include "gravity.h"
+
 #include "root.h"
 #include "diskw.h"
         REAL    xi0,temp,hc_tot,rho,rho1,xi1,hc_tot1,e_0,e_1
 	REAL    t_0,t_1,hc_01
 	REAL 	e_01,t_01,sqsqxi1
 	INTEGER i1,j1,i,j
-	double precision t_l,t_u,tol,nh1,ne1
+	double precision t_l,t_u,tol,nh1,ne1,tfloor
 	REAL heatcool,zbrent,zfunc,n1
 	real test
 	common /hc_data/ xi1,e_01,hc_01,sqsqxi1,n1,i1,j1,nh1,ne1
@@ -68,8 +70,15 @@ c now we have worked out a bracket, find the correct value of new temperature
 c we search for the zero point of the equation e_old - e_old - dt(de(t(1/2)))	
 c	print *,"XXXXXX calling zbrent"
 	     t_1=zbrent(zfunc,t_l,t_u,tol)
-c		 print *,"XXXXX finished, ans=",t_1
 c we will call heatcool one last time to compute the heating and cooling rates for the new temperature	
+		 
+       tfloor=((3.0*ptmass*mdot*guniv)/  (8.0*pi*sb*
+     &   (x1b(i)*sin(x2b(j)))**3.0) )**0.25
+	  
+	  if (t_1.lt.tfloor) then
+	 print *,"temperature returned from cell",i,j," too low=",t_1
+	  t_1=tfloor
+      endif
 	
 	hc_01=heatcool(t_1)
 
@@ -100,9 +109,14 @@ c now we have a new temperature, we will return the new internal energy.
 	st=sqrt(temp)
 
 
+
+
 	h_comp(i,j)=comp_h_pre(i,j)*8.9e-36*xi0*tx
 	c_comp(i,j)=comp_c_pre(i,j)*8.9e-36*xi0*(4.0*temp)
 	gamma_comp=h_comp(i,j)-c_comp(i,j)
+c	if (i.eq.3 .and. j.eq.90) then
+c		print *,ne,nh,xi0,temp,c_comp(i,j),comp_c_pre(i,j)
+c	endif
 
 c	gamma_x=sqrt(xi)
 c	gamma_x=sqrt(gamma_x)
@@ -319,9 +333,12 @@ c     &  (theta)
 		 comp_c_pre(i+2,j+3)=comp_c_pre(i+2,j+3)*(c_cool)/
      &   (ne*nh*c_comp(i+2,j+3))+1e-3
 		 
-		 
-c	  print *,"COMP test",x1b(i+2),x2b(j+3),ne*nh*c_comp(i+2,j+3),
-c     +  c_comp(i+2,j+3),c_cool,d(i+2,j+3),xi(i+2,j+3)
+	 if (i.eq.1) then
+	  print *,"COMP test",i,j,comp_c_pre(i+2,j+3),
+     &   c_comp(i+2,j+3),ne*nh*c_comp(i+2,j+3),c_cool,ne,nh,
+     &    xi(i+2,j+3),d(i+2,j+3),
+     &   e(i+2,j+3)*(2.0/3.0)/((d(i+2,j+3)/(mu*mp))*boltz)
+        endif
 		 xray_pre(i+2,j+3)=xray_pre(i+2,j+3)*(x_heat)/
      &   (ne*nh*h_xray(i+2,j+3))+1e-3
  		 line_pre(i+2,j+3)=line_pre(i+2,j+3)*l_cool/

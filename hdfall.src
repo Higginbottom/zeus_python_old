@@ -95,6 +95,11 @@ c  compton cooling
 c
       do 113 j=js,je
         do 103 i=is,ie
+			if (i.eq.3 .and. j.eq.90) then
+				print *,xi(i,j),comp_c_pre(i,j),c_comp(i,j),real(c_comp(i,j))
+			endif 
+			
+			
           data((j-js)*nx1z + i -is+1) = real(c_comp(i,j))
 103     continue
 113   continue
