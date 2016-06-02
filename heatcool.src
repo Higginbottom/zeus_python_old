@@ -76,7 +76,7 @@ c we will call heatcool one last time to compute the heating and cooling rates f
      &   (x1b(i)*sin(x2b(j)))**3.0) )**0.25
 	  
 	  if (t_1.lt.tfloor) then
-	 print *,"temperature returned from cell",i,j," too low=",t_1
+c	 print *,"temperature returned from cell",i,j," too low=",t_1
 	  t_1=tfloor
       endif
 	
@@ -333,12 +333,12 @@ c     &  (theta)
 		 comp_c_pre(i+2,j+3)=comp_c_pre(i+2,j+3)*(c_cool)/
      &   (ne*nh*c_comp(i+2,j+3))+1e-3
 		 
-	 if (i.eq.1) then
-	  print *,"COMP test",i,j,comp_c_pre(i+2,j+3),
-     &   c_comp(i+2,j+3),ne*nh*c_comp(i+2,j+3),c_cool,ne,nh,
-     &    xi(i+2,j+3),d(i+2,j+3),
-     &   e(i+2,j+3)*(2.0/3.0)/((d(i+2,j+3)/(mu*mp))*boltz)
-        endif
+c	 if (i.eq.1) then
+c	  print *,"COMP test",i,j,comp_c_pre(i+2,j+3),
+c     &   c_comp(i+2,j+3),ne*nh*c_comp(i+2,j+3),c_cool,ne,nh,
+c     &    xi(i+2,j+3),d(i+2,j+3),
+c     &   e(i+2,j+3)*(2.0/3.0)/((d(i+2,j+3)/(mu*mp))*boltz)
+c        endif
 		 xray_pre(i+2,j+3)=xray_pre(i+2,j+3)*(x_heat)/
      &   (ne*nh*h_xray(i+2,j+3))+1e-3
  		 line_pre(i+2,j+3)=line_pre(i+2,j+3)*l_cool/
