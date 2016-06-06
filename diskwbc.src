@@ -41,9 +41,9 @@ c	print *,dfloor*d0
         if (d (i,j).le.1e-22) d (i,j)=1e-22
 		tfloor=((3.0*ptmass*mdot*guniv)/  (8.0*pi*sb*
      &   (x1b(i)*sin(x2b(j)))**3.0) )**0.25
-		 if (e(i,j) .le. (3.0*d(i,j)*boltz*tfloor)/(2.0*mp*mu)) then
-			 e(i,j)=(3.0*d(i,j)*boltz*tfloor)/(2.0*mp*mu)
-		 endif
+c		 if (e(i,j) .le. (3.0*d(i,j)*boltz*tfloor)/(2.0*mp*mu)) then
+c			 e(i,j)=(3.0*d(i,j)*boltz*tfloor)/(2.0*mp*mu)
+c		 endif
         enddo 
        enddo 
 
