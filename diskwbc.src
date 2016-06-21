@@ -38,7 +38,7 @@ c
 c	print *,dfloor*d0
        do  i=is,ie
         do  j=is,je
-        if (d (i,j).le.1e-22) d (i,j)=1e-22
+        if (d (i,j).le.1e-22) d(i,j)=1e-22
 		tfloor=((3.0*ptmass*mdot*guniv)/  (8.0*pi*sb*
      &   (x1b(i)*sin(x2b(j)))**3.0) )**0.25
 c		 if (e(i,j) .le. (3.0*d(i,j)*boltz*tfloor)/(2.0*mp*mu)) then
@@ -48,7 +48,7 @@ c		 endif
        enddo 
 
        do  i=is,ie
-        d (i,je)=djop1(i)  
+        if (d(i,je).le.djop1(i)) d(i,je)=djop1(i)  
         v1(i,je)=0.0
         v3(i,je)=v3jop1(i)
 c         if (e(i,je).le.ejop1(i)) e(i,je)=ejop1(i) 
