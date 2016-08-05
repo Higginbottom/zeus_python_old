@@ -28,7 +28,7 @@ c-----------------------------------------------------------------------
       implicit NONE
 #include "param.h"
 #include "grid.h"
-      character*15 filename
+      character*16 filename
       integer ngridr,ngridi
       parameter(ngridr  = 49*in + 49*jn + 3
      .         ,ngridi  = 12*in + 12*jn + 7)

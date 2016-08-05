@@ -118,11 +118,11 @@ clean:
 
 
 
-compile: zeus2d.src ${EXEDIR}zeus2d_test.exe
+compile: zeus2d.src ${EXEDIR}zeus2d_aug_4.exe
 
 zeus2d.src: zeus2d.def
 	touch *.src *.c
 
-${EXEDIR}zeus2d_test.exe: ${OBJ}  ${ADDN}
-	${LDR} -o ${EXEDIR}zeus2d_test.exe ${OBJ}  ${ADDN} ${LIB}
+${EXEDIR}zeus2d_aug_4.exe: ${OBJ}  ${ADDN}
+	${LDR} -o ${EXEDIR}zeus2d_aug_4.exe ${OBJ}  ${ADDN} ${LIB}
 

@@ -52,6 +52,6 @@
      .,nwarn
 
       character*8  id
-      character*16  hdffile, hstfile, resfile, usrfile
+      character*17  hdffile, hstfile, resfile, usrfile
       common /chroot2/  id
       common /chroot1/  hdffile, hstfile, resfile, usrfile
