@@ -34,7 +34,7 @@ c-----------------------------------------------------------------------
       integer*4 dssdims,dssdast,dssdisc,dsadata,dspdata
 #endif
 c
-      character*16  filename
+      character*17  filename
       character*16 coordsys
       character*40 string
 c
