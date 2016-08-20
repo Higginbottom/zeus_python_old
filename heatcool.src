@@ -116,7 +116,7 @@ c	  REAL interpolate
      + xi0,delta)
 
 	heatcool=hc_tot*ne*nh
-	print *,xi0,temp,heatcool
+	print *,xi0/1e15,temp/1e8,heatcool,hc_tot,ne,nh
 
 	end function
 

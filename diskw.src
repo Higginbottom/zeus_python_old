@@ -54,7 +54,10 @@ c
 	  write(2,hc_pre)
 
 c
-
+#ifdef PYHYDRO
+		print *,"Reading in the interpolation data"
+		call hc_lookup_input
+#endif
 c
 c  setup d, e and vel. over whole grid
 c
