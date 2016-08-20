@@ -68,7 +68,7 @@ c	print *,"New run"
   	end do
 c now we have worked out a bracket, find the correct value of new temperature
 c we search for the zero point of the equation e_old - e_old - dt(de(t(1/2)))	
-	print *,"XXXXXX calling zbrent",t_l,t_u
+c	print *,"XXXXXX calling zbrent",t_l,t_u
 	     t_1=zbrent(zfunc,t_l,t_u,tol)
 c we will call heatcool one last time to compute the heating and cooling rates for the new temperature	
 		 
@@ -88,7 +88,7 @@ c	 print *,"temperature returned from cell",i,j," too low=",t_1
 c now we have a new temperature, we will return the new internal energy. 
 	e_1=t_1*1.5*n1*boltz
 
-	call exit()
+c	call exit()
 
 	end
 
@@ -144,8 +144,8 @@ c	print *,ne*nh*(gamma_comp+gamma_x-l_b-l_l),hc_tot
 	
 	heatcool=hc_tot
 	
-	print *,xi0/1e15,temp/1e8,heatcool,(gamma_comp+gamma_x-l_b-l_l),
-     + ne,nh
+c	print *,xi0/1e15,temp/1e8,heatcool,(gamma_comp+gamma_x-l_b-l_l),
+c    + ne,nh
 	
 	end function
 
