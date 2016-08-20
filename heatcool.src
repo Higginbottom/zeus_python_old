@@ -144,7 +144,7 @@ c	print *,ne*nh*(gamma_comp+gamma_x-l_b-l_l),hc_tot
 	
 	heatcool=hc_tot
 	
-	print *,xi0,temp,heatcool
+	print *,xi0/1e14,temp/1e8,heatcool,ne,nh
 	
 	end function
 
