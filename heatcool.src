@@ -88,6 +88,7 @@ c	 print *,"temperature returned from cell",i,j," too low=",t_1
 c now we have a new temperature, we will return the new internal energy. 
 	e_1=t_1*1.5*n1*boltz
 
+	call exit()
 
 	end
 
@@ -142,6 +143,9 @@ c	print *,ne*nh*(gamma_comp+gamma_x-l_b-l_l),hc_tot
 	
 	
 	heatcool=hc_tot
+	
+	print *,xi0,temp,heatcool
+	
 	end function
 
 
