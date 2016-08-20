@@ -1,7 +1,8 @@
-	REAL xi1,e_01,hc_01,sqsqxi1,n1
-	INTEGER i1,j1
-	DOUBLE PRECISTOIN nh1,ne1
+	INTEGER n_lu_temp,n_lu_xi
+	
+	REAL, dimension(501,501) :: hc_lu
+	REAL, dimension(501) :: lu_xi
+	REAL, dimension(501) ::lu_temp
 
 
-
-	common /hc_data/ xi1,e_01,hc_01,sqsqxi1,n1,i1,j1,nh1,ne1
+	common /lookup_data/ n_lu_temp,n_lu_xi,hc_lu,lu_xi,lu_temp

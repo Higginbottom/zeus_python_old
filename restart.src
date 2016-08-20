@@ -97,8 +97,8 @@ c
 	  
 	  
 #ifdef PYHYDRO
-		print *,"We will read in heating and cooling data here I think"
-		call hc_file_input
+		print *,"Reading in the interpolation data"
+		call hc_lookup_input
 #endif
 #ifdef PROBRES
 c

@@ -4,7 +4,8 @@
 #
 #-------------------  object files  ------------------------------------
 #
-OBJ =   msave.o    \
+OBJ =  	util.o\
+     msave.o    \
 	bval.o     \
 	bvalrad.o  \
 	ct.o       \
@@ -63,7 +64,9 @@ OBJ =   msave.o    \
 	linpck.o   \
 	diskw.o   \
 	diskwbc.o \
-	heatcool.o 
+	heatcool.o \
+	recipies.o 
+
 #-------------------  macro definitions  -------------------------------
 .SUFFIXES:
 .SUFFIXES: .src .c .f .o
@@ -118,11 +121,11 @@ clean:
 
 
 
-compile: zeus2d.src ${EXEDIR}zeus2d_aug_11.exe
+compile: zeus2d.src ${EXEDIR}zeus2d_lookup.exe
 
 zeus2d.src: zeus2d.def
 	touch *.src *.c
 
-${EXEDIR}zeus2d_aug_11.exe: ${OBJ}  ${ADDN}
-	${LDR} -o ${EXEDIR}zeus2d_aug_11.exe ${OBJ}  ${ADDN} ${LIB}
+${EXEDIR}zeus2d_lookup.exe: ${OBJ}  ${ADDN}
+	${LDR} -o ${EXEDIR}zeus2d_lookup.exe ${OBJ}  ${ADDN} ${LIB}
 

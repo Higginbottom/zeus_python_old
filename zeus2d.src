@@ -23,6 +23,7 @@ c                      Ap. J. Supp., 80, 791 (MHD)
 c                      Ap. J. Supp., 80, 819 (Radiation Hydro)
 c
 c-----------------------------------------------------------------------
+
       implicit NONE
 #include "param.h"
 #include "grid.h"

@@ -1,8 +1,7 @@
 #include "zeus2d.def"
 
-
 	subroutine hc_sub(rho,xi0,e_0,e_1,i,j)
-
+		
        implicit NONE
 
 #include "cons.h"
@@ -10,7 +9,7 @@
 #include "grid.h"
 #include "field.h"
 #include "gravity.h"
-
+#include "zeus_python.h"
 #include "root.h"
 #include "diskw.h"
         REAL    xi0,temp,hc_tot,rho,rho1,xi1,hc_tot1,e_0,e_1
@@ -23,9 +22,11 @@
 	common /hc_data/ xi1,e_01,hc_01,sqsqxi1,n1,i1,j1,nh1,ne1
 	external zfunc
 	
+	REAL xi_min,xi_max,dxi
+	integer nxi,n
+c	print *,xi0/1e14
 c   first calculate the current temperature of the cell	
-	
-	
+		
 	t_01=e_0*(2.0/3.0)/((rho/(mu*mp))*boltz)
 	xi1=xi0
 	i1=i
@@ -68,7 +69,7 @@ c	print *,"New run"
   	end do
 c now we have worked out a bracket, find the correct value of new temperature
 c we search for the zero point of the equation e_old - e_old - dt(de(t(1/2)))	
-c	print *,"XXXXXX calling zbrent"
+c	print *,"XXXXXX calling zbrent",t_l,t_u,e_0,t_01/1e8
 	     t_1=zbrent(zfunc,t_l,t_u,tol)
 c we will call heatcool one last time to compute the heating and cooling rates for the new temperature	
 		 
@@ -87,61 +88,36 @@ c	 print *,"temperature returned from cell",i,j," too low=",t_1
 
 c now we have a new temperature, we will return the new internal energy. 
 	e_1=t_1*1.5*n1*boltz
-
+	call exit()
 
 	end
 
 
 
       double precision function heatcool(temp)
+  	use interpolation
+	  
       implicit NONE
 #include "cons.h"
 #include "param.h"
 #include "grid.h"
 #include "field.h"
+#include "zeus_python.h"
 #include "root.h"
 #include "diskw.h"
       integer i,j
+c	  REAL interpolate
       REAL    div1,div2,divv,del,pnew,pav,xi0,temp,hc_tot,rho,e_0,t_0
-      REAL    gamma_comp,gamma_x,l_b,l_l,hc_0,sqsqxi,st,n,nh,ne
+      REAL    gamma_comp,gamma_x,l_b,l_l,hc_0,sqsqxi,st,n,nh,ne,delta
 	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j,nh,ne
 
-	st=sqrt(temp)
 
+	hc_tot=interpolate(n_lu_temp,lu_temp,n_lu_xi,lu_xi,hc_lu,temp,
+     + xi0,delta)
 
+	heatcool=hc_tot*ne*nh
+	print *,xi0,temp,heatcool
 
-
-	h_comp(i,j)=comp_h_pre(i,j)*8.9e-36*xi0*tx
-	c_comp(i,j)=comp_c_pre(i,j)*8.9e-36*xi0*(4.0*temp)
-	gamma_comp=h_comp(i,j)-c_comp(i,j)
-c	if (i.eq.3 .and. j.eq.90) then
-c		print *,ne,nh,xi0,temp,c_comp(i,j),comp_c_pre(i,j)
-c	endif
-
-c	gamma_x=sqrt(xi)
-c	gamma_x=sqrt(gamma_x)
-c	gamma_x=gamma_x*1.5e-21
-c	gamma_x=gamma_x/sqrt(temp)
-c	gamma_x=gamma_x*(1-temp/tx)
-	h_xray(i,j)=xray_pre(i,j)*1.5e-21*(sqsqxi/st)*(1-(temp/tx))
-	gamma_x=h_xray(i,j)
-
-	l_b=brem_pre(i,j)*3.3e-27*st
-	c_brem(i,j)=l_b
-c	l_l=exp(-1.3e5/temp)
-c	l_l=l_l/xi
-c	l_l=l_l/sqrt(temp)
-c	l_l=l_l*1.7e-18
-c	l_l=l_l+1e-24
-	l_l=line_pre(i,j)*(1.7e-18*exp(-1.3e5/temp)/(xi0*st)+1e-24)
-	c_line(i,j)=l_l
-c	print *,temp,xi,gamma_comp,gamma_x,l_b,l_l
-	hc_tot=ne*nh*(gamma_comp+gamma_x-l_b-l_l)
-c	print *,ne,nh,gamma_comp,gamma_x,l_b,l_l
-c	print *,ne*nh*(gamma_comp+gamma_x-l_b-l_l),hc_tot
-	
-	
-	heatcool=hc_tot
 	end function
 
 
@@ -160,116 +136,10 @@ c	print *,ne*nh*(gamma_comp+gamma_x-l_b-l_l),hc_tot
 	external heatcool
 	zfunc=(1.5*temp*n*boltz)-e_0-
      &  dt*(hc_0+heatcool(temp))/2.0
-c	print *,temp,zfunc
 	end function
 
 
-c     this file contains the quasi-vanilla and slightly modified
-c     versions of FORTRAN Numerical Recipe routines
 
-c     DOUBLE PRECISION FUNCTION ZBRENT(FUNC,X1,X2,TOL)
-
-c     MODIFICATIONS from the vanilla Numerical Recipes: all of the
-c     following routines have been trivially modified in two ways from
-c     the original vanilla; (1) the declarations are now IMPLICIT NONE
-c     or IMPLICIT DOUBLE PRECISION; (2) communication of errors which
-c     may occur in the form of WRITE statements with hard STOPs; some of
-c     the routines have been further modified (see comments in each
-c     routine for details)
-
-c::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-      REAL FUNCTION ZBRENT(FUNC,X1,X2,TOL)
-
-c     return the root of the function FUNC using Brents method where
-c     the root of the function is assumed lie between X1 and X2; the
-c     root is refined until its accuracy is TOL and is returned as
-c     ZBRENT
-
-c..............................................................................
-
-      IMPLICIT DOUBLE PRECISION (A-H,O-Z)
-      PARAMETER (ITMAX=100,EPS=3.E-14)
-      A=X1
-      B=X2
-      FA=FUNC(A)
-      FB=FUNC(B)
-c     error: Root not bracketed 
-      IF(FB*FA.GT.0.) THEN
-       WRITE(6,*) 'ERROR(zbrent): root of FUNC not bracketed.'
-       WRITE(6,*) 'lower bracket A = ',A,' FUNC(A) = ',FUNC(A)
-       WRITE(6,*) 'upper bracket B = ',B,' FUNC(B) = ',FUNC(B)
-       WRITE(6,*) 'this can be remedied by changing A and/or B'
-       call exit(5)
-      END IF
-      FC=FB
-      DO 11 ITER=1,ITMAX
-        IF(FB*FC.GT.0.) THEN
-          C=A
-          FC=FA
-          D=B-A
-          E=D
-        ENDIF
-        IF(ABS(FC).LT.ABS(FB)) THEN
-          A=B
-          B=C
-          C=A
-          FA=FB
-          FB=FC
-          FC=FA
-        ENDIF
-        TOL1=2.*EPS*ABS(B)+0.5*TOL
-        XM=.5*(C-B)
-        IF(ABS(XM).LE.TOL1 .OR. FB.EQ.0.)THEN
-          ZBRENT=B
-c	print *,"zbrent took ",ITER," iterations"
-          RETURN
-        ENDIF
-        IF(ABS(E).GE.TOL1 .AND. ABS(FA).GT.ABS(FB)) THEN
-          S=FB/FA
-          IF(A.EQ.C) THEN
-            P=2.*XM*S
-            Q=1.-S
-          ELSE
-            Q=FA/FC
-            R=FB/FC
-            P=S*(2.*XM*Q*(Q-R)-(B-A)*(R-1.))
-            Q=(Q-1.)*(R-1.)*(S-1.)
-          ENDIF
-          IF(P.GT.0.) Q=-Q
-          P=ABS(P)
-          IF(2.*P .LT. MIN(3.*XM*Q-ABS(TOL1*Q),ABS(E*Q))) THEN
-            E=D
-            D=P/Q
-          ELSE
-            D=XM
-            E=D
-          ENDIF
-        ELSE
-          D=XM
-          E=D
-        ENDIF
-        A=B
-        FA=FB
-        IF(ABS(D) .GT. TOL1) THEN
-          B=B+D
-        ELSE
-          B=B+SIGN(TOL1,XM)
-        ENDIF
-        FB=FUNC(B)
-11    CONTINUE
-c     error message for too many iterations
-      WRITE(6,*) 'ERROR(zbrent): number of iterations required to'
-      WRITE(6,*) 'converge on the root of FUNC exceeded maximum'
-      WRITE(6,*) 'allowed.  This can be remedied by increasing'
-      WRITE(6,*) 'parameter ITMAX in the file or by relaxing'
-      WRITE(6,*) 'the convrgence tolerance TOL'
-      WRITE(6,*) '*** terminating program  ***'
-      call exit(5)
-      ZBRENT=B
-      RETURN
-      END
-	  
 	  
 	  subroutine hc_file_input()
 #include "cons.h"
@@ -457,6 +327,68 @@ c 20 		continue
 		
 20		print *,"There are ",n," records"	
 		print *,pre_limit," cells had HC prefactor change limited"
+		
+		  close unit=66
+	  else
+		  print *,"There is no heatcool file - continuuing normally"
+	  endif
+		  
+		  
+		  RETURN
+	  END
+
+
+	  subroutine hc_lookup_input()
+#include "cons.h"
+#include "param.h"
+#include "grid.h"
+#include "field.h"
+#include "zeus_python.h"
+#include "root.h"
+#include "diskw.h"
+#include "control.h"
+		  integer i,j
+		  
+		  
+		  LOGICAL THERE 
+   
+   	      character*10 junk
+		  character*1000 line
+		  integer number
+		  real r,theta,c_heat,x_heat,b_heat,l_heat,c_cool,x_cool,py_xi
+		  real temp(501)
+          real b_cool,l_cool,n1,py_temp,py_ne,py_vol,ne,nh
+          real comp_c_pre_old,comp_h_pre_old,xray_pre_old,line_pre_old,
+     +     brem_pre_old,ratio,py_rho,py_nh
+	 integer pre_limit,pre_limit_tmp,size
+	 
+	 pre_limit_tmp=0
+	 pre_limit=0
+		  
+         INQUIRE( FILE='heatcool_lookup.dat', EXIST=THERE ) 
+          IF ( THERE ) then
+		 	 open(66,file='heatcool_lookup.dat',status='old')
+	  	   	read (66,*,end=20) junk,n_lu_xi
+			read (66,*,end=20) junk,n_lu_temp
+			
+
+
+			
+			READ (66,*,end=20)  junk,(lu_xi(i),i=1,n_lu_xi)
+			
+			
+			do 10, n=1,n_lu_temp
+				READ (66,*,end=20)  lu_temp(n),(hc_lu(n,i),i=1,n_lu_xi)
+c				print *,n,n_lu_xi
+ 10		continue
+		
+20		print *,"There are ",n_lu_xi," xi records"	
+		print *,"There are ",n_lu_temp," temp records"	
+
+
+c		do 30, n=1,n_lu_temp
+c			print *,(hc_lu(n,i),i=1,n_lu_xi)
+c 30		continue
 		
 		  close unit=66
 	  else
