@@ -15,15 +15,22 @@
         REAL    xi0,temp,hc_tot,rho,rho1,xi1,hc_tot1,e_0,e_1
 	REAL    t_0,t_1,hc_01
 	REAL 	e_01,t_01,sqsqxi1
-	INTEGER i1,j1,i,j
+	INTEGER i1,j1,i,j,hc_mode
 	double precision t_l,t_u,tol,nh1,ne1,tfloor
 	REAL heatcool,zbrent,zfunc,n1
-	real test
-	common /hc_data/ xi1,e_01,hc_01,sqsqxi1,n1,i1,j1,nh1,ne1
+	REAL test,hc_test
+	common /hc_data/ xi1,e_01,hc_01,sqsqxi1,n1,i1,j1,nh1,ne1,hc_mode
 	external zfunc
 	
-	REAL xi_min,xi_max,dxi
-	integer nxi,n
+	
+	
+	
+c	print *,comp_c_lu(10,10),comp_h_lu(10,10),xray_h_lu(10,10)
+c     + ,line_c_lu(10,10),brem_c_lu(10,10),comp_h_lu(10,10)-
+c     +  comp_c_lu(10,10)+xray_h_lu(10,10)
+c     + -line_c_lu(10,10)-brem_c_lu(10,10),hc_lu(10,10)
+c	print *,"BLAH3",hc_lu(10,10),comp_c_lu(10,10)
+	
 c	print *,xi0/1e14
 c   first calculate the current temperature of the cell	
 		
@@ -49,6 +56,7 @@ c stage one, bracket to find out where the zero point is
 
 c we use the heating rate at the   originaltemperature a lot,
 c lets compute it first
+	hc_mode=0
 	hc_01=heatcool(t_01)
 
 
@@ -83,9 +91,14 @@ c		 print *,'Back from zbrent, t=',t_1
 c	 print *,"temperature returned from cell",i,j," too low=",t_1
 	  t_1=tfloor
       endif
-	
+c  And we finally call heatcool one last time to get the final heating and cooling rates	
 	hc_01=heatcool(t_1)
-
+	
+	
+	if (indiv_heatcool) then
+		hc_mode=1
+		hc_test=heatcool(t_1)
+	endif
 
 
 
@@ -108,18 +121,51 @@ c	call exit()
 #include "zeus_python.h"
 #include "root.h"
 #include "diskw.h"
-      integer i,j
+      integer i,j,mode
 c	  REAL interpolate
       REAL    div1,div2,divv,del,pnew,pav,xi0,temp,hc_tot,rho,e_0,t_0
       REAL    gamma_comp,gamma_x,l_b,l_l,hc_0,sqsqxi,st,n,nh,ne,delta
-	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j,nh,ne
+	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j,nh,ne,mode
 
+
+	if (mode.eq.0) then
 
 	hc_tot=interpolate(n_lu_temp,lu_temp,n_lu_xi,lu_xi,hc_lu,temp,
      + xi0,delta)
+	 
+ 	endif
+	
+	if (mode.eq.1 .and. indiv_heatcool) then
+
+		c_line(i,j)=interpolate(n_lu_temp,lu_temp,n_lu_xi,lu_xi,
+     + line_c_lu,temp,xi0,delta)
+	c_comp(i,j)=interpolate(n_lu_temp,lu_temp,n_lu_xi,lu_xi,
+     + comp_c_lu,temp,xi0,delta)
+	h_comp(i,j)=interpolate(n_lu_temp,lu_temp,n_lu_xi,lu_xi,
+     + comp_h_lu,temp,xi0,delta)
+	c_brem(i,j)=interpolate(n_lu_temp,lu_temp,n_lu_xi,lu_xi,
+     + brem_c_lu,temp,xi0,delta)
+	h_xray(i,j)=interpolate(n_lu_temp,lu_temp,n_lu_xi,lu_xi,
+     + xray_h_lu,temp,xi0,delta)
+	 
+	 
+	 
+	 hc_tot=h_comp(i,j)+h_xray(i,j)-c_line(i,j)-c_brem(i,j)-
+     +  c_comp(i,j)
+	 
+
+ 	endif
+
+c	print *,"BLAH4",comp_c_lu(10,10)
+
+c 	print *,h_comp(i,j),h_xray(i,j),c_line(i,j)
+	
+	
+	
 
 	heatcool=hc_tot*ne*nh
 c	print *,xi0/1e15,temp/1e8,heatcool,hc_tot,ne,nh
+	net_hc(i,j)=heatcool
 
 	end function
 
@@ -134,8 +180,8 @@ c	print *,xi0/1e15,temp/1e8,heatcool,hc_tot,ne,nh
 #include "root.h"
 #include "diskw.h"
 	REAL rho,xi0,e_0,t_0,temp,heatcool,hc_0,logxi,sqsqxi,n,nh,ne
-	INTEGER i,j
-	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j,nh,ne
+	INTEGER i,j,mode
+	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j,nh,ne,mode
 	external heatcool
 	zfunc=(1.5*temp*n*boltz)-e_0-
      &  dt*(hc_0+heatcool(temp))/2.0
@@ -341,7 +387,7 @@ c 20 		continue
 	  END
 
 
-	  subroutine hc_lookup_input()
+	  subroutine hc_lookup_input(fname,stat,dat)
 #include "cons.h"
 #include "param.h"
 #include "grid.h"
@@ -354,23 +400,24 @@ c 20 		continue
 		  
 		  
 		  LOGICAL THERE 
-   
+   	      character*17 fname
    	      character*10 junk
-		  character*1000 line
-		  integer number
-		  real r,theta,c_heat,x_heat,b_heat,l_heat,c_cool,x_cool,py_xi
-		  real temp(501)
-          real b_cool,l_cool,n1,py_temp,py_ne,py_vol,ne,nh
-          real comp_c_pre_old,comp_h_pre_old,xray_pre_old,line_pre_old,
+	  	REAL, dimension(nt,nxi) :: dat
+		  
+		  integer number,stat
+		  REAL r,theta,c_heat,x_heat,b_heat,l_heat,c_cool,x_cool,py_xi
+          REAL b_cool,l_cool,n1,py_temp,py_ne,py_vol,ne,nh
+          REAL comp_c_pre_old,comp_h_pre_old,xray_pre_old,line_pre_old,
      +     brem_pre_old,ratio,py_rho,py_nh
 	 integer pre_limit,pre_limit_tmp,size
 	 
 	 pre_limit_tmp=0
 	 pre_limit=0
-		  
-         INQUIRE( FILE='heatcool_lookup.dat', EXIST=THERE ) 
+	 print *,fname
+         INQUIRE( FILE=fname, EXIST=THERE ) 
           IF ( THERE ) then
-		 	 open(66,file='heatcool_lookup.dat',status='old')
+			  stat=1
+		 	 open(66,file=fname,status='old')
 	  	   	read (66,*,end=20) junk,n_lu_xi
 			read (66,*,end=20) junk,n_lu_temp
 			
@@ -381,13 +428,13 @@ c 20 		continue
 			
 			
 			do 10, n=1,n_lu_temp
-				READ (66,*,end=20)  lu_temp(n),(hc_lu(n,i),i=1,n_lu_xi)
+				READ (66,*,end=20)  lu_temp(n),(dat(n,i),i=1,n_lu_xi)
 c				print *,n,n_lu_xi
  10		continue
 		
-20		print *,"There are ",n_lu_xi," xi records"	
-		print *,"There are ",n_lu_temp," temp records"	
+20		continue		
 
+		print *,"BLAH",dat(10,10)
 
 c		do 30, n=1,n_lu_temp
 c			print *,(hc_lu(n,i),i=1,n_lu_xi)
@@ -395,7 +442,7 @@ c 30		continue
 		
 		  close unit=66
 	  else
-		  print *,"There is no heatcool file - continuuing normally"
+		  stat=0
 	  endif
 		  
 		  

@@ -24,6 +24,8 @@
 #define D_ABSORPTION_DT   0.0
 #define SCATTERING        0.0
 #define REAL real*8
+#define NUM_OF_XI_LOOKUP  501
+#define NUM_OF_T_LOOKUP  501
 /*=========================  operating system  ======================*/
 /* #define SGI */
 /* #define SUN */

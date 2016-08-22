@@ -350,6 +350,20 @@ c
 	  
 	  
 	  
+c
+c  net heating/cooling
+c
+      do 144 j=js,je
+        do 154 i=is,ie
+          data((j-js)*nx1z + i -is+1) = real(net_hc(i,j))
+154     continue
+144   continue
+      write(string,"('NET_HC AT TIME=',1pe14.6,'   ')") time
+      ret = dssdast(string,' ',' ',coordsys)
+      ret = dsadata(filename,rank,shape,data)	  
+	  
+	  
+	  
 	  
 	  
 	  
