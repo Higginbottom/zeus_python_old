@@ -132,27 +132,29 @@ c	  REAL interpolate
 
 	hc_tot=interpolate(n_lu_temp,lu_temp,n_lu_xi,lu_xi,hc_lu,temp,
      + xi0,delta)
+ 	heatcool=hc_tot*ne*nh
 	 
  	endif
 	
 	if (mode.eq.1 .and. indiv_heatcool) then
 
 		c_line(i,j)=interpolate(n_lu_temp,lu_temp,n_lu_xi,lu_xi,
-     + line_c_lu,temp,xi0,delta)
+     + line_c_lu,temp,xi0,delta)*ne*nh
 	c_comp(i,j)=interpolate(n_lu_temp,lu_temp,n_lu_xi,lu_xi,
-     + comp_c_lu,temp,xi0,delta)
+     + comp_c_lu,temp,xi0,delta)*ne*nh
 	h_comp(i,j)=interpolate(n_lu_temp,lu_temp,n_lu_xi,lu_xi,
-     + comp_h_lu,temp,xi0,delta)
+     + comp_h_lu,temp,xi0,delta)*ne*nh
 	c_brem(i,j)=interpolate(n_lu_temp,lu_temp,n_lu_xi,lu_xi,
-     + brem_c_lu,temp,xi0,delta)
+     + brem_c_lu,temp,xi0,delta)*ne*nh
 	h_xray(i,j)=interpolate(n_lu_temp,lu_temp,n_lu_xi,lu_xi,
-     + xray_h_lu,temp,xi0,delta)
+     + xray_h_lu,temp,xi0,delta)*ne*nh
 	 
 	 
 	 
 	 hc_tot=h_comp(i,j)+h_xray(i,j)-c_line(i,j)-c_brem(i,j)-
      +  c_comp(i,j)
-	 
+	  
+	 heatcool=hc_tot
 
  	endif
 
@@ -163,7 +165,6 @@ c 	print *,h_comp(i,j),h_xray(i,j),c_line(i,j)
 	
 	
 
-	heatcool=hc_tot*ne*nh
 c	print *,xi0/1e15,temp/1e8,heatcool,hc_tot,ne,nh
 	net_hc(i,j)=heatcool
 
