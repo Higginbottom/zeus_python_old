@@ -59,7 +59,7 @@ c
 	main_heatcool=.TRUE.
 	indiv_heatcool=.TRUE.
 		print *,"Reading in the interpolation data"
-		call hc_lookup_input('net_hc_lookup.dat',stat,hc_lu)
+		call hc_lookup_input('net_hc_lookup.dat',stat,hc_lu,'lin')
 		print *,"BLAH2",hc_lu(10,10)
 		
 		if (stat.eq.0) then
@@ -73,33 +73,33 @@ c
 	endif
 	
 	
-	call hc_lookup_input('comp_c_lookup.dat',stat,comp_c_lu)
+	call hc_lookup_input('comp_c_lookup.dat',stat,comp_c_lu,'log')
 	
 	if (stat.eq.0) then
 		indiv_heatcool=.FALSE.
 	endif
-	call hc_lookup_input('comp_h_lookup.dat',stat,comp_h_lu)
+	call hc_lookup_input('comp_h_lookup.dat',stat,comp_h_lu,'log')
 	if (stat.eq.0) then
 		indiv_heatcool=.FALSE.
 	endif
-	call hc_lookup_input('xray_h_lookup.dat',stat,xray_h_lu)
+	call hc_lookup_input('xray_h_lookup.dat',stat,xray_h_lu,'log')
 	if (stat.eq.0) then
 		indiv_heatcool=.FALSE.
 	endif
-	call hc_lookup_input('line_c_lookup.dat',stat,line_c_lu)
+	call hc_lookup_input('line_c_lookup.dat',stat,line_c_lu,'log')
 	if (stat.eq.0) then
 		indiv_heatcool=.FALSE.
 	endif
-	call hc_lookup_input('brem_c_lookup.dat',stat,brem_c_lu)
+	call hc_lookup_input('brem_c_lookup.dat',stat,brem_c_lu,'log')
 	if (stat.eq.0) then
 		indiv_heatcool=.FALSE.
 	endif
 	if (indiv_heatcool) then
 		print *,"READ individual heatcool files OK"
-		print *,comp_c_lu(10,10),comp_h_lu(10,10),xray_h_lu(10,10)
-     + ,line_c_lu(10,10),brem_c_lu(10,10),comp_h_lu(10,10)-
-     +  comp_c_lu(10,10)+xray_h_lu(10,10)
-     + -line_c_lu(10,10)-brem_c_lu(10,10),hc_lu(10,10)
+  		print *,comp_c_lu(10,10),comp_h_lu(10,10),xray_h_lu(10,10)
+     + ,line_c_lu(10,10),brem_c_lu(10,10),10**comp_h_lu(10,10)-
+     +  10**comp_c_lu(10,10)+10**xray_h_lu(10,10)
+     + -10**line_c_lu(10,10)-10**brem_c_lu(10,10),hc_lu(10,10)
 	else
 		print *,'No individual interpolation files found'
 	endif

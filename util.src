@@ -58,14 +58,16 @@ c 30	continue
 
 	end function binarysearch
 
-	real function interpolate(x_len,x_array,y_len,y_array,f,x,y,delta)
+	real function interpolate(x_len,x_array,y_len,y_array,f,x,y,delta,
+     + mode,i,j)
         ! This function uses bilinear interpolation to estimate the value
         ! of a function f at point (x,y)
         ! f is assumed to be sampled on a regular grid, with the grid x values specified
         ! by x_array and the grid y values specified by y_array
         ! Reference: http://en.wikipedia.org/wiki/Bilinear_interpolation
         implicit none
-        integer, intent(in) :: x_len, y_len           
+        integer, intent(in) :: x_len, y_len 
+		character*4 mode          
         real*8, dimension(501), intent(in) :: x_array
         real*8, dimension(501), intent(in) :: y_array
         real*8, dimension(501,501), intent(in) :: f
@@ -82,13 +84,16 @@ c			print *,'init',n,x_array(n)
 c 30		continue
 
 c		print *,"Going to binarysearch"
+		if (mode.eq.'init') then
 
         i = binarysearch(x_len, x_array, x)
         j = binarysearch(y_len, y_array, y)
+		
+		endif
 
 c		print *,"Back from binarysearch"
 
-		
+
 
         x1 = x_array(i)
         x2 = x_array(i+1)

@@ -55,8 +55,8 @@ c stage one, bracket to find out where the zero point is
 
 
 c we use the heating rate at the   originaltemperature a lot,
-c lets compute it first
-	hc_mode=0
+c lets compute 0t first
+	hc_mode=1
 	hc_01=heatcool(t_01)
 
 
@@ -100,6 +100,7 @@ c  And we finally call heatcool one last time to get the final heating and cooli
 		hc_test=heatcool(t_1)
 	endif
 
+c	print *,hc_test,hc_01
 
 
 c now we have a new temperature, we will return the new internal energy. 
@@ -125,29 +126,41 @@ c	call exit()
 c	  REAL interpolate
       REAL    div1,div2,divv,del,pnew,pav,xi0,temp,hc_tot,rho,e_0,t_0
       REAL    gamma_comp,gamma_x,l_b,l_l,hc_0,sqsqxi,st,n,nh,ne,delta
+	  REAL     lxi,lt
+	  integer   i_ind,j_ind
 	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j,nh,ne,mode
+
+
+
 
 
 	if (mode.eq.0) then
 
 	hc_tot=interpolate(n_lu_temp,lu_temp,n_lu_xi,lu_xi,hc_lu,temp,
-     + xi0,delta)
+     + xi0,delta,'init',i_ind,j_ind)
  	heatcool=hc_tot*ne*nh
-	 
- 	endif
+
+	endif
+	
+c	print *,10**lxi,10**lt,heatcool,hc_tot
+	
+
+	
 	
 	if (mode.eq.1 .and. indiv_heatcool) then
 
-		c_line(i,j)=interpolate(n_lu_temp,lu_temp,n_lu_xi,lu_xi,
-     + line_c_lu,temp,xi0,delta)*ne*nh
-	c_comp(i,j)=interpolate(n_lu_temp,lu_temp,n_lu_xi,lu_xi,
-     + comp_c_lu,temp,xi0,delta)*ne*nh
-	h_comp(i,j)=interpolate(n_lu_temp,lu_temp,n_lu_xi,lu_xi,
-     + comp_h_lu,temp,xi0,delta)*ne*nh
-	c_brem(i,j)=interpolate(n_lu_temp,lu_temp,n_lu_xi,lu_xi,
-     + brem_c_lu,temp,xi0,delta)*ne*nh
-	h_xray(i,j)=interpolate(n_lu_temp,lu_temp,n_lu_xi,lu_xi,
-     + xray_h_lu,temp,xi0,delta)*ne*nh
+		lxi=log10(xi0)
+		lt=log10(temp)
+	c_line(i,j)=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
+     + log_lu_xi,line_c_lu,lt,lxi,delta,'init',i_ind,j_ind)*ne*nh
+	c_comp(i,j)=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
+     + log_lu_xi,comp_c_lu,lt,lxi,delta,'done',i_ind,j_ind)*ne*nh
+	h_comp(i,j)=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
+     + log_lu_xi,comp_h_lu,lt,lxi,delta,'done',i_ind,j_ind)*ne*nh
+	c_brem(i,j)=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
+     + log_lu_xi,brem_c_lu,lt,lxi,delta,'done',i_ind,j_ind)*ne*nh
+	h_xray(i,j)=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
+     + log_lu_xi,xray_h_lu,lt,lxi,delta,'done',i_ind,j_ind)*ne*nh
 	 
 	 
 	 
@@ -155,13 +168,17 @@ c	  REAL interpolate
      +  c_comp(i,j)
 	  
 	 heatcool=hc_tot
+c 	print *,lxi,lt,hc_tot,h_comp(i,j),interpolate(n_lu_temp,
+c     + log_lu_temp,
+c     + n_lu_xi,log_lu_xi,comp_h_lu,lt,lxi,delta)*ne*nh
+	 
+	 
 
  	endif
 
 c	print *,"BLAH4",comp_c_lu(10,10)
 
 c 	print *,h_comp(i,j),h_xray(i,j),c_line(i,j)
-	
 	
 	
 
@@ -388,7 +405,7 @@ c 20 		continue
 	  END
 
 
-	  subroutine hc_lookup_input(fname,stat,dat)
+	  subroutine hc_lookup_input(fname,stat,dat,loglin)
 #include "cons.h"
 #include "param.h"
 #include "grid.h"
@@ -397,14 +414,14 @@ c 20 		continue
 #include "root.h"
 #include "diskw.h"
 #include "control.h"
-		  integer i,j
+		  integer i,j,n,unit
 		  
-		  
+		  character*3 loglin
 		  LOGICAL THERE 
    	      character*17 fname
    	      character*10 junk
 	  	REAL, dimension(nt,nxi) :: dat
-		  
+		
 		  integer number,stat
 		  REAL r,theta,c_heat,x_heat,b_heat,l_heat,c_cool,x_cool,py_xi
           REAL b_cool,l_cool,n1,py_temp,py_ne,py_vol,ne,nh
@@ -427,24 +444,47 @@ c 20 		continue
 			
 			READ (66,*,end=20)  junk,(lu_xi(i),i=1,n_lu_xi)
 			
+			do 15, n=1,n_lu_xi
+				log_lu_xi(n)=log10(lu_xi(n))
+15			continue				
+			
 			
 			do 10, n=1,n_lu_temp
 				READ (66,*,end=20)  lu_temp(n),(dat(n,i),i=1,n_lu_xi)
-c				print *,n,n_lu_xi
- 10		continue
+				log_lu_temp(n)=log10(lu_temp(n))
+
+10		continue
 		
 20		continue		
 
-		print *,"BLAH",dat(10,10)
+c    we now take logs of everything else to improve interpolation
 
-c		do 30, n=1,n_lu_temp
-c			print *,(hc_lu(n,i),i=1,n_lu_xi)
-c 30		continue
+	if (loglin.eq.'log')then
+		print *,"Taking logs"
+
+			do 30 i=1,n_lu_xi
+				do 40 j=1,n_lu_temp
+c					print *,dat(j,i),log10(dat(j,i))
+					dat(j,i)=log10(dat(j,i))
+
+			
+40 	continue	
+30 	continue
+		endif
+
+
+
+
+
+
+
 		
 		  close unit=66
 	  else
 		  stat=0
 	  endif
+	  
+	  
 		  
 		  
 		  RETURN
