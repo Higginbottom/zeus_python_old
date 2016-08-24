@@ -138,6 +138,14 @@ c
 	  	if (stat.eq.0) then
 	  		indiv_heatcool=.FALSE.
 	  	endif
+	  	call hc_lookup_input('totl_c_lookup.dat',stat,cool_lu,'log')
+	  	if (stat.eq.0) then
+	  		indiv_heatcool=.FALSE.
+		endif
+		call hc_lookup_input('totl_h_lookup.dat',stat,heat_lu,'log')
+	  	if (stat.eq.0) then
+	  		indiv_heatcool=.FALSE.
+	  	endif
 	  	if (indiv_heatcool) then
 	  		print *,"READ individual heatcool files OK"
 	  		print *,comp_c_lu(10,10),comp_h_lu(10,10),xray_h_lu(10,10)

@@ -96,7 +96,7 @@ c  And we finally call heatcool one last time to get the final heating and cooli
 	
 	
 	if (indiv_heatcool) then
-		hc_mode=1
+		hc_mode=2
 		hc_test=heatcool(t_1)
 	endif
 
@@ -126,7 +126,7 @@ c	call exit()
 c	  REAL interpolate
       REAL    div1,div2,divv,del,pnew,pav,xi0,temp,hc_tot,rho,e_0,t_0
       REAL    gamma_comp,gamma_x,l_b,l_l,hc_0,sqsqxi,st,n,nh,ne,delta
-	  REAL     lxi,lt
+	  REAL     lxi,lt,heat,cool
 	  integer   i_ind,j_ind
 	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j,nh,ne,mode
 
@@ -144,10 +144,21 @@ c	  REAL interpolate
 	
 c	print *,10**lxi,10**lt,heatcool,hc_tot
 	
+	if (mode.eq.1) then
 
+	heat=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
+     + log_lu_xi,heat_lu,lt,lxi,delta,'init',i_ind,j_ind)*ne*nh
+ 	cool=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
+     + log_lu_xi,cool_lu,lt,lxi,delta,'done',i_ind,j_ind)*ne*nh
+	 
+	 
+ 	heatcool=(heat-cool)*ne*nh
+c	print *,heat,cool
+
+	endif
 	
 	
-	if (mode.eq.1 .and. indiv_heatcool) then
+	if (mode.eq.2 .and. indiv_heatcool) then
 
 		lxi=log10(xi0)
 		lt=log10(temp)
