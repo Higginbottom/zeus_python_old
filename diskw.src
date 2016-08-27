@@ -33,6 +33,7 @@ c----------------------------------------------------------------------
 #include "bndry.h"
 #include "diskw.h"
 #include "zeus_python.h"
+#include "mpi.h"
 
 
       integer i,j,iprob,stat
@@ -58,18 +59,23 @@ c
 #ifdef PYHYDRO
 	main_heatcool=.TRUE.
 	indiv_heatcool=.TRUE.
+  	if (my_id.eq.0) then
+	
 		print *,"Reading in the interpolation data"
+	endif
 		call hc_lookup_input('net_hc_lookup.dat',stat,hc_lu,'lin')
-		print *,"BLAH2",hc_lu(10,10)
 		
 		if (stat.eq.0) then
 			main_heatcool=.FALSE.
 		endif
+  	  if (my_id.eq.0) then
+		
 	if (main_heatcool) then
 		print *,"READ main heatcool OK"
 	else
 		print *,'No main interpolation file found - exiting'
 		call exit()
+	endif
 	endif
 	
 	
@@ -94,6 +100,14 @@ c
 	if (stat.eq.0) then
 		indiv_heatcool=.FALSE.
 	endif
+	call hc_lookup_input('brem_h_lookup.dat',stat,brem_h_lu,'log')
+	if (stat.eq.0) then
+		indiv_heatcool=.FALSE.
+	endif
+	call hc_lookup_input('dion_c_lookup.dat',stat,dion_c_lu,'log')
+	if (stat.eq.0) then
+		indiv_heatcool=.FALSE.
+	endif
 	
   	call hc_lookup_input('totl_c_lookup.dat',stat,cool_lu,'log')
   	if (stat.eq.0) then
@@ -104,18 +118,13 @@ c
   		indiv_heatcool=.FALSE.
   	endif
 	
+	if (my_id.eq.0) then
 	
 	if (indiv_heatcool) then
 		print *,"READ individual heatcool files OK"
-  		print *,comp_c_lu(10,10),comp_h_lu(10,10),xray_h_lu(10,10)
-     + ,line_c_lu(10,10),brem_c_lu(10,10),10**comp_h_lu(10,10)-
-     +  10**comp_c_lu(10,10)+10**xray_h_lu(10,10)
-     + -10**line_c_lu(10,10)-10**brem_c_lu(10,10),hc_lu(10,10),
-     +  10**heat_lu(10,10),10**cool_lu(10,10),
-     +  10**heat_lu(10,10)-
-     +  10**cool_lu(10,10)
 	else
 		print *,'No individual interpolation files found'
+	endif
 	endif
 	
 	
@@ -148,6 +157,12 @@ c			 print *,comp_pre0,xray_pre0,line_pre0,brem_pre0
 			 xray_pre(i,j)=xray_pre0
 			 line_pre(i,j)=line_pre0
 			 brem_pre(i,j)=brem_pre0
+			 
+			 xi_ind_st(i,j)=0
+			 t_ind_st(i,j)=0
+			 last_tu(i,j)=1e20
+			 last_tl(i,j)=1e20
+			 
 			 
 			 
 		v1(i,j)=v10

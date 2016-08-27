@@ -25,13 +25,19 @@ c-----------------------------------------------------------------------
 #include "root.h"
 #include "diskw.h"
 #include "control.h"
+#include "mpi.h"
+include 'mpif.h'
 
 
-      integer i,j,icount
+      integer i,j,icount,ierr
+	  integer ncells,n_mpi_cells,n_mpi_extra,n
+	  integer my_nmin,my_nmax,ndo,n_mpi
       REAL    div1,div2,divv,del,pnew,pav,temp
       REAL    hc_tot,dt_hc,e1,epv
+	  integer index(in*jn,2),op,comm
 	  REAL 	max_d_change
       external heatcool
+	  REAL e_exchange(in*jn),e_collect(in*jn)
 c\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\////////////////////////////////////
 c=======================================================================
 c  pdv calculation with isothermal EOS
@@ -66,8 +72,54 @@ c
 	icount=0
 	max_d_change=0.0
 	
-          do 40 j=js,je
-            do 30 i=ii(j),io(j)
+	ncells=(je-js+1)*(io(1)-ii(1)+1)
+	my_nmin=1
+	my_nmax=ncells
+	
+	
+	n=0		
+	do 41 j=js,je
+		do 31 i=ii(j),io(j)
+			n=n+1
+			index(n,1)=i
+			index(n,2)=j
+			e_exchange(n)=0.0
+31 		continue
+41 	continue		
+	
+
+	if (num_procs>1) then
+	    n_mpi_cells = floor (float(ncells / num_procs));
+	    n_mpi_extra = ncells - (num_procs * n_mpi_cells)
+
+		  if (my_id < n_mpi_extra) then
+		      my_nmin = my_id * (n_mpi_cells + 1);
+		      my_nmax = (my_id + 1) * (n_mpi_cells + 1);
+			  else
+				  my_nmin =
+     +    n_mpi_extra * (n_mpi_cells + 1) + (my_id -
+     +    n_mpi_extra) * (n_mpi_cells) +1
+		      my_nmax =
+     +    n_mpi_extra * (n_mpi_cells + 1) + (my_id -
+     +   n_mpi_extra +  1) * (n_mpi_cells)
+		  ndo = my_nmax - my_nmin;
+	  endif
+
+
+	endif
+
+		
+	n=0	
+		
+          do 40 n=my_nmin,my_nmax
+			  i=index(n,1)
+			  j=index(n,2)
+c			  print *,i,j
+c do 40 j=js,je
+c		do 30 i=ii(j),io(j)
+
+
+c			  print *,n,i,j,ncells
 c		print *,lx,d(i,j),mu,mp,x1b(i)
 				
 c   This next line computes the ionization parameter  - rho/1.43mp is the hydrogen number density.				
@@ -95,43 +147,49 @@ c    and we also storethe adiabatic heating/cooling rates
 
 			  
 c		we now send the current energy, density, and ionization parameter to hc_sub, which will compute the radiative heating/cooling
+ 			 
+
+			  
+			  
+			  
 	      call hc_sub(d(i,j),xi(i,j),epv,e1,i,j)
 c		  print *,"returned e1=",e1
 c		the new energy in the cell is the returned energy 
 		e(i,j)=e1
+		e_exchange(n)=e1
+		
 
         temp=e(i,j)*(2.0/3.0)/((d(i,j)/(mu*mp))*boltz)
 		
-#ifdef PYHYDRO
-				if (abs(d(i,j)-d_init(i,j))/d_init(i,j) .gt. den_tol) then
-c					print *,d(i,j),d_old(i,j)
-					icount=icount+1
-c				else if (abs(temp-t_old(i,j))/t_old(i,j) .gt. 0.01) then
-c					print *,temp,t_old(i,j),abs(temp-t_old(i,j))/t_old(i,j)
-c					icount=icount+1 
-				endif
-				if (abs(d(i,j)-d_init(i,j))/d_init(i,j) .gt. max_d_change) then
-					max_d_change=abs(d(i,j)-d_init(i,j))/d_init(i,j)
-				endif
-c				if (abs(d(i,j)-d_init(i,j))/d_init(i,j) .gt. 0.5) then
-c					print *,"Oh no, 1 cell changed density by  >50% PANIC"
-c				call_py=1
-c			endif
-c				if (irestart.eq.0) then
-c					d_old(i,j)=d(i,j)
-c					t_old(i,j)=temp
-c				endif
-#endif
-		
-		
-		
-		
+	
 c		print *,i,j,xi,d(i,j),e_old,e1-epv,epv-e_old
 c		if (j .eq. 90 .and. i .eq. 40) then
 c			print *,e_old,epv,e1
 c		endif 
-30          continue
+c 30		continue
 40        continue
+
+		call MPI_BARRIER(MPI_COMM_WORLD,ierr)
+c		if (my_id .eq.0) then
+		
+		call MPI_ALLREDUCE(e_exchange,e_collect,in*jn+1,
+     +   MPI_REAL, MPI_SUM,MPI_COMM_WORLD ,ierr)
+	call MPI_BARRIER(MPI_COMM_WORLD,ierr)
+		
+		
+c      MPI_Pack (&plasmamain[n].heat_auger, 1, MPI_DOUBLE,
+c		commbuffer, size_of_commbuffer, &position,
+c		MPI_COMM_WORLD);
+     	do 44 n=1,ncells
+	  	  	i=index(n,1)
+	  		j=index(n,2)
+		 
+			e(i,j)=e_collect(n)	
+			 
+44	continue		 
+
+
+
         if (nden.lt.1.0) then
 			print *,"Cycle ",nhy,(float(icount)/(je*io(je)))*100.,
      + "% exceed density tol. Max dens change=",max_d_change

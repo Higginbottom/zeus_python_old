@@ -79,20 +79,13 @@ c 30	continue
         real :: denom, x1, x2, y1, y2
         integer :: i,j,n
 
-c		do 30 n=1,x_lenc
-c			print *,'init',n,x_array(n)
-c 30		continue
 
-c		print *,"Going to binarysearch"
 		if (mode.eq.'init') then
 
         i = binarysearch(x_len, x_array, x)
         j = binarysearch(y_len, y_array, y)
 		
 		endif
-
-c		print *,"Back from binarysearch"
-
 
 
         x1 = x_array(i)
@@ -101,16 +94,11 @@ c		print *,"Back from binarysearch"
         y1 = y_array(j)
         y2 = y_array(j+1)
 		
-c		print *,x,y,i,j,f(i,j),f(i+1,j),f(i,j+1),f(i+1,j+1)
         
         denom = (x2 - x1)*(y2 - y1)
 
         interpolate = (f(i,j)*(x2-x)*(y2-y) + f(i+1,j)*(x-x1)*(y2-y) + 
      +   f(i,j+1)*(x2-x)*(y-y1) + f(i+1, j+1)*(x-x1)*(y-y1))/denom
-
-c		print *,x1,x,x2,y1,y,y2,denom,interpolate
-
-
 
 		end function interpolate
 

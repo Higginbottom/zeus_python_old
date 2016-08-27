@@ -28,9 +28,18 @@ c-----------------------------------------------------------------------
 #include "param.h"
 #include "grid.h"
 #include "root.h"
+#include "mpi.h"
+include 'mpif.h'
+
+
       REAL     zcs
-      integer  iswres,iswhdf,iswhst,iswusr,icode
+      integer  iswres,iswhdf,iswhst,iswusr,icode,ierr
       external mstart,dataio,srcstep,nudt,newgrid,intchk,SPECIAL
+	  
+  	call MPI_INIT ( ierr )
+	call MPI_COMM_SIZE (MPI_COMM_WORLD, num_procs, ierr)
+	call MPI_COMM_RANK (MPI_COMM_WORLD, my_id, ierr)
+	  
 c\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\///////////////////////////////////
 c=======================================================================
 c  Write greetings and problem definitions
@@ -64,10 +73,13 @@ c
       iswhst = 1
       iswusr = 1
       call mstart
+	  if (my_id.eq.0) then
+	  
       open (unit=3,file=hstfile,status='unknown')
       call dataio(iswres,iswhdf,iswhst,iswusr)
       write(6,"(/,'Setup complete with ',i2,' warning(s):',
      &  ' entering main loop...')") nwarn
+ 	endif
 c
 c--------------------------  start of main loop  -----------------------
 c  execution ends when INTCHK returns a value of 1 for ifsen
@@ -82,7 +94,11 @@ c
         nhy   = nhy   + 1
         time  = time  + dt
         call intchk(iswres,iswhdf,iswhst,iswusr,icode)
+		
+  	  if (my_id.eq.0) then
+		
         call dataio(iswres,iswhdf,iswhst,iswusr)
+	endif
         if (ifsen .eq. 1) goto 2000
         call nudt
         call newgrid
@@ -105,4 +121,6 @@ c
 c NSH modificiation - terminate with an exit code to permit 
 c a python controlling script to understand whats going on
       call exit(icode) 
+	call MPI_FINALIZE ( ierr )
+	  
       end

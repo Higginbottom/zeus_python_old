@@ -74,10 +74,10 @@ EXEDIR = ../exe/
 
 PROB   = planetw
 USER   = user
-FC     = gfortran
-OPTS   = -c -O3 
+FC     = mpif77
+OPTS   = -c -O3 -lmpi
 CC     = gcc
-LDR    = gfortran
+LDR    = mpif77
 
 
 UNAME := $(shell uname)
@@ -85,7 +85,8 @@ UNAME1 := $(shell uname -n)
 
 
 ifeq ($(UNAME), Darwin)
-LIB    = /usr/local/lib/libmfhdf.a /usr/local/lib/libdf.a /usr/local/lib/libjpeg.a /usr/local/lib/libz.a  
+LIB    = /usr/local/lib/libmfhdf.a /usr/local/lib/libdf.a /usr/local/lib/libjpeg.a /usr/local/lib/libz.a
+
 endif
 ifeq ($(UNAME1), endjinn)
 LIB    = /usr/lib/libmfhdf.a /usr/lib/libdf.a /usr/lib/x86_64-linux-gnu/libjpeg.a /usr/lib/x86_64-linux-gnu/libz.a  
@@ -121,11 +122,11 @@ clean:
 
 
 
-compile: zeus2d.src ${EXEDIR}zeus2d_lookup.exe
+compile: zeus2d.src ${EXEDIR}zeus2d_mp_lookup.exe
 
 zeus2d.src: zeus2d.def
 	touch *.src *.c
 
-${EXEDIR}zeus2d_lookup.exe: ${OBJ}  ${ADDN}
-	${LDR} -o ${EXEDIR}zeus2d_lookup.exe ${OBJ}  ${ADDN} ${LIB}
+${EXEDIR}zeus2d_mp_lookup.exe: ${OBJ}  ${ADDN}
+	${LDR} -o ${EXEDIR}zeus2d_mp_lookup.exe ${OBJ}  ${ADDN} ${LIB}
 
