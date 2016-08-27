@@ -99,7 +99,7 @@ c
       write(2,pgen)
 	  
 	  
-	  #ifdef PYHYDRO
+#ifdef PYHYDRO
 	  	main_heatcool=.TRUE.
 	  	indiv_heatcool=.TRUE.
 	  		print *,"Reading in the interpolation data"
@@ -161,7 +161,7 @@ c
 	
 		
 		
-	  #endif
+#endif
 	  
 #ifdef PROBRES
 c
