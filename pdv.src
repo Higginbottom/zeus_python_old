@@ -219,7 +219,7 @@ c		if (my_id .eq.0) then
 			e(i,j)=e_collect(n)	
 c			if (my_id.eq.1) then
 c			print *,i,j,e(i,j)
-		endif
+c		endif
 44	continue
 
 
