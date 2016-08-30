@@ -17,12 +17,12 @@
         REAL    xi0,temp,hc_tot,rho,rho1,xi1,hc_tot1,e_0,e_1
 	REAL    t_0,t_1,hc_01
 	REAL 	e_01,t_01,sqsqxi1
-	INTEGER i1,j1,i,j,hc_mode,xi_ind
+	INTEGER i1,j1,i,j,hc_mode,xi_ind,lti
 	double precision t_l,t_u,tol,nh1,ne1,tfloor
 	REAL heatcool,zbrent,zfunc,n1
 	REAL test,hc_test
 	common /hc_data/ xi1,e_01,hc_01,sqsqxi1,n1,i1,j1,nh1,ne1,hc_mode
-     + ,xi_ind
+     + ,xi_ind,lti
 	external zfunc
 	
 	
@@ -52,9 +52,17 @@ c   nh1 is the hydrogen density (based upon solar abundances)
 	nh1=rho/(1.43*mp)
 c   ne1 is the electron density 	
 	ne1=nh1*1.21
+	
+	lti=0
+	
 
-	xi_ind=binarysearch(n_lu_xi, lu_xi, xi1)
-
+	if (lu_xi(xi_ind_st(i,j)) .lt. xi1 .and. 
+     +lu_xi(xi_ind_st(i,j)+1) .gt. xi1) then
+		xi_ind=xi_ind_st(i,j)
+	else
+		xi_ind=binarysearch(n_lu_xi, lu_xi, xi1)
+		xi_ind_st(i,j)=xi_ind
+	endif
 c stage one, bracket to find out where the zero point is
 
 
@@ -126,18 +134,25 @@ c	call exit()
 #include "zeus_python.h"
 #include "root.h"
 #include "diskw.h"
-      integer i,j,mode,xi_i,t_i
+      integer i,j,mode,xi_i,t_i,lti
 c	  REAL interpolate
       REAL    div1,div2,divv,del,pnew,pav,xi0,temp,hc_tot,rho,e_0,t_0
       REAL    gamma_comp,gamma_x,l_b,l_l,hc_0,sqsqxi,st,n,nh,ne,delta
 	  REAL     lxi,lt,heat,cool
 	  integer   i_ind,j_ind
-	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j,nh,ne,mode,xi_i
+	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j,nh,ne,mode,xi_i,lti
 
 
 
-	t_i=binarysearch(n_lu_temp, lu_temp, temp)
+	if (lu_temp(lti) .lt. temp .and. 
+     +lu_temp(lti+1) .gt. temp) then
+		t_i=lti
+c		print *,"No need to index temp"
+	else
+		t_i=binarysearch(n_lu_temp, lu_temp, temp)		
+		lti=t_i
 
+	endif 
 	if (mode.eq.0) then
 
 	hc_tot=interpolate(n_lu_temp,lu_temp,n_lu_xi,lu_xi,hc_lu,temp,
@@ -221,8 +236,8 @@ c	print *,xi0/1e15,temp/1e8,heatcool,hc_tot,ne,nh
 #include "root.h"
 #include "diskw.h"
 	REAL rho,xi0,e_0,t_0,temp,heatcool,hc_0,logxi,sqsqxi,n,nh,ne
-	INTEGER i,j,mode,xi_i
-	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j,nh,ne,mode,xi_i
+	INTEGER i,j,mode,xi_i,lti
+	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j,nh,ne,mode,xi_i,lti
 	external heatcool
 	zfunc=(1.5*temp*n*boltz)-e_0-
      &  dt*(hc_0+heatcool(temp))/2.0
