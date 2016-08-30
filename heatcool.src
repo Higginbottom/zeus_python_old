@@ -3,6 +3,7 @@
 	subroutine hc_sub(rho,xi0,e_0,e_1,i,j)
 	  	use interpolation
 		
+		
        implicit NONE
 
 #include "cons.h"
@@ -16,12 +17,12 @@
         REAL    xi0,temp,hc_tot,rho,rho1,xi1,hc_tot1,e_0,e_1
 	REAL    t_0,t_1,hc_01
 	REAL 	e_01,t_01,sqsqxi1
-	INTEGER i1,j1,i,j,hc_mode,xi_ind,n,lti
+	INTEGER i1,j1,i,j,hc_mode,xi_ind
 	double precision t_l,t_u,tol,nh1,ne1,tfloor
 	REAL heatcool,zbrent,zfunc,n1
 	REAL test,hc_test
-	common /hc_data/ xi1,e_01,hc_01,sqsqxi1,n1,i1,j1,nh1,ne1,
-     + hc_mode,xi_ind,lti
+	common /hc_data/ xi1,e_01,hc_01,sqsqxi1,n1,i1,j1,nh1,ne1,hc_mode
+     + ,xi_ind
 	external zfunc
 	
 	
@@ -52,19 +53,7 @@ c   nh1 is the hydrogen density (based upon solar abundances)
 c   ne1 is the electron density 	
 	ne1=nh1*1.21
 
-	
-	lti=0
-	
-
-
-
-c	if (lu_xi(xi_ind_st(i,j)) .lt. xi1 .and. 
-c     +lu_xi(xi_ind_st(i,j)+1) .gt. xi1) then
-c		xi_ind=xi_ind_st(i,j)
-c	else
-c		xi_ind=binarysearch(n_lu_xi, lu_xi, xi1)
-c		xi_ind_st(i,j)=xi_indc
-c	endif
+	xi_ind=binarysearch(n_lu_xi, lu_xi, xi1)
 
 c stage one, bracket to find out where the zero point is
 
@@ -76,33 +65,23 @@ c lets compute 0t first
 
 
 c   the next few lines bracket the solution temperature
-	
-	if (zfunc(last_tl(i,j))*zfunc(last_tu(i,j)) <0.0) then
-		t_l=last_tl(i,j)
-		t_u=last_tu(i,j)
-	else
-		t_l=t_01*0.9
-		t_u=t_01*1.1	
-		test=zfunc(t_l)*zfunc(t_u)
-		tol=1.0
-		do while (test > 0)
-			t_l=t_l*0.9
-			t_u=t_u*1.1
+	t_l=t_01*0.9
+	t_u=t_01*1.1	
+c	print *,"Bracketing temp=",t_01,i,j,rho,e_0
+	test=zfunc(t_l)*zfunc(t_u)
+	tol=1.0
+c	if (test.gt.0) then
+c		print *,"PANIC"
+c	endif
+c	print *,"New run"
+	  do while (test > 0)
+		t_l=t_l*0.9
+		t_u=t_u*1.1
     		test=zfunc(t_l)*zfunc(t_u)
-  		end do
-		last_tl(i,j)=t_l
-		last_tu(i,j)=t_u
-	endif	
-	
-	
-	
-
+  	end do
 c now we have worked out a bracket, find the correct value of new temperature
 c we search for the zero point of the equation e_old - e_old - dt(de(t(1/2)))	
 c	print *,"XXXXXX calling zbrent",t_l,t_u
-c	t_l=t_01*0.9
-c	t_u=t_01/0.9
-c	print *,log10(xi1),t_l,t_u,zfunc(t_l),zfunc(t_u)
 	     t_1=zbrent(zfunc,t_l,t_u,tol)
 c we will call heatcool one last time to compute the heating and cooling rates for the new temperature	
 	
@@ -117,13 +96,13 @@ c	 print *,"temperature returned from cell",i,j," too low=",t_1
 	  t_1=tfloor
       endif
 c  And we finally call heatcool one last time to get the final heating and cooling rates	
-c	hc_01=heatcool(t_1)
+	hc_01=heatcool(t_1)
 	
 	
-c	if (indiv_heatcool) then
-c		hc_mode=2
-c		hc_test=heatcool(t_1)
-c	endif
+	if (indiv_heatcool) then
+		hc_mode=2
+		hc_test=heatcool(t_1)
+	endif
 
 c	print *,hc_test,hc_01
 
@@ -131,7 +110,7 @@ c	print *,hc_test,hc_01
 c now we have a new temperature, we will return the new internal energy. 
 	e_1=t_1*1.5*n1*boltz
 c	call exit()
-c	print *,"total_calls=",lti
+
 	end
 
 
@@ -147,34 +126,19 @@ c	print *,"total_calls=",lti
 #include "zeus_python.h"
 #include "root.h"
 #include "diskw.h"
-      integer i,j,mode,xi_i,lti
+      integer i,j,mode,xi_i,t_i
 c	  REAL interpolate
       REAL    div1,div2,divv,del,pnew,pav,xi0,temp,hc_tot,rho,e_0,t_0
       REAL    gamma_comp,gamma_x,l_b,l_l,hc_0,sqsqxi,st,n,nh,ne,delta
-	  REAL     lxi,lt,heat,cool,h_brem,c_dion
-	  integer   t_i
-	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j,nh,ne,mode,xi_i,lti
+	  REAL     lxi,lt,heat,cool
+	  integer   i_ind,j_ind
+	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j,nh,ne,mode,xi_i
 
 
-	
-	
-c	if (lu_temp(lti) .lt. temp .and. 
-c     +lu_temp(lti+1) .gt. temp) then
-c		t_i=lti
-c		print *,"No need to index temp"
-c	else
-c		t_i=binarysearch(n_lu_temp, lu_temp, temp)		
-c		lti=t_i
 
-c	endif 
-	
-
-	
-
-	
+	t_i=binarysearch(n_lu_temp, lu_temp, temp)
 
 	if (mode.eq.0) then
-	
 
 	hc_tot=interpolate(n_lu_temp,lu_temp,n_lu_xi,lu_xi,hc_lu,temp,
      + xi0,delta,'done',t_i,xi_i)
@@ -189,11 +153,9 @@ c	print *,10**lxi,10**lt,heatcool,hc_tot
 		lt=log10(temp)
 
 c  		print *,10**heat_lu(10,10),10**cool_lu(10,10)
-		
-	
-			
+
 	heat=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
-     + log_lu_xi,heat_lu,lt,lxi,delta,'init',t_i,xi_i)
+     + log_lu_xi,heat_lu,lt,lxi,delta,'done',t_i,xi_i)
  	cool=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
      + log_lu_xi,cool_lu,lt,lxi,delta,'done',t_i,xi_i)
 	 
@@ -209,7 +171,7 @@ c	print *,heat,cool
 
 		lxi=log10(xi0)
 		lt=log10(temp)
-	c_line(i,j)=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
+		c_line(i,j)=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
      + log_lu_xi,line_c_lu,lt,lxi,delta,'done',t_i,xi_i)*ne*nh
 	c_comp(i,j)=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
      + log_lu_xi,comp_c_lu,lt,lxi,delta,'done',t_i,xi_i)*ne*nh
@@ -219,14 +181,14 @@ c	print *,heat,cool
      + log_lu_xi,brem_c_lu,lt,lxi,delta,'done',t_i,xi_i)*ne*nh
 	h_xray(i,j)=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
      + log_lu_xi,xray_h_lu,lt,lxi,delta,'done',t_i,xi_i)*ne*nh
- 	h_brem=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
-     + log_lu_xi,brem_h_lu,lt,lxi,delta,'done',t_i,xi_i)*ne*nh	
-	c_dion=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
-     + log_lu_xi,dion_c_lu,lt,lxi,delta,'done',t_i,xi_i)*ne*nh
+c 	h_brem=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
+c     + log_lu_xi,brem_h_lu,lt,lxi,delta,'done',t_i,xi_i)*ne*nh	
+c	c_dion=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
+c     + log_lu_xi,dion_c_lu,lt,lxi,delta,'done',t_i,xi_i)*ne*nh
 	 
 	 
 	 hc_tot=h_comp(i,j)+h_xray(i,j)-c_line(i,j)-c_brem(i,j)-
-     +  c_comp(i,j)+h_brem-c_dion
+     +  c_comp(i,j)
 	  
 	 heatcool=hc_tot
 c 	print *,lxi,lt,hc_tot,h_comp(i,j),interpolate(n_lu_temp,
@@ -245,8 +207,6 @@ c 	print *,h_comp(i,j),h_xray(i,j),c_line(i,j)
 
 c	print *,xi0/1e15,temp/1e8,heatcool,hc_tot,ne,nh
 	net_hc(i,j)=heatcool
-	
-
 
 	end function
 
@@ -261,8 +221,8 @@ c	print *,xi0/1e15,temp/1e8,heatcool,hc_tot,ne,nh
 #include "root.h"
 #include "diskw.h"
 	REAL rho,xi0,e_0,t_0,temp,heatcool,hc_0,logxi,sqsqxi,n,nh,ne
-	INTEGER i,j,mode,xi_i,lti
-	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j,nh,ne,mode,xi_i,lti
+	INTEGER i,j,mode,xi_i
+	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j,nh,ne,mode,xi_i
 	external heatcool
 	zfunc=(1.5*temp*n*boltz)-e_0-
      &  dt*(hc_0+heatcool(temp))/2.0
@@ -494,6 +454,7 @@ c 20 		continue
 	 
 	 pre_limit_tmp=0
 	 pre_limit=0
+	 print *,fname
          INQUIRE( FILE=fname, EXIST=THERE ) 
           IF ( THERE ) then
 			  stat=1
@@ -522,6 +483,7 @@ c 20 		continue
 c    we now take logs of everything else to improve interpolation
 
 	if (loglin.eq.'log')then
+		print *,"Taking logs"
 
 			do 30 i=1,n_lu_xi
 				do 40 j=1,n_lu_temp
