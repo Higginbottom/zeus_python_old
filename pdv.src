@@ -157,7 +157,7 @@ c		we now send the current energy, density, and ionization parameter to hc_sub, 
 	      call hc_sub(d(i,j),xi(i,j),epv,e1,i,j)
 c		  print *,"returned e1=",e1
 c		the new energy in the cell is the returned energy 
-		e(i,j)=e1
+c		e(i,j)=e1
 		e_exchange(n)=e1
 		
 
@@ -169,8 +169,12 @@ c		if (j .eq. 90 .and. i .eq. 40) then
 c			print *,e_old,epv,e1
 c		endif 
 c 30		continue
-40        continue
+		if (my_id.eq.0) then
+		print *,i,j,e(i,j) 
 
+		endif
+40        continue
+		call exit()
 		call MPI_BARRIER(MPI_COMM_WORLD,ierr)
 c		if (my_id .eq.0) then
 		
