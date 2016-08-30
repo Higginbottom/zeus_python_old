@@ -113,12 +113,12 @@ c
 		
 	n=0	
 		
-          do 40 n=my_nmin,my_nmax
-			  i=index(n,1)
-			  j=index(n,2)
+c          do 40 n=my_nmin,my_nmax
+c			  i=index(n,1)
+c			  j=index(n,2)
 c			  print *,i,j
-c do 40 j=js,je
-c		do 30 i=ii(j),io(j)
+	do 40 j=js,je
+		do 30 i=ii(j),io(j)
 
 
 c			  print *,n,i,j,ncells
@@ -168,11 +168,12 @@ c		print *,i,j,xi,d(i,j),e_old,e1-epv,epv-e_old
 c		if (j .eq. 90 .and. i .eq. 40) then
 c			print *,e_old,epv,e1
 c		endif 
-c 30		continue
 		if (my_id.eq.0) then
 		print *,i,j,e(i,j) 
 
 		endif
+30		continue
+
 40        continue
 		call exit()
 		call MPI_BARRIER(MPI_COMM_WORLD,ierr)
@@ -186,13 +187,13 @@ c		if (my_id .eq.0) then
 c      MPI_Pack (&plasmamain[n].heat_auger, 1, MPI_DOUBLE,
 c		commbuffer, size_of_commbuffer, &position,
 c		MPI_COMM_WORLD);
-     	do 44 n=1,ncells
-	  	  	i=index(n,1)
-	  		j=index(n,2)
-		 
-			e(i,j)=e_collect(n)	
+c     	do 44 n=1,ncells
+c	  	  	i=index(n,1)
+c	  		j=index(n,2)
+c		 
+c			e(i,j)=e_collect(n)	
 			 
-44	continue		 
+c 44	continue		 
 
 
 

@@ -58,13 +58,13 @@ c   ne1 is the electron density
 
 
 
-	if (lu_xi(xi_ind_st(i,j)) .lt. xi1 .and. 
-     +lu_xi(xi_ind_st(i,j)+1) .gt. xi1) then
-		xi_ind=xi_ind_st(i,j)
-	else
-		xi_ind=binarysearch(n_lu_xi, lu_xi, xi1)
-		xi_ind_st(i,j)=xi_ind
-	endif
+c	if (lu_xi(xi_ind_st(i,j)) .lt. xi1 .and. 
+c     +lu_xi(xi_ind_st(i,j)+1) .gt. xi1) then
+c		xi_ind=xi_ind_st(i,j)
+c	else
+c		xi_ind=binarysearch(n_lu_xi, lu_xi, xi1)
+c		xi_ind_st(i,j)=xi_indc
+c	endif
 
 c stage one, bracket to find out where the zero point is
 
@@ -158,15 +158,15 @@ c	  REAL interpolate
 
 	
 	
-	if (lu_temp(lti) .lt. temp .and. 
-     +lu_temp(lti+1) .gt. temp) then
-		t_i=lti
+c	if (lu_temp(lti) .lt. temp .and. 
+c     +lu_temp(lti+1) .gt. temp) then
+c		t_i=lti
 c		print *,"No need to index temp"
-	else
-		t_i=binarysearch(n_lu_temp, lu_temp, temp)		
-		lti=t_i
+c	else
+c		t_i=binarysearch(n_lu_temp, lu_temp, temp)		
+c		lti=t_i
 
-	endif 
+c	endif 
 	
 
 	
@@ -193,7 +193,7 @@ c  		print *,10**heat_lu(10,10),10**cool_lu(10,10)
 	
 			
 	heat=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
-     + log_lu_xi,heat_lu,lt,lxi,delta,'done',t_i,xi_i)
+     + log_lu_xi,heat_lu,lt,lxi,delta,'init',t_i,xi_i)
  	cool=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
      + log_lu_xi,cool_lu,lt,lxi,delta,'done',t_i,xi_i)
 	 
