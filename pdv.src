@@ -217,8 +217,8 @@ c		if (my_id .eq.0) then
 			i=ind(n,1)
 	  		j=ind(n,2)
 			e(i,j)=e_collect(n)	
-			if (my_id.eq.1) then
-			print *,i,j,e(i,j)
+c			if (my_id.eq.1) then
+c			print *,i,j,e(i,j)
 		endif
 44	continue
 
@@ -226,7 +226,7 @@ c		if (my_id .eq.0) then
 		call MPI_BARRIER(MPI_COMM_WORLD,ierr)
 
 		
-		call exit()
+c		call exit()
 		
 		
 		
