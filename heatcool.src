@@ -144,15 +144,15 @@ c	  REAL interpolate
 
 
 
-c	if (lu_temp(lti) .lt. temp .and. 
-c     +lu_temp(lti+1) .gt. temp) then
-c		t_i=lti
-c		print *,"No need to index temp"
-c	else
+	if (lu_temp(lti) .lt. temp .and. 
+     +lu_temp(lti+1) .gt. temp) then
+		t_i=lti
+		print *,"No need to index temp"
+	else
 		t_i=binarysearch(n_lu_temp, lu_temp, temp)		
-c		lti=t_i
+		lti=t_i
 
-c	endif 
+	endif 
 	if (mode.eq.0) then
 
 	hc_tot=interpolate(n_lu_temp,lu_temp,n_lu_xi,lu_xi,hc_lu,temp,
