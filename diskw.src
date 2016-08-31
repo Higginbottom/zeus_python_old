@@ -111,7 +111,6 @@ c
      + ,line_c_lu(10,10),brem_c_lu(10,10),10**comp_h_lu(10,10)-
      +  10**comp_c_lu(10,10)+10**xray_h_lu(10,10)
      + -10**line_c_lu(10,10)-10**brem_c_lu(10,10),hc_lu(10,10),
-     +  10**heat_lu(10,10),10**cool_lu(10,10),
      +  10**heat_lu(10,10)-
      +  10**cool_lu(10,10)
 	else

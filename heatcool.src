@@ -145,17 +145,12 @@ c	  REAL interpolate
 c	print *,10**lxi,10**lt,heatcool,hc_tot
 	
 	if (mode.eq.1) then
-		lxi=log10(xi0)
-		lt=log10(temp)
-
-c  		print *,10**heat_lu(10,10),10**cool_lu(10,10)
 
 	heat=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
-     + log_lu_xi,heat_lu,lt,lxi,delta,'init',i_ind,j_ind)
+     + log_lu_xi,heat_lu,lt,lxi,delta,'init',i_ind,j_ind)*ne*nh
  	cool=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
-     + log_lu_xi,cool_lu,lt,lxi,delta,'done',i_ind,j_ind)
+     + log_lu_xi,cool_lu,lt,lxi,delta,'done',i_ind,j_ind)*ne*nh
 	 
-c 	print *,heat,cool
 	 
  	heatcool=(heat-cool)*ne*nh
 c	print *,heat,cool
