@@ -1,6 +1,7 @@
 #include "zeus2d.def"
 
 	subroutine hc_sub(rho,xi0,e_0,e_1,i,j)
+	  	use interpolation
 		
        implicit NONE
 
@@ -15,11 +16,12 @@
         REAL    xi0,temp,hc_tot,rho,rho1,xi1,hc_tot1,e_0,e_1
 	REAL    t_0,t_1,hc_01
 	REAL 	e_01,t_01,sqsqxi1
-	INTEGER i1,j1,i,j,hc_mode
+	INTEGER i1,j1,i,j,hc_mode,xi_ind
 	double precision t_l,t_u,tol,nh1,ne1,tfloor
 	REAL heatcool,zbrent,zfunc,n1
 	REAL test,hc_test
-	common /hc_data/ xi1,e_01,hc_01,sqsqxi1,n1,i1,j1,nh1,ne1,hc_mode
+	common /hc_data/ xi1,e_01,hc_01,sqsqxi1,n1,i1,j1,nh1,ne1,hc_mode,
+     + xi_ind
 	external zfunc
 	
 	
@@ -52,6 +54,12 @@ c   ne1 is the electron density
 
 
 c stage one, bracket to find out where the zero point is
+
+c the ionization parameter doesnt change
+
+	xi_ind=binarysearch(n_lu_xi, lu_xi, xi1)
+
+
 
 
 c we use the heating rate at the   originaltemperature a lot,
@@ -128,16 +136,16 @@ c	  REAL interpolate
       REAL    gamma_comp,gamma_x,l_b,l_l,hc_0,sqsqxi,st,n,nh,ne,delta
 	  REAL     lxi,lt,heat,cool
 	  integer   i_ind,j_ind
-	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j,nh,ne,mode
+	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j,nh,ne,mode,j_ind
 
 
-
+	i_ind=binarysearch(n_lu_temp, lu_temp, temp)	
 
 
 	if (mode.eq.0) then
 
 	hc_tot=interpolate(n_lu_temp,lu_temp,n_lu_xi,lu_xi,hc_lu,temp,
-     + xi0,delta,'init',i_ind,j_ind)
+     + xi0,delta,'done',i_ind,j_ind)
  	heatcool=hc_tot*ne*nh
 
 	endif
@@ -151,7 +159,7 @@ c	print *,10**lxi,10**lt,heatcool,hc_tot
 c  		print *,10**heat_lu(10,10),10**cool_lu(10,10)
 
 	heat=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
-     + log_lu_xi,heat_lu,lt,lxi,delta,'init',i_ind,j_ind)
+     + log_lu_xi,heat_lu,lt,lxi,delta,'done',i_ind,j_ind)
  	cool=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
      + log_lu_xi,cool_lu,lt,lxi,delta,'done',i_ind,j_ind)
 	 
@@ -168,7 +176,7 @@ c	print *,heat,cool
 		lxi=log10(xi0)
 		lt=log10(temp)
 	c_line(i,j)=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
-     + log_lu_xi,line_c_lu,lt,lxi,delta,'init',i_ind,j_ind)*ne*nh
+     + log_lu_xi,line_c_lu,lt,lxi,delta,'done',i_ind,j_ind)*ne*nh
 	c_comp(i,j)=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
      + log_lu_xi,comp_c_lu,lt,lxi,delta,'done',i_ind,j_ind)*ne*nh
 	h_comp(i,j)=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
@@ -214,8 +222,8 @@ c	print *,xi0/1e15,temp/1e8,heatcool,hc_tot,ne,nh
 #include "root.h"
 #include "diskw.h"
 	REAL rho,xi0,e_0,t_0,temp,heatcool,hc_0,logxi,sqsqxi,n,nh,ne
-	INTEGER i,j,mode
-	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j,nh,ne,mode
+	INTEGER i,j,mode,j_ind
+	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j,nh,ne,mode,j_ind
 	external heatcool
 	zfunc=(1.5*temp*n*boltz)-e_0-
      &  dt*(hc_0+heatcool(temp))/2.0
