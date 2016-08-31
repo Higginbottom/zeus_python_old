@@ -56,13 +56,13 @@ c   ne1 is the electron density
 	lti=0
 	
 
-	if (lu_xi(xi_ind_st(i,j)) .lt. xi1 .and. 
-     +lu_xi(xi_ind_st(i,j)+1) .gt. xi1) then
-		xi_ind=xi_ind_st(i,j)
-	else
+c	if (lu_xi(xi_ind_st(i,j)) .lt. xi1 .and. 
+c     +lu_xi(xi_ind_st(i,j)+1) .gt. xi1) then
+c		xi_ind=xi_ind_st(i,j)
+c	else
 		xi_ind=binarysearch(n_lu_xi, lu_xi, xi1)
-		xi_ind_st(i,j)=xi_ind
-	endif
+c		xi_ind_st(i,j)=xi_ind
+c	endif
 c stage one, bracket to find out where the zero point is
 
 
@@ -144,15 +144,15 @@ c	  REAL interpolate
 
 
 
-	if (lu_temp(lti) .lt. temp .and. 
-     +lu_temp(lti+1) .gt. temp) then
-		t_i=lti
+c	if (lu_temp(lti) .lt. temp .and. 
+c     +lu_temp(lti+1) .gt. temp) then
+c		t_i=lti
 c		print *,"No need to index temp"
-	else
+c	else
 		t_i=binarysearch(n_lu_temp, lu_temp, temp)		
-		lti=t_i
+c		lti=t_i
 
-	endif 
+c	endif 
 	if (mode.eq.0) then
 
 	hc_tot=interpolate(n_lu_temp,lu_temp,n_lu_xi,lu_xi,hc_lu,temp,
