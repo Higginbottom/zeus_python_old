@@ -87,6 +87,7 @@ c
 			ind(n,1)=i
 			ind(n,2)=j
 			e_exchange(n)=0.0
+			xi(i,j)=(lx/((d(i,j)/(mp*1.43))*x1b(i)**2))
 31 		continue
 41 	continue
 
@@ -141,7 +142,7 @@ c            do 30 i=ii(j),io(j)
 c		print *,lx,d(i,j),mu,mp,x1b(i)
 				
 c   This next line computes the ionization parameter  - rho/1.43mp is the hydrogen number density.				
-	  	      xi(i,j)=(lx/((d(i,j)/(mp*1.43))*x1b(i)**2))
+	  	      
 				
 c    We calculate the divergence of the velocity field in this cell, to permit the adiabatic heating or cooling to be computed
               div1 = (g2a(i+1)*g31a(i+1)*v1(i+1,j)
