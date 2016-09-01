@@ -130,6 +130,7 @@ c		print *,i,j,xi,d(i,j),e_old,e1-epv,epv-e_old
 c		if (j .eq. 90 .and. i .eq. 40) then
 c			print *,e_old,epv,e1
 c		endif 
+		
 30          continue
 40        continue
         if (nden.lt.1.0) then
