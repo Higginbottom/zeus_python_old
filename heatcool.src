@@ -65,6 +65,7 @@ c the ionization parameter doesnt change
 c we use the heating rate at the   originaltemperature a lot,
 c lets compute 0t first
 	hc_mode=1
+c	print *,"Computing the initial heating/cooling"
 	hc_01=heatcool(t_01)
 
 
@@ -80,12 +81,16 @@ c	endif
 c	print *,"New run"
 	  do while (test > 0)
 		t_l=t_l*0.9
+		if (t_l.lt.lu_temp(1)) then
+			t_l=lu_temp(1)
+		endif
 		t_u=t_u*1.1
     		test=zfunc(t_l)*zfunc(t_u)
   	end do
 c now we have worked out a bracket, find the correct value of new temperature
 c we search for the zero point of the equation e_old - e_old - dt(de(t(1/2)))	
-c	print *,"XXXXXX calling zbrent",t_l,t_u
+c	print *,"XXXXXX calling zbrent",i,j,xi1,xi_ind,t_l,t_u,
+c     + zfunc(t_l),zfunc(t_u)
 	     t_1=zbrent(zfunc,t_l,t_u,tol)
 c we will call heatcool one last time to compute the heating and cooling rates for the new temperature	
 	
@@ -100,6 +105,7 @@ c	 print *,"temperature returned from cell",i,j," too low=",t_1
 	  t_1=tfloor
       endif
 c  And we finally call heatcool one last time to get the final heating and cooling rates	
+c	  print *,"Finialised, calling one last time"
 	hc_01=heatcool(t_1)
 	
 	
@@ -163,10 +169,12 @@ c  		print *,10**heat_lu(10,10),10**cool_lu(10,10)
  	cool=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
      + log_lu_xi,cool_lu,lt,lxi,delta,'done',i_ind,j_ind)
 	 
-c 	print *,heat,cool
+ 	
 	 
  	heatcool=(heat-cool)*ne*nh
-c	print *,heat,cool
+c 	print *,"after temp search",temp,i_ind,xi0,j_ind,heat,cool,
+c     + heatcool
+
 
 	endif
 	

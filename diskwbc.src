@@ -23,6 +23,7 @@ c----------------------------------------------------------------------
 #include "gravity.h"
 #include "bndry.h"
 #include "diskw.h"
+#include "zeus_python.h"
          
 
       integer i,j
@@ -41,6 +42,9 @@ c	print *,dfloor*d0
         if (d (i,j).le.1e-22) d(i,j)=1e-22
 		tfloor=((3.0*ptmass*mdot*guniv)/  (8.0*pi*sb*
      &   (x1b(i)*sin(x2b(j)))**3.0) )**0.25
+	 if (tfloor.lt.lu_temp(1)) then
+		 tfloor=lu_temp(1)
+	 endif
 		 if (e(i,j) .le. (3.0*d(i,j)*boltz*tfloor)/(2.0*mp*mu)) then
 			 e(i,j)=(3.0*d(i,j)*boltz*tfloor)/(2.0*mp*mu)
 		 endif

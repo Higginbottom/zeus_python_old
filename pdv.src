@@ -132,6 +132,7 @@ c			print *,e_old,epv,e1
 c		endif 
 30          continue
 40        continue
+c	call exit()
         if (nden.lt.1.0) then
 			print *,"Cycle ",nhy,(float(icount)/(je*io(je)))*100.,
      + "% exceed density tol. Max dens change=",max_d_change
