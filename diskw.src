@@ -105,10 +105,10 @@ c
   	endif
 	
 
-	if (split_heatcool) then
-		print *,"READ heatcool split into heat and cool OK"
+	if (indiv_heatcool) then
+		print *,"READ individual heatcool files OK"
 	else
-		print *,'No split interpolation files found'
+		print *,'No individual interpolation files found'
 	endif
 
 	

@@ -157,8 +157,7 @@ c	  REAL interpolate
 	endif
 	
 c	print *,10**lxi,10**lt,heatcool,hc_tot
-	
-	if (mode.eq.1 .and. split_heatcool) then
+	if (mode.eq.1) then
 		lxi=log10(xi0)
 		lt=log10(temp)
 
@@ -226,6 +225,7 @@ c	print *,xi0/1e15,temp/1e8,heatcool,hc_tot,ne,nh
 #include "cons.h"
 #include "param.h"
 #include "grid.h"
+#include "zeus_python.h"
 #include "field.h"
 #include "root.h"
 #include "diskw.h"
