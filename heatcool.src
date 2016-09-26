@@ -158,7 +158,7 @@ c	  REAL interpolate
 	
 c	print *,10**lxi,10**lt,heatcool,hc_tot
 	
-	if (mode.eq.1) then
+	if (mode.eq.1 .and. split_heatcool) then
 		lxi=log10(xi0)
 		lt=log10(temp)
 

@@ -17,7 +17,7 @@
 		REAL, dimension(nxi) :: log_lu_xi
 		REAL, dimension(nt) ::log_lu_temp
 		
-	LOGICAL main_heatcool,indiv_heatcool
+	LOGICAL main_heatcool,indiv_heatcool,split_heatcool
 
 
 	common /lookup_data/ n_lu_temp,n_lu_xi,hc_lu,lu_xi,lu_temp,
