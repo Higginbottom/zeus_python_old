@@ -363,9 +363,29 @@ c
       ret = dsadata(filename,rank,shape,data)	  
 	  
 	  
+c
+c  net heating/cooling
+c
+      do 145 j=js,je
+        do 155 i=is,ie
+          data((j-js)*nx1z + i -is+1) = real(heat_tot(i,j))
+155     continue
+145   continue
+      write(string,"('TOT_HEAT AT TIME=',1pe14.6,'   ')") time
+      ret = dssdast(string,' ',' ',coordsys)
+      ret = dsadata(filename,rank,shape,data)	
 	  
-	  
-	  
+c
+c  net heating/cooling
+c
+      do 146 j=js,je
+        do 156 i=is,ie
+          data((j-js)*nx1z + i -is+1) = real(cool_tot(i,j))
+156     continue
+146   continue
+      write(string,"('TOT_COOL AT TIME=',1pe14.6,'   ')") time
+      ret = dssdast(string,' ',' ',coordsys)
+      ret = dsadata(filename,rank,shape,data)		  
 	  
 	  
 	  
