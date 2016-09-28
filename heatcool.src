@@ -108,7 +108,6 @@ c  And we finally call heatcool one last time to get the final heating and cooli
 c	  print *,"Finialised, calling one last time"
 	hc_01=heatcool(t_1)
 	
-	
 	if (indiv_heatcool) then
 		hc_mode=2
 		hc_test=heatcool(t_1)
@@ -163,14 +162,14 @@ c	print *,10**lxi,10**lt,heatcool,hc_tot
 
 c  		print *,10**heat_lu(10,10),10**cool_lu(10,10)
 
-	heat=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
+	heat_tot(i,j)=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
      + log_lu_xi,heat_lu,lt,lxi,delta,'done',i_ind,j_ind)
- 	cool=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
+ 	cool_tot(i,j)=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
      + log_lu_xi,cool_lu,lt,lxi,delta,'done',i_ind,j_ind)
 	 
  	
 	 
- 	heatcool=(heat-cool)*ne*nh
+ 	heatcool=(heat_tot(i,j)-cool_tot(i,j))*ne*nh
 c 	print *,"after temp search",temp,i_ind,xi0,j_ind,heat,cool,
 c     + heatcool
 
@@ -193,7 +192,8 @@ c     + heatcool
 	h_xray(i,j)=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
      + log_lu_xi,xray_h_lu,lt,lxi,delta,'done',i_ind,j_ind)*ne*nh
 	 
-	 
+	 heat_tot(i,j)=h_comp(i,j)+h_xray(i,j)
+	 cool_tot(i,j)=c_line(i,j)-c_brem(i,j)-c_comp(i,j)
 	 
 	 hc_tot=h_comp(i,j)+h_xray(i,j)-c_line(i,j)-c_brem(i,j)-
      +  c_comp(i,j)
