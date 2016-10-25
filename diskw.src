@@ -69,7 +69,6 @@ c
 		print *,"READ main heatcool OK"
 	else
 		print *,'No main interpolation file found - exiting'
-		call exit()
 	endif
 	
 	
