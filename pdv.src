@@ -25,6 +25,8 @@ c-----------------------------------------------------------------------
 #include "root.h"
 #include "diskw.h"
 #include "control.h"
+#include "zeus_python.h"
+
 
 
       integer i,j,icount

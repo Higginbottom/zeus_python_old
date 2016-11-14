@@ -26,7 +26,6 @@
 	
 	
 	
-	
 c	print *,comp_c_lu(10,10),comp_h_lu(10,10),xray_h_lu(10,10)
 c     + ,line_c_lu(10,10),brem_c_lu(10,10),comp_h_lu(10,10)-
 c     +  comp_c_lu(10,10)+xray_h_lu(10,10)
@@ -65,11 +64,13 @@ c we use the heating rate at the   originaltemperature a lot,
 c lets compute 0t first
 	if (split_heatcool) then
 		xi_ind=binarysearch(n_lu_xi, lu_xi, xi1)
-		
-	hc_mode=1
-	else
-	hc_mode=3
-	endif
+	      hc_mode=1
+      elseif (indiv_heatcool) then
+      	xi_ind=binarysearch(n_lu_xi, lu_xi, xi1)
+      	hc_mode=2
+      else
+            hc_mode=3
+      endif
 		
 c	print *,"Computing the initial heating/cooling"
 	hc_01=heatcool(t_01)

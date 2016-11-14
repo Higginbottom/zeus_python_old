@@ -111,14 +111,14 @@ c
 	endif
 
 	
-	if (indiv_heatcool) then
-		print *,"READ individual heatcool files OK"
+	if (split_heatcool) then
+		print *,"READ h/c split heatcool files OK"
 	else
-		print *,'No individual interpolation files found'
+		print *,'No h/c split interpolation files found'
 	endif
 	
 	
-	
+	print *,"Leaving diskw.src split_heatcool=",split_heatcool
 		
 		
 #endif
@@ -168,13 +168,11 @@ c     &      x1b(i)*(1.-1./2./sin(x2b(j)))))
        d(i,j)=d0*(x1b(i)/ric)**(-dindex)*
      & exp((-1.0*guniv*ptmass*(x1b(i)*cos(x2b(j)))**2)/
      & (cisosqrd*2.0*(x1b(i))**3))
-	 print *,"High",i,nojb(i),x1b(i)/ric
       else
        d(i,j)=d0*(x1b(i)/ric)**(-dindex)*
      &   exp(20.*(1.-(x1b(i)/9.7e11)))*
      & exp((-1.0*guniv*ptmass*(x1b(i)*cos(x2b(j)))**2)/
      & (cisosqrd*2.0*(x1b(i))**3))	
-	 print *,"Low",i,nojb(i),x1b(i)/ric
 	 	  
 c		  
 c       d(i,j)=d0*(x1b(i)/ric)**(-dindex)*1.*
