@@ -165,7 +165,10 @@ c     error message for too many iterations
       WRITE(6,*) 'allowed.  This can be remedied by increasing'
       WRITE(6,*) 'parameter ITMAX in the file or by relaxing'
       WRITE(6,*) 'the convrgence tolerance TOL'
+      WRITE(6,*) X1,X2
+      
       WRITE(6,*) '*** terminating program  ***'
+      
       call exit(5)
       ZBRENT=B
       RETURN

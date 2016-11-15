@@ -59,7 +59,6 @@ c the ionization parameter doesnt change
 
 
 
-
 c we use the heating rate at the   originaltemperature a lot,
 c lets compute 0t first
 	if (split_heatcool) then
@@ -169,7 +168,6 @@ c	print *,10**lxi,10**lt,heatcool,hc_tot
 		lxi=log10(xi0)
 		lt=log10(temp)
 
-c  		print *,10**heat_lu(10,10),10**cool_lu(10,10)
 
 	heat_tot(i,j)=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
      + log_lu_xi,heat_lu,lt,lxi,delta,'done',i_ind,j_ind)
@@ -456,92 +454,6 @@ c 20 		continue
 	  else
 		  print *,"There is no heatcool file - continuuing normally"
 	  endif
-		  
-		  
-		  RETURN
-	  END
-
-
-	  subroutine hc_lookup_input(fname,stat,dat,loglin)
-#include "cons.h"
-#include "param.h"
-#include "grid.h"
-#include "field.h"
-#include "zeus_python.h"
-#include "root.h"
-#include "diskw.h"
-#include "control.h"
-		  integer i,j,n,unit
-		  
-		  character*3 loglin
-		  LOGICAL THERE 
-   	      character*17 fname
-   	      character*10 junk
-	  	REAL, dimension(nt,nxi) :: dat
-		
-		  integer number,stat
-		  REAL r,theta,c_heat,x_heat,b_heat,l_heat,c_cool,x_cool,py_xi
-          REAL b_cool,l_cool,n1,py_temp,py_ne,py_vol,ne,nh
-          REAL comp_c_pre_old,comp_h_pre_old,xray_pre_old,line_pre_old,
-     +     brem_pre_old,ratio,py_rho,py_nh
-	 integer pre_limit,pre_limit_tmp,size
-	 
-	 pre_limit_tmp=0
-	 pre_limit=0
-	 print *,fname
-         INQUIRE( FILE=fname, EXIST=THERE ) 
-          IF ( THERE ) then
-			  stat=1
-		 	 open(66,file=fname,status='old')
-	  	   	read (66,*,end=20) junk,n_lu_xi
-			read (66,*,end=20) junk,n_lu_temp
-			
-
-
-			
-			READ (66,*,end=20)  junk,(lu_xi(i),i=1,n_lu_xi)
-			
-			do 15, n=1,n_lu_xi
-				log_lu_xi(n)=log10(lu_xi(n))
-15			continue				
-			
-			
-			do 10, n=1,n_lu_temp
-				READ (66,*,end=20)  lu_temp(n),(dat(n,i),i=1,n_lu_xi)
-				log_lu_temp(n)=log10(lu_temp(n))
-
-10		continue
-		
-20		continue		
-
-c    we now take logs of everything else to improve interpolation
-
-	if (loglin.eq.'log')then
-		print *,"Taking logs"
-
-			do 30 i=1,n_lu_xi
-				do 40 j=1,n_lu_temp
-c					print *,dat(j,i),log10(dat(j,i))
-					dat(j,i)=log10(dat(j,i))
-
-			
-40 	continue	
-30 	continue
-		endif
-
-
-
-
-
-
-
-		
-		  close unit=66
-	  else
-		  stat=0
-	  endif
-	  
-	  
 		  
 		  
 		  RETURN

@@ -56,71 +56,7 @@ c
 
 c
 #ifdef PYHYDRO
-	main_heatcool=.TRUE.
-	split_heatcool=.TRUE.
-	indiv_heatcool=.TRUE.
-		print *,"Reading in the interpolation data"
-		call hc_lookup_input('net_hc_lookup.dat',stat,hc_lu,'lin')
-		
-		if (stat.eq.0) then
-			main_heatcool=.FALSE.
-		endif
-	if (main_heatcool) then
-		print *,"READ main heatcool OK"
-	else
-		print *,'No main interpolation file found - exiting'
-	endif
-	
-	
-	call hc_lookup_input('comp_c_lookup.dat',stat,comp_c_lu,'log')
-	
-	if (stat.eq.0) then
-		indiv_heatcool=.FALSE.
-	endif
-	call hc_lookup_input('comp_h_lookup.dat',stat,comp_h_lu,'log')
-	if (stat.eq.0) then
-		indiv_heatcool=.FALSE.
-	endif
-	call hc_lookup_input('xray_h_lookup.dat',stat,xray_h_lu,'log')
-	if (stat.eq.0) then
-		indiv_heatcool=.FALSE.
-	endif
-	call hc_lookup_input('line_c_lookup.dat',stat,line_c_lu,'log')
-	if (stat.eq.0) then
-		indiv_heatcool=.FALSE.
-	endif
-	call hc_lookup_input('brem_c_lookup.dat',stat,brem_c_lu,'log')
-	if (stat.eq.0) then
-		indiv_heatcool=.FALSE.
-	endif
-	
-  	call hc_lookup_input('totl_c_lookup.dat',stat,cool_lu,'log')
-  	if (stat.eq.0) then
-  		split_heatcool=.FALSE.
-	endif
-	call hc_lookup_input('totl_h_lookup.dat',stat,heat_lu,'log')
-  	if (stat.eq.0) then
-  		split_heatcool=.FALSE.
-  	endif
-	
-
-	if (indiv_heatcool) then
-		print *,"READ individual heatcool files OK"
-	else
-		print *,'No individual interpolation files found'
-	endif
-
-	
-	if (split_heatcool) then
-		print *,"READ h/c split heatcool files OK"
-	else
-		print *,'No h/c split interpolation files found'
-	endif
-	
-	
-	print *,"Leaving diskw.src split_heatcool=",split_heatcool
-		
-		
+      call input_lookup 
 #endif
 c
 c  setup d, e and vel. over whole grid

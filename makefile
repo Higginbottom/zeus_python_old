@@ -65,6 +65,7 @@ OBJ =  	util.o\
 	diskw.o   \
 	diskwbc.o \
 	heatcool.o \
+	lookup.o \
 	recipies.o 
 
 #-------------------  macro definitions  -------------------------------
