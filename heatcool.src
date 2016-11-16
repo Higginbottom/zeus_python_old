@@ -41,7 +41,7 @@ c   first calculate the current temperature of the cell
 	j1=j
 	e_01=e_0
 	
-c   compute xi to the quater power, this is used a lot and doing this now saves time	
+c   compute xi to the quarter power, this is used a lot and doing this now saves time	
 	sqsqxi1=sqrt(sqrt(xi0))
 
 c   n1 is the particle density (including electrons)

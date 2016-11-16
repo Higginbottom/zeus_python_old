@@ -101,7 +101,8 @@ c
 	  
 	  #ifdef PYHYDRO
 	  	call input_lookup
-	
+		print *,"We will read in heating and cooling data here I think"
+		call hc_file_input
             #endif
 #ifdef PROBRES
 c
