@@ -80,7 +80,7 @@ c     routine for details)
 
 c::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-      REAL*8 FUNCTION ZBRENT(FUNC,X1,X2,TOL)
+      REAL*8 FUNCTION ZBRENT(FUNC,X1,X2,TOL,code)
 
 c     return the root of the function FUNC using Brents method where
 c     the root of the function is assumed lie between X1 and X2; the
@@ -89,6 +89,7 @@ c     ZBRENT
 c..............................................................................
 
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
+	  integer code
       PARAMETER (ITMAX=100,EPS=3.E-14)
       A=X1
       B=X2
@@ -100,7 +101,8 @@ c     error: Root not bracketed
        WRITE(6,*) 'lower bracket A = ',A,' FUNC(A) = ',FUNC(A)
        WRITE(6,*) 'upper bracket B = ',B,' FUNC(B) = ',FUNC(B)
        WRITE(6,*) 'this can be remedied by changing A and/or B'
-       call exit(5)
+	   code=0
+c       call exit(5)
       END IF
       FC=FB
       DO 11 ITER=1,ITMAX
@@ -123,7 +125,7 @@ c     error: Root not bracketed
         IF(ABS(XM).LE.TOL1 .OR. FB.EQ.0.)THEN
           ZBRENT=B
 c	print *,"zbrent took ",ITER," iterations"
-		  
+		  code=1
           RETURN
         ENDIF
         IF(ABS(E).GE.TOL1 .AND. ABS(FA).GT.ABS(FB)) THEN
@@ -168,8 +170,8 @@ c     error message for too many iterations
       WRITE(6,*) X1,X2
       
       WRITE(6,*) '*** terminating program  ***'
-      
-      call exit(5)
+      code=0
+c      call exit(5)
       ZBRENT=B
       RETURN
       END

@@ -16,7 +16,7 @@
         REAL    xi0,temp,hc_tot,rho,rho1,xi1,hc_tot1,e_0,e_1
 	REAL    t_0,t_1,hc_01
 	REAL 	e_01,t_01,sqsqxi1
-	INTEGER i1,j1,i,j,hc_mode,xi_ind
+	INTEGER i1,j1,i,j,hc_mode,xi_ind,code
 	double precision t_l,t_u,tol,nh1,ne1,tfloor
 	REAL heatcool,zbrent,zfunc,n1
 	REAL test,hc_test
@@ -81,6 +81,8 @@ c   the next few lines bracket the solution temperature
 c	print *,"Bracketing temp=",t_01,i,j,rho,e_0
 	test=zfunc(t_l)*zfunc(t_u)
 	tol=1.0
+	
+
 c	if (test.gt.0) then
 c		print *,"PANIC"
 c	endif
@@ -93,11 +95,20 @@ c	print *,"New run"
 		t_u=t_u*1.1
     		test=zfunc(t_l)*zfunc(t_u)
   	end do
+	
+c	if (i .eq.43 .and. j.eq.8) then
+c		print *,d(i,j),t_l,t_u
+c	endif
 c now we have worked out a bracket, find the correct value of new temperature
 c we search for the zero point of the equation e_old - e_old - dt(de(t(1/2)))	
 c	print *,"XXXXXX calling zbrent",i,j,xi1,xi_ind,t_l,t_u,
 c     + zfunc(t_l),zfunc(t_u)
-	     t_1=zbrent(zfunc,t_l,t_u,tol)
+	code=1
+	     t_1=zbrent(zfunc,t_l,t_u,tol,code)
+		 if (code==0) then
+			print *,"Failure in zbrent for cell ",i,j
+			call exit(5)
+		endif
 c we will call heatcool one last time to compute the heating and cooling rates for the new temperature	
 	
 c		 print *,'Back from zbrent, t=',t_1
