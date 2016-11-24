@@ -99,11 +99,11 @@ c
       write(2,pgen)
 	  
 	  
-	  #ifdef PYHYDRO
+#ifdef PYHYDRO
 	  	call input_lookup
 		print *,"We will read in heating and cooling data here I think"
 		call hc_file_input
-            #endif
+#endif
 #ifdef PROBRES
 c
 c------------------------  HYDRO CONTROL  ------------------------------
