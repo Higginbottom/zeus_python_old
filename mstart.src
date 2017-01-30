@@ -75,7 +75,7 @@ C D. Proga , 17, Sept. 2002
 	  
 	  
 c  A quick loop to store the initial density conditions - used in py_hydro mode to see 
-c  if the heating and coolinf rates are still likely to be realistic	
+c  if the heating and cooling rates are still likely to be realistic	
 #ifdef PYHYDRO  
       do 40 j=js,je
         do 30 i=ii(j),io(j)	  

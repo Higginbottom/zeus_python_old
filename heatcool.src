@@ -196,18 +196,23 @@ c     + heatcool
 	
 	
 	if (mode.eq.2 .and. indiv_heatcool) then
-
+		print *,"doing indiv"
 		lxi=log10(xi0)
 		lt=log10(temp)
-	c_line(i,j)=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
+	c_line(i,j)=line_pre(i,j)*
+     + 10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
      + log_lu_xi,line_c_lu,lt,lxi,delta,'done',i_ind,j_ind)*ne*nh
-	c_comp(i,j)=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
+	c_comp(i,j)=comp_c_pre(i,j)*
+     + 10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
      + log_lu_xi,comp_c_lu,lt,lxi,delta,'done',i_ind,j_ind)*ne*nh
-	h_comp(i,j)=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
+	h_comp(i,j)=comp_h_pre(i,j)*
+     + 10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
      + log_lu_xi,comp_h_lu,lt,lxi,delta,'done',i_ind,j_ind)*ne*nh
-	c_brem(i,j)=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
+	c_brem(i,j)=brem_pre(i,j)*
+     + 10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
      + log_lu_xi,brem_c_lu,lt,lxi,delta,'done',i_ind,j_ind)*ne*nh
-	h_xray(i,j)=10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
+	h_xray(i,j)=xray_pre(i,j)*
+     + 10**interpolate(n_lu_temp,log_lu_temp,n_lu_xi,
      + log_lu_xi,xray_h_lu,lt,lxi,delta,'done',i_ind,j_ind)*ne*nh
 	 
 	 heat_tot(i,j)=h_comp(i,j)+h_xray(i,j)

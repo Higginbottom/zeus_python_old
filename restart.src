@@ -30,14 +30,18 @@ c-----------------------------------------------------------------------
       namelist /pcon/ nlim,tlim
       namelist /pgen/ d0,v10,v20,v30,dindex,mdot,tx,lx,mu
 	  integer stat
-c
+
+
 #ifdef PROBRES
+
+
+
 c
 #include "grid.h"
 #include "field.h"
 #include "bndry.h"
 #include "scratch.h"
-#include "gravity.h"
+c#include "gravity.h"
 #include "radiation.h"
 c
       external PROBRES
@@ -104,6 +108,8 @@ c
 		print *,"We will read in heating and cooling data here I think"
 		call hc_file_input
 #endif
+		rewind 1
+
 #ifdef PROBRES
 c
 c------------------------  HYDRO CONTROL  ------------------------------
