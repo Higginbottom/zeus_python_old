@@ -332,14 +332,14 @@ c     &  (theta)
                 line_pre_old=line_pre(i+2,j+3)
                 brem_pre_old=brem_pre(i+2,j+3)      
                         
-                        
+     
                         
                         
                          
 		 comp_h_pre(i+2,j+3)=comp_h_pre(i+2,j+3)*(c_heat)/
-     &   (ne*nh*h_comp(i+2,j+3))+1e-3
+     &   (h_comp(i+2,j+3))+1e-3
 		 comp_c_pre(i+2,j+3)=comp_c_pre(i+2,j+3)*(c_cool)/
-     &   (ne*nh*c_comp(i+2,j+3))+1e-3
+     &   (c_comp(i+2,j+3))+1e-3
 		 
 c	 if (i.eq.1) then
 c	  print *,"COMP test",i,j,comp_c_pre(i+2,j+3),
@@ -348,13 +348,15 @@ c     &    xi(i+2,j+3),d(i+2,j+3),
 c     &   e(i+2,j+3)*(2.0/3.0)/((d(i+2,j+3)/(mu*mp))*boltz)
 c        endif
 		 xray_pre(i+2,j+3)=xray_pre(i+2,j+3)*(x_heat)/
-     &   (ne*nh*h_xray(i+2,j+3))+1e-3
+     &   (h_xray(i+2,j+3))+1e-3
  		 line_pre(i+2,j+3)=line_pre(i+2,j+3)*l_cool/
-     &   (ne*nh*(c_line(i+2,j+3)+c_xray(i+2,j+3)))+1e-3
+     &   ((c_line(i+2,j+3)+c_xray(i+2,j+3)))+1e-3
  		 brem_pre(i+2,j+3)=brem_pre(i+2,j+3)*b_cool/
-     &   (ne*nh*c_brem(i+2,j+3))+1e-3
+     &   (c_brem(i+2,j+3))+1e-3
         if (hc_lim.gt.0.0) then
         ratio=hc_lim
+	  
+
 	  
 	  
 c hc_lim is negative, which means we dont want to limit hc changes	  
