@@ -196,7 +196,6 @@ c     + heatcool
 	
 	
 	if (mode.eq.2 .and. indiv_heatcool) then
-		print *,"doing indiv"
 		lxi=log10(xi0)
 		lt=log10(temp)
 	c_line(i,j)=line_pre(i,j)*
@@ -332,7 +331,7 @@ c     &  (theta)
                 line_pre_old=line_pre(i+2,j+3)
                 brem_pre_old=brem_pre(i+2,j+3)      
                         
-     
+                        
                         
                         
                          
@@ -355,8 +354,6 @@ c        endif
      &   (c_brem(i+2,j+3))+1e-3
         if (hc_lim.gt.0.0) then
         ratio=hc_lim
-	  
-
 	  
 	  
 c hc_lim is negative, which means we dont want to limit hc changes	  
