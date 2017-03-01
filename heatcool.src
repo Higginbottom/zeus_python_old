@@ -286,7 +286,7 @@ c     + n_lu_xi,log_lu_xi,comp_h_lu,lt,lxi,delta)*ne*nh
 #include "root.h"
 #include "diskw.h"
 #include "control.h"
-		  integer i,j
+		  integer i,j,ir,jt
 		  
 		  
 		  LOGICAL THERE 
@@ -299,6 +299,9 @@ c     + n_lu_xi,log_lu_xi,comp_h_lu,lt,lxi,delta)*ne*nh
 	 
 	 pre_limit_tmp=0
 	 pre_limit=0
+	 
+	 
+	 
 		  
 c		  print *,"Got here OK"
          INQUIRE( FILE='py_heatcool.dat', EXIST=THERE ) 
@@ -310,13 +313,21 @@ c		  print *,"Got here OK"
 		  	   	read (66,*,end=20) i,j,r,theta,py_vol,py_temp,py_xi,py_ne,
      &			x_heat,c_heat,l_heat,
      &   b_heat,c_cool,l_cool,b_cool,py_rho,py_nh
-
+	 
+	 ir=i+is 
+	 jt=j+js
+	 
+	 if (abs((d(ir,jt)-py_rho)/py_rho) .gt. 1e-6) then
+		 print *,"ALARM mismatch between zeus and python file",i,j,
+     +d(ir,jt),py_rho,abs((d(ir,jt)-py_rho)/py_rho)
+		 
+	 endif
 c				print *,i,j,r,theta,x_heat,c_heat,l_heat,b_heat,x_cool,
 c     &   c_cool,l_cool,b_cool,py_xi	   
 				
-				n1=d(i+2,j+3)/(mu*mp)
+				n1=d(ir,jt)/(mu*mp)
 				
-				nh=d(i+2,j+3)/(1.43*mp)
+				nh=d(ir,jt)/(1.43*mp)
 				ne=nh*1.21
 				
 c		  print *,hc_xray(i+2,j+3),x_heat/(n1*n1*1.2),x_cool/(n1*n1*1.2),
@@ -325,20 +336,20 @@ c		  do 10 i=is,ie
 c			  do 20 j=js,je
 c		  print *,is,i+2,ie,x1b(i+2)/r,js,j+3,je,x2b(j+3)/
 c     &  (theta)
-				comp_c_pre_old=comp_c_pre(i+2,j+3) 
-                comp_h_pre_old=comp_h_pre(i+2,j+3)
-                xray_pre_old=xray_pre(i+2,j+3)
-                line_pre_old=line_pre(i+2,j+3)
-                brem_pre_old=brem_pre(i+2,j+3)      
+				comp_c_pre_old=comp_c_pre(ir,jt) 
+                comp_h_pre_old=comp_h_pre(ir,jt)
+                xray_pre_old=xray_pre(ir,jt)
+                line_pre_old=line_pre(ir,jt)
+                brem_pre_old=brem_pre(ir,jt)      
                         
                         
                         
                         
                          
-		 comp_h_pre(i+2,j+3)=comp_h_pre(i+2,j+3)*(c_heat)/
-     &   (h_comp(i+2,j+3))+1e-3
-		 comp_c_pre(i+2,j+3)=comp_c_pre(i+2,j+3)*(c_cool)/
-     &   (c_comp(i+2,j+3))+1e-3
+		 comp_h_pre(ir,jt)=comp_h_pre(ir,jt)*(c_heat)/
+     &   (h_comp(ir,jt))+1e-3
+		 comp_c_pre(ir,jt)=comp_c_pre(ir,jt)*(c_cool)/
+     &   (c_comp(ir,jt))+1e-3
 		 
 c	 if (i.eq.1) then
 c	  print *,"COMP test",i,j,comp_c_pre(i+2,j+3),
@@ -346,48 +357,48 @@ c     &   c_comp(i+2,j+3),ne*nh*c_comp(i+2,j+3),c_cool,ne,nh,
 c     &    xi(i+2,j+3),d(i+2,j+3),
 c     &   e(i+2,j+3)*(2.0/3.0)/((d(i+2,j+3)/(mu*mp))*boltz)
 c        endif
-		 xray_pre(i+2,j+3)=xray_pre(i+2,j+3)*(x_heat)/
-     &   (h_xray(i+2,j+3))+1e-3
- 		 line_pre(i+2,j+3)=line_pre(i+2,j+3)*l_cool/
-     &   ((c_line(i+2,j+3)+c_xray(i+2,j+3)))+1e-3
- 		 brem_pre(i+2,j+3)=brem_pre(i+2,j+3)*b_cool/
-     &   (c_brem(i+2,j+3))+1e-3
+		 xray_pre(ir,jt)=xray_pre(ir,jt)*(x_heat)/
+     &   (h_xray(ir,jt))+1e-3
+ 		 line_pre(ir,jt)=line_pre(ir,jt)*l_cool/
+     &   ((c_line(ir,jt)+c_xray(ir,jt)))+1e-3
+ 		 brem_pre(ir,jt)=brem_pre(i32,j+3)*b_cool/
+     &   (c_brem(ir,jt))+1e-3
         if (hc_lim.gt.0.0) then
         ratio=hc_lim
 	  
 	  
 c hc_lim is negative, which means we dont want to limit hc changes	  
 c	  print *,"CHECKING ",i,j
-      if (comp_h_pre(i+2,j+3)/comp_h_pre_old .lt. ratio) then
+      if (comp_h_pre(ir,jt)/comp_h_pre_old .lt. ratio) then
 c		  print *,"comp_h_pre=",comp_h_pre(i+2,j+3),' LIMITING LO'
-           comp_h_pre(i+2,j+3)=comp_h_pre_old*ratio
+           comp_h_pre(ir,jt)=comp_h_pre_old*ratio
 		   pre_limit_tmp=pre_limit_tmp+1
       endif
-      if (comp_c_pre(i+2,j+3)/comp_c_pre_old .lt. ratio) then
+      if (comp_c_pre(ir,jt)/comp_c_pre_old .lt. ratio) then
 c		  print *,"comp_c_pre=",comp_c_pre(i+2,j+3),' LIMITING LO'
 		  
-           comp_c_pre(i+2,j+3)=comp_c_pre_old*ratio
+           comp_c_pre(ir,jt)=comp_c_pre_old*ratio
 		   pre_limit_tmp=pre_limit_tmp+1
 		   
       endif
-      if (xray_pre(i+2,j+3)/xray_pre_old .lt. ratio) then
+      if (xray_pre(ir,jt)/xray_pre_old .lt. ratio) then
 c		  print *,"xray_pre=",xray_pre(i+2,j+3),' LIMITING LO'
 		  
-           xray_pre(i+2,j+3)=xray_pre_old*ratio
+           xray_pre(ir,jt)=xray_pre_old*ratio
 		   pre_limit_tmp=pre_limit_tmp+1
 		   
       endif
-      if (line_pre(i+2,j+3)/line_pre_old .lt. ratio) then
+      if (line_pre(ir,jt)/line_pre_old .lt. ratio) then
 c		  print *,"line_pre=",line_pre(i+2,j+3),' LIMITING LO'
 		  
-            line_pre(i+2,j+3)=line_pre_old*ratio
+            line_pre(ir,jt)=line_pre_old*ratio
  		   pre_limit_tmp=pre_limit_tmp+1
 			
       endif
-      if (brem_pre(i+2,j+3)/brem_pre_old .lt. ratio) then
+      if (brem_pre(ir,jt)/brem_pre_old .lt. ratio) then
 c		  print *,"brem_pre=",brem_pre(i+2,j+3),' LIMITING LO'
 		  
-            brem_pre(i+2,j+3)=brem_pre_old*ratio
+            brem_pre(ir,jt)=brem_pre_old*ratio
  		   pre_limit_tmp=pre_limit_tmp+1
 			
       endif
@@ -395,36 +406,36 @@ c		  print *,"brem_pre=",brem_pre(i+2,j+3),' LIMITING LO'
       
       ratio=1.0/hc_lim
      
-      if (comp_h_pre(i+2,j+3)/comp_h_pre_old .gt. ratio) then
+      if (comp_h_pre(ir,jt)/comp_h_pre_old .gt. ratio) then
 c		  print *,"comp_h_pre=",comp_h_pre(i+2,j+3),' LIMITING HI'
 		  
-           comp_h_pre(i+2,j+3)=comp_h_pre_old*ratio
+           comp_h_pre(ir,jt)=comp_h_pre_old*ratio
 		   pre_limit_tmp=pre_limit_tmp+1
 		   
       endif
-      if (comp_c_pre(i+2,j+3)/comp_c_pre_old .gt. ratio) then
+      if (comp_c_pre(ir,jt)/comp_c_pre_old .gt. ratio) then
 c		  print *,"comp_h_pre=",comp_c_pre(i+2,j+3),' LIMITING HI'
 		  
-           comp_c_pre(i+2,j+3)=comp_c_pre_old*ratio
+           comp_c_pre(ir,jt)=comp_c_pre_old*ratio
 		   pre_limit_tmp=pre_limit_tmp+1
 		   
       endif
-      if (xray_pre(i+2,j+3)/xray_pre_old .gt. ratio) then
-		   xray_pre(i+2,j+3)=xray_pre_old*ratio
+      if (xray_pre(ir,jt)/xray_pre_old .gt. ratio) then
+		   xray_pre(ir,jt)=xray_pre_old*ratio
 		   pre_limit_tmp=pre_limit_tmp+1
 		   
       endif
-      if (line_pre(i+2,j+3)/line_pre_old .gt. ratio) then
+      if (line_pre(ir,jt)/line_pre_old .gt. ratio) then
 c		  print *,"line_pre=",line_pre(i+2,j+3),' LIMITING HI'
 		  
-            line_pre(i+2,j+3)=line_pre_old*ratio
+            line_pre(ir,jt)=line_pre_old*ratio
  		   pre_limit_tmp=pre_limit_tmp+1
 			
       endif
-      if (brem_pre(i+2,j+3)/brem_pre_old .gt. ratio) then
+      if (brem_pre(ir,jt)/brem_pre_old .gt. ratio) then
 c		  print *,"brem_pre=",brem_pre(i+2,j+3),' LIMITING HI'
 		  
-            brem_pre(i+2,j+3)=brem_pre_old*ratio		
+            brem_pre(ir,jt)=brem_pre_old*ratio		
 			   pre_limit_tmp=pre_limit_tmp+1
 
       endif
