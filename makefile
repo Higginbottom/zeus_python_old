@@ -27,7 +27,7 @@ OBJ =  	util.o\
 	moment.o   \
  	momx1.o    \
 	momx2.o    \
-        movie.o    \
+	movie.o    \
 	mprops.o   \
 	mstart.o   \
 	newgrid.o  \

@@ -48,6 +48,8 @@ c\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\////////////////////////////////
 c=======================================================================
 c  Check stopping criteria
 c
+	call cpu_time(tused)
+
 #ifdef UNIX
 c      tused = etime(tarray)
 c- D.Proga 18.Feb.98  modif. intchk did not  on the VX
