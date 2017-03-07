@@ -320,8 +320,11 @@ c		  print *,"Got here OK"
 	 if (abs((d(ir,jt)-py_rho)/py_rho) .gt. 1e-6) then
 		 print *,"ALARM mismatch between zeus and python file",i,j,
      +d(ir,jt),py_rho,abs((d(ir,jt)-py_rho)/py_rho)
+	endif
+	 
+	 
+
 		 
-	 endif
 c				print *,i,j,r,theta,x_heat,c_heat,l_heat,b_heat,x_cool,
 c     &   c_cool,l_cool,b_cool,py_xi	   
 				
