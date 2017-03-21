@@ -35,7 +35,13 @@ c	print *,"BLAH3",hc_lu(10,10),comp_c_lu(10,10)
 c	print *,xi0/1e14
 c   first calculate the current temperature of the cell	
 		
+		
 	t_01=e_0*(2.0/3.0)/((rho/(mu*mp))*boltz)
+c	if (i.eq.4 .and. j.eq.96) then
+c		print *,"t=",t_01
+c	endif
+	
+	
 	xi1=xi0
 	i1=i
 	j1=j
@@ -98,7 +104,12 @@ c	print *,"New run"
 		t_u=t_u*1.1
     		test=zfunc(t_l)*zfunc(t_u)
   	end do
-	
+c	if (i.eq.4 .and. j.eq.96) then
+c		print *,"t=",t_l,t_01,t_u,rho,i,j
+c,line_pre(i,j),
+c     + comp_h_pre(i,j),comp_c_pre(i,j),xray_pre(i,j),
+c     + brem_pre(i,j)
+c	endif
 c	if (i .eq.43 .and. j.eq.8) then
 c		print *,d(i,j),t_l,t_u
 c	endif
@@ -107,11 +118,15 @@ c we search for the zero point of the equation e_old - e_old - dt(de(t(1/2)))
 c	print *,"XXXXXX calling zbrent",i,j,xi1,xi_ind,t_l,t_u,
 c     + zfunc(t_l),zfunc(t_u)
 	code=1
-	     t_1=zbrent(zfunc,t_l,t_u,tol,code)
+	     t_1=zbrent(zfunc,t_l,t_u,tol,code,i,j)
+		 
 		 if (code==0) then
-			print *,"Failure in zbrent for cell ",i,j
+ 			print *,"Failure in zbrent for cell ",i,j,"xi=",xi1,
+     + " t_l=",t_l," t_old=",t_01," t_u=",t_u," dens=",rho,"e_0=",e_0
 			call exit(5)
+		
 		endif
+
 c we will call heatcool one last time to compute the heating and cooling rates for the new temperature	
 	
 c		 print *,'Back from zbrent, t=',t_1
@@ -120,10 +135,10 @@ c		 print *,'Back from zbrent, t=',t_1
        tfloor=((3.0*ptmass*mdot*guniv)/  (8.0*pi*sb*
      &   (x1b(i)*sin(x2b(j)))**3.0) )**0.25
 	  
-	  if (t_1.lt.tfloor) then
+c	  if (t_1.lt.tfloor) then
 c	 print *,"temperature returned from cell",i,j," too low=",t_1
-	  t_1=tfloor
-      endif
+c	  t_1=tfloor
+c      endif
 c  And we finally call heatcool one last time to get the final heating and cooling rates	
 c	  print *,"Finialised, calling one last time"
 	hc_01=heatcool(t_1)

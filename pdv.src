@@ -82,6 +82,10 @@ c    We calculate the divergence of the velocity field in this cell, to permit t
      &             -  g32a(j  )*v2(i,j  ))/(g2b(i)*dvl2a(j))
               divv1(i,j) = div1 + div2
 			  
+			  if (i.eq.4 .and. j.eq.96) then
+			  
+c			  print *,"div2 ",v2(i,j+1),v2(i,j  )
+		  	endif
 c     Just a couple of lines to store the velocities used to compute the divergence, for comparison with python		  
 			  v1_pdv(i,j)=v1(i,j)
 			  v2_pdv(i,j)=v2(i,j)
@@ -97,6 +101,10 @@ c    and we also storethe adiabatic heating/cooling rates
 
 			  
 c		we now send the current energy, density, and ionization parameter to hc_sub, which will compute the radiative heating/cooling
+c			  if (i.eq.4 .and. j.eq.96) then
+			
+c				  print *,"initial e=",epv,e(i,j),del,dt,div1,div2
+c			  endif
 	      call hc_sub(d(i,j),xi(i,j),epv,e1,i,j)
 c		  print *,"returned e1=",e1
 c		the new energy in the cell is the returned energy 
