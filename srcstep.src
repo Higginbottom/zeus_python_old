@@ -91,12 +91,12 @@ c  Now update momenta and energy due to artificial viscosity source
 c  terms (only a von Neumann-Richtmyer treatment is available with this
 c  release)
 c	
-	print *,"before VISCOSITY ",v2(4,98)
+c	print *,"before VISCOSITY ",v2(4,98)
 
       call VISCOSITY
       call bvale
       call bvalv1
-	print *,"before bvalv2 ",v2(4,98)
+c	print *,"before bvalv2 ",v2(4,98)
 	  
       call bvalv2
 c
@@ -111,7 +111,7 @@ c
       call gradv
       call moment
 #else
-		print *,"before pdv ",v2(4,98)
+c		print *,"before pdv ",v2(4,98)
 
       call pdv
       call bvale

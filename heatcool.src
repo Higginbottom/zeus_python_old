@@ -381,9 +381,9 @@ c     &  (theta)
                         
                          
 		 comp_h_pre(ir,jt)=comp_h_pre(ir,jt)*(c_heat)/
-     &   (h_comp(ir,jt))+1e-3
+     &   ((h_comp(ir,jt))+1d-99)
 		 comp_c_pre(ir,jt)=comp_c_pre(ir,jt)*(c_cool)/
-     &   (c_comp(ir,jt))+1e-3
+     &   ((c_comp(ir,jt))+1d-99)
 	 
 
 		 
@@ -394,27 +394,15 @@ c     &    xi(i+2,j+3),d(i+2,j+3),
 c     &   e(i+2,j+3)*(2.0/3.0)/((d(i+2,j+3)/(mu*mp))*boltz)
 c        endif
 		 xray_pre(ir,jt)=xray_pre(ir,jt)*x_heat/
-     &   (h_xray(ir,jt))+1e-3
+     &   ((h_xray(ir,jt))+1d-99)
  		 line_pre(ir,jt)=line_pre(ir,jt)*l_cool/
-     &   ((c_line(ir,jt)+c_xray(ir,jt)))+1e-3
+     &   ((c_line(ir,jt))+1d-99)
  		 brem_pre(ir,jt)=brem_pre(ir,jt)*b_cool/
-     &   (c_brem(ir,jt))+1e-3
+     &   ((c_brem(ir,jt))+1d-99)
 	 
-	 if (i.eq.22 .and. j.eq.19) then
-		 print *,"comp_h",d(ir,jt),py_rho,c_heat,
-     +h_comp(ir,jt),
-     +comp_h_pre(ir,jt)*(c_heat)/(h_comp(ir,jt))
-
-	 print *,"line_c",d(ir,jt),py_rho,l_cool,
-     +c_line(ir,jt),
-     +line_pre(ir,jt)*(l_cool)/(c_line(ir,jt))
-
-
 	 
-	 print *,"brem_h",d(ir,jt),py_rho,b_cool,
-     +c_brem(ir,jt),
-     +brem_pre(ir,jt)*(b_cool)/(c_brem(ir,jt))
-		endif
+	 
+
 	 
 	 
         if (hc_lim.gt.0.0) then
