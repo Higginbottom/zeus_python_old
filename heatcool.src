@@ -348,7 +348,7 @@ c		  print *,"Got here OK"
 	 ir=i+is 
 	 jt=j+js
 	 
-	 if (abs((d(ir,jt)-py_rho)/py_rho) .gt. 1e-6) then
+	 if (abs((d(ir,jt)-py_rho)/py_rho) .gt. 1e-5) then
 		 print *,"ALARM mismatch between zeus and python file",i,j,
      +d(ir,jt),py_rho,abs((d(ir,jt)-py_rho)/py_rho)
 	endif

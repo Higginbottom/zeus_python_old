@@ -75,6 +75,8 @@ c
 c
 c  Now do v2 (j sweeps) except for 1-D problems
 c
+	print *,"test1 ",v2(4,98)
+
       if (nx2z .gt. 1) then
         do 40 i=is,ie
           dvel2(ji(i)) =  v2(i,jip1(i)) - v2(i,ji(i))
@@ -88,9 +90,21 @@ c
             if (dvel2(j) .gt. 0.0) dvel2(j) = 0.0
             dv2dx2 (j) = dvel2(j)*dx2ai(j)/g2b(i)
             q22    (j) = dt*d(i,j)*qcon*dvel2(j)**2
+	if (i.eq.4 .and. j.eq.98) then
+		 print *,"TEST0 ",q22(j),dt,d(i,j),qcon,dvel2(j),
+     +v2(i,jip1(i)),v2(i,ji(i))
+	endif	
+			
+			
             rhoi =  2.0/(d(i,j-1) + d(i,j))
 c
+	if (i.eq.4 .and. j.eq.98) then
+  	  print *,"TEST1 ",v2(i,j),rhoi,q22(j),q22(j-1),dx2bi(j),g2b(i)
+	endif
             v2(i,j) = v2(i,j) - rhoi*(q22(j) - q22(j-1))*dx2bi(j)/g2b(i)
+		  if (i.eq.4 .and. j.eq.98) then
+			  print *,"TEST2 ",v2(i,j),rhoi,q22(j),q22(j-1),dx2bi(j),g2b(i)
+		  endif
             eold    = e (i,j)
             e (i,j) = e (i,j) - dv2dx2(j)*q22(j)
 30        continue
@@ -100,6 +114,9 @@ c
       else
         dv2dx2m(is) = 0.0
       endif
+	  
+	print *,"test2 ",v2(4,98)
+	  
 c
 c  viscus timestep.  Note we find the minimum dv/dx since it is < 0 ;
 c  thus minimum dv/dx gives maximum absolute value.
