@@ -99,17 +99,16 @@ c	print *,"New run"
 	  do while (test > 0)
 		t_l=t_l*0.9
 		if (t_l.lt.lu_temp(1)) then
-			t_l=lu_temp(1)
+			print *,"Extrapolating to lower T in cell ",i,j,
+     + "T=",t_l 
 		endif
 		t_u=t_u*1.1
     		test=zfunc(t_l)*zfunc(t_u)
+			
+			
+			
   	end do
-c	if (i.eq.4 .and. j.eq.96) then
-c		print *,"t=",t_l,t_01,t_u,rho,i,j
-c,line_pre(i,j),
-c     + comp_h_pre(i,j),comp_c_pre(i,j),xray_pre(i,j),
-c     + brem_pre(i,j)
-c	endif
+
 c	if (i .eq.43 .and. j.eq.8) then
 c		print *,d(i,j),t_l,t_u
 c	endif
@@ -211,6 +210,7 @@ c     + heatcool
 
 	endif
 	
+
 	
 	if (mode.eq.2 .and. indiv_heatcool) then
 		lxi=log10(xi0)
@@ -248,7 +248,7 @@ c 	print *,lxi,lt,hc_tot,h_comp(i,j),interpolate(n_lu_temp,
 c     + log_lu_temp,
 c     + n_lu_xi,log_lu_xi,comp_h_lu,lt,lxi,delta)*ne*nh
 	 
-	 
+
 
  	endif
 	
@@ -281,6 +281,9 @@ c     + n_lu_xi,log_lu_xi,comp_h_lu,lt,lxi,delta)*ne*nh
 	heatcool=hc_tot
 
 	endif
+	
+	
+
 	
 	
 	net_hc(i,j)=heatcool
