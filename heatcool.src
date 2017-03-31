@@ -153,6 +153,12 @@ c	print *,hc_test,hc_01
 c now we have a new temperature, we will return the new internal energy. 
 	e_1=t_1*1.5*n1*boltz
 c	call exit()
+      
+      
+      if (i.eq.0+is .and. j.eq.85+js ) then
+            print *,"final t=%e",t_1," final brem_c=",c_brem(i,j)
+      endif
+      
 
 	end
 
@@ -265,6 +271,11 @@ c     + n_lu_xi,log_lu_xi,comp_h_lu,lt,lxi,delta)*ne*nh
 	
 	l_b=brem_pre(i,j)*3.3e-27*st*ne*nh
 	
+       if (i.eq.0+is .and. j.eq.85+js) then
+       print *,i,j,"brem_pre=",brem_pre(i,j),"l_b=",l_b,"temp=",temp
+       endif
+      
+      
 	
 	gamma_comp=h_comp(i,j)-c_comp(i,j)
 	gamma_x=h_xray(i,j)
@@ -335,28 +346,31 @@ c     + n_lu_xi,log_lu_xi,comp_h_lu,lt,lxi,delta)*ne*nh
 	 pre_limit=0
 	 
 	 
-	 
+
 		  
 c		  print *,"Got here OK"
          INQUIRE( FILE='py_heatcool.dat', EXIST=THERE ) 
           IF ( THERE ) then
-		 	 open(66,file='py_heatcool.dat',status='old')
-	  	   	read (66,*,end=20)
-   		  	 do 10, n=1,10000000
+                print *,"File is there"
+	   open(66,file='py_heatcool.dat',status='old')
+	 read (66,*,end=20)
+      do 10, n=1,10000000
  
-		  	   	read (66,*,end=20) i,j,r,theta,py_vol,py_temp,py_xi,py_ne,
+	read (66,*,end=20) i,j,r,theta,py_vol,py_temp,py_xi,py_ne,
      &			x_heat,c_heat,l_heat,
      &   b_heat,c_cool,l_cool,b_cool,py_rho,py_nh
-	 
+     
+ 
 	 ir=i+is 
 	 jt=j+js
+       
 	 
 	 if (abs((d(ir,jt)-py_rho)/py_rho) .gt. 1e-5) then
 		 print *,"ALARM mismatch between zeus and python file",i,j,
      +d(ir,jt),py_rho,abs((d(ir,jt)-py_rho)/py_rho)
 	endif
 	 
-	 
+ 
 
 		 
 c				print *,i,j,r,theta,x_heat,c_heat,l_heat,b_heat,x_cool,
@@ -373,13 +387,17 @@ c		  do 10 i=is,ie
 c			  do 20 j=js,je
 c		  print *,is,i+2,ie,x1b(i+2)/r,js,j+3,je,x2b(j+3)/
 c     &  (theta)
-				comp_c_pre_old=comp_c_pre(ir,jt) 
+		     comp_c_pre_old=comp_c_pre(ir,jt) 
                 comp_h_pre_old=comp_h_pre(ir,jt)
                 xray_pre_old=xray_pre(ir,jt)
                 line_pre_old=line_pre(ir,jt)
                 brem_pre_old=brem_pre(ir,jt)      
                         
-                        
+                if (i.eq.0 .and. j.eq.85) then
+       print *,"brem_pre=",brem_pre(ir,jt),"b_cool=",b_cool,
+     +"c_brem+1d-99=",(c_brem(ir,jt)+1d-99),
+     +  "c_brem=",c_brem(ir,jt),ir,jt                      
+          endif
                         
                         
                          
@@ -387,21 +405,22 @@ c     &  (theta)
      &   ((h_comp(ir,jt))+1d-99)
 		 comp_c_pre(ir,jt)=comp_c_pre(ir,jt)*(c_cool)/
      &   ((c_comp(ir,jt))+1d-99)
-	 
-
-		 
-c	 if (i.eq.1) then
-c	  print *,"COMP test",i,j,comp_c_pre(i+2,j+3),
-c     &   c_comp(i+2,j+3),ne*nh*c_comp(i+2,j+3),c_cool,ne,nh,
-c     &    xi(i+2,j+3),d(i+2,j+3),
-c     &   e(i+2,j+3)*(2.0/3.0)/((d(i+2,j+3)/(mu*mp))*boltz)
-c        endif
 		 xray_pre(ir,jt)=xray_pre(ir,jt)*x_heat/
      &   ((h_xray(ir,jt))+1d-99)
  		 line_pre(ir,jt)=line_pre(ir,jt)*l_cool/
      &   ((c_line(ir,jt))+1d-99)
  		 brem_pre(ir,jt)=brem_pre(ir,jt)*b_cool/
      &   ((c_brem(ir,jt))+1d-99)
+ 
+     
+     
+           if (i.eq.0 .and. j.eq.85) then
+      print *,"brem_pre=",brem_pre(ir,jt),"b_cool=",b_cool,
+     +"c_brem+1d-99=",(c_brem(ir,jt)+1d-99),
+     +  "c_brem=",c_brem(ir,jt)                      
+      endif
+           
+           
 	 
 	 
 	 
@@ -445,8 +464,12 @@ c		  print *,"brem_pre=",brem_pre(i+2,j+3),' LIMITING LO'
 		  
             brem_pre(ir,jt)=brem_pre_old*ratio
  		   pre_limit_tmp=pre_limit_tmp+1
+               
+         
 			
       endif
+      
+
       
       
       ratio=1.0/hc_lim
@@ -487,6 +510,11 @@ c		  print *,"brem_pre=",brem_pre(i+2,j+3),' LIMITING HI'
       else
 		  print *,"We are not limiting changes in HC rates"
 	  endif
+        
+        
+        if (i.eq.0 .and. j.eq.85) then
+              print *,"final brem_pre=",brem_pre(ir,jt)
+        endif
      
 c	  print *,'COMP_C_PRE    old=',comp_c_pre_old,
 c     c' new=',comp_c_pre(i+2,j+3) 

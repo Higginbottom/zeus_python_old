@@ -396,6 +396,11 @@ c  internal energy
 c
       do 210 j=js,je
         do 200 i=is,ie
+              if (i.eq.0+is) then
+              print *,i,j,"output_e=",e(i,j)
+              endif
+              
+              
           data((j-js)*nx1z + i -is+1) = real(e(i,j))
 200     continue
 210   continue
