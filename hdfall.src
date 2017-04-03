@@ -3,6 +3,8 @@ c=======================================================================
 c/////////////////////////  SUBROUTINE HDFALL  \\\\\\\\\\\\\\\\\\\\\\\\\
 c
       subroutine hdfall(filename)
+  	  	use interpolation
+		  
 c
 c  PURPOSE: Makes an hdf dump of all the active field variables.  The
 c  set of field variables dumped is problem specific (depends on what
@@ -17,11 +19,16 @@ c
 c  LOCALS:
 c-----------------------------------------------------------------------
       implicit NONE
+#include "cons.h"
 #include "param.h"
 #include "grid.h"
 #include "field.h"
 #include "root.h"
 #include "scratch.h"
+#include "zeus_python.h"
+#include "diskw.h"
+
+
       integer  i,j
 	  real old_time
 #ifdef UNICOS
@@ -37,6 +44,13 @@ c
       character*17  filename
       character*16 coordsys
       character*40 string
+#ifdef PYHYDRO
+	  	REAL xi0,e_0,hc_0,sqsqxi,nh,ne,n,t_1
+	  	integer j_ind,hc_mode
+	  	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j,nh,ne,hc_mode,j_ind
+		double precision heatcool
+		external heatcool
+#endif
 c
       equivalence (data,wb),(xscale,wi0),(yscale,wj0)
 c
@@ -53,6 +67,9 @@ c
 #ifdef XY
       coordsys = 'cartesian' // char(0)
 #endif
+
+
+
       do 10 i=is,ie
         xscale(i-is+1) = real(x1b(i))
 10    continue
@@ -74,6 +91,30 @@ c
       do 110 j=js,je
         do 100 i=is,ie
           data((j-js)*nx1z + i -is+1) = real(d(i,j))
+c  if we are in phhydro mode, we want to get the up to date HC rates for any changed temperature		  
+#ifdef PYHYDRO 
+		n=d(i,j)/(mu*mp)
+		nh=d(i,j)/(1.43*mp)
+		ne=nh*1.21
+		xi(i,j)=(lx/(nh*x1b(i)**2))
+		xi0=xi(i,j)
+		sqsqxi=sqrt(sqrt(xi0))
+		t_1=e(i,j)*(2.0/3.0)/(n*boltz)
+		
+		
+c set hc_mode to 3 - this is default, blondin	
+		hc_mode=3 
+c if we have individial heatcool files for each mechanism - mode
+		  if (indiv_heatcool) then
+	      	j_ind=binarysearch(n_lu_xi, lu_xi, xi0)
+	      	hc_mode=2
+	      endif
+	  
+	  	hc_0=heatcool(t_1)
+#endif
+		
+		
+		
 100     continue
 110   continue
       write(string,"('DENSITY AT TIME=',1pe14.6,'        ')") time

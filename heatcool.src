@@ -154,10 +154,7 @@ c now we have a new temperature, we will return the new internal energy.
 	e_1=t_1*1.5*n1*boltz
 c	call exit()
       
-      
-      if (i.eq.0+is .and. j.eq.85+js ) then
-            print *,"final t=%e",t_1," final brem_c=",c_brem(i,j)
-      endif
+
       
 
 	end
@@ -271,9 +268,7 @@ c     + n_lu_xi,log_lu_xi,comp_h_lu,lt,lxi,delta)*ne*nh
 	
 	l_b=brem_pre(i,j)*3.3e-27*st*ne*nh
 	
-       if (i.eq.0+is .and. j.eq.85+js) then
-       print *,i,j,"brem_pre=",brem_pre(i,j),"l_b=",l_b,"temp=",temp
-       endif
+
       
       
 	

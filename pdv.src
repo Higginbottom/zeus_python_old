@@ -34,6 +34,7 @@ c-----------------------------------------------------------------------
       REAL    hc_tot,dt_hc,e1,epv
 	  REAL 	max_d_change
       external heatcool
+
 c\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\////////////////////////////////////
 c=======================================================================
 c  pdv calculation with isothermal EOS
@@ -125,9 +126,7 @@ c		the new energy in the cell is the returned energy
 		e(i,j)=e1
 
         temp=e(i,j)*(2.0/3.0)/((d(i,j)/(mu*mp))*boltz)
-        if (i.eq.0+is) then
-        print *,i,j,"new_temp=",temp,"new_e=",e(i,j),"density=",d(i,j)
-        endif
+
 		
 #ifdef PYHYDRO
 				if (abs(d(i,j)-d_init(i,j))/d_init(i,j) .gt. den_tol) then
