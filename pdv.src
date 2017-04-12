@@ -29,10 +29,11 @@ c-----------------------------------------------------------------------
 
 
 
-      integer i,j,icount
+      integer i,j,icount,i2
       REAL    div1,div2,divv,del,pnew,pav,temp
       REAL    hc_tot,dt_hc,e1,epv
 	  REAL 	max_d_change
+	  REAL  col,n_h,f_x,f_star
       external heatcool
 c\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\////////////////////////////////////
 c=======================================================================
@@ -71,9 +72,27 @@ c
           do 40 j=js,je
             do 30 i=ii(j),io(j)
 c		print *,lx,d(i,j),mu,mp,x1b(i)
-				
-c   This next line computes the ionization parameter  - rho/1.43mp is the hydrogen number density.				
-	  	      xi(i,j)=(lx/((d(i,j)/(mp*1.43))*x1b(i)**2))
+				n_h=d(i,j)/(mp*1.43)
+c   This next line computes the ionization parameter  - rho/1.43mp is the hydrogen number density.	
+			if (kappa_x .gt. 0) then	
+				col=(x1b(ii(j))-x1a(ii(j)))*d(ii(j),j)				
+				do 41 i2=ii(j)+1,i
+					col=col+(x1a(i2)-x1b(i2-1))*d(i2-1,j)
+					col=col+(x1b(i2)-x1a(i2))*d(i2,j)
+41				continue
+		tau_x(i,j)=col*kappa_x
+		
+		f_star=lx/4.0/pi/x1b(i)/x1b(i)
+		f_x=f_star*exp(-1.0*tau_x(i,j))
+		xi(i,j)=4*pi*f_x/n_h
+		
+		  else
+			  tau_x(i,j)=0.0
+			  xi(i,j)=(lx/(n_h*x1b(i)**2))		  
+		  endif
+		  
+c		print *,i,j,col,kappa_x,tau_x(i,j)
+		  
 				
 c    We calculate the divergence of the velocity field in this cell, to permit the adiabatic heating or cooling to be computed
               div1 = (g2a(i+1)*g31a(i+1)*v1(i+1,j)
