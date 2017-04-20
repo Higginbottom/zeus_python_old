@@ -29,7 +29,7 @@ c-----------------------------------------------------------------------
 
       integer i,j,icount
       REAL    div1,div2,divv,del,pnew,pav,temp
-      REAL    hc_tot,dt_hc,e1,epv
+      REAL    hc_tot,dt_hc,e1,epv,n
 	  real column,opacity
       external heatcool
 c\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\////////////////////////////////////
@@ -79,13 +79,18 @@ c Add in the next little bit of column
      &                d(i-1,j)*(x1a(i)-x1b(i-1))
  			endif
 
+
+
 c   This next line computes the ionization parameter  - rho/1.43mp is the hydrogen number density.		
 c   We azttenuate the luminosity by electron scattering cross section times the column					
 				
+			n=((d(i,j)/(mp*mu)))
 				
-	  	      xi(i,j)=((lx*exp(-1.0*column*kappa_x))/((d(i,j)/(mp*mu))*
-     &         x1b(i)**2))
 				
+	xi(i,j)=((lx*exp(-1.0*column*kappa_x))/n/
+     &  x1b(i)**2)
+	 
+
 
               div1 = (g2a(i+1)*g31a(i+1)*v1(i+1,j)
      &             -  g2a(i  )*g31a(i  )*v1(i  ,j))/dvl1a(i)

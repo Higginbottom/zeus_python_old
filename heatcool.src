@@ -91,11 +91,13 @@ c if xi is tiny, we set the temperature to 10000K
 #include "diskw.h"
       integer i,j
       REAL    div1,div2,divv,del,pnew,pav,xi0,temp,hc_tot,rho,e_0,t_0
-      REAL    gamma_comp,gamma_x,l_b,l_l,hc_0,sqsqxi,st,n
+      REAL    gamma_comp,gamma_x,l_b,l_l,hc_0,sqsqxi,st,n,ne,nh
 	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j
 
 	st=sqrt(temp)
 
+	nh=n*mu/1.43
+	ne=nh*1.21
 
 	h_comp(i,j)=comp_h_pre(i,j)*8.9e-36*xi0*tx
 	c_comp(i,j)=comp_c_pre(i,j)*8.9e-36*xi0*(4.0*temp)
