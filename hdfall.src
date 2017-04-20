@@ -390,14 +390,14 @@ c
 c
 c  optical depths
 c
-      do 147 j=js,je
-        do 157 i=is,ie
-          data((j-js)*nx1z + i -is+1) = real(tau_x(i,j))
-157     continue
-147   continue
-      write(string,"('TAU_X AT TIME=',1pe14.6,'   ')") time
-      ret = dssdast(string,' ',' ',coordsys)
-      ret = dsadata(filename,rank,shape,data)		  	  
+c      do 147 j=js,je
+c        do 157 i=is,ie
+c          data((j-js)*nx1z + i -is+1) = real(tau_x(i,j))
+c 157     continue
+c 147   continue
+c      write(string,"('TAU_X AT TIME=',1pe14.6,'   ')") time
+c      ret = dssdast(string,' ',' ',coordsys)
+c      ret = dsadata(filename,rank,shape,data)		  	  
 	  
 	  
 	  

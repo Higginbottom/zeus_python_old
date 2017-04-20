@@ -10,7 +10,6 @@
 	  REAL   divv1(in,jn),v1_pdv(in,jn),v2_pdv(in,jn)
 	  REAL   dt_csound(in,jn),dt_v1(in,jn),dt_v2(in,jn)
 	  REAL   dt_viscosity(in,jn),dt_alfen(in,jn)
-	  REAL tau_x(in,jn)
 #endif
 #ifdef ROTATE
       REAL  v3(in,jn)
@@ -37,7 +36,6 @@
 
 	  common /fieldr/ divv1,v1_pdv,v2_pdv
 	  common /fieldr/ dt_csound,dt_v1,dt_v2,dt_alfen,dt_viscosity
-		  common /fieldr/ tau_x
 		  
 #ifdef ROTATE
       common /fieldr/  v3
