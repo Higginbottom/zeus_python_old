@@ -34,6 +34,11 @@ c	print *,"BLAH3",hc_lu(10,10),comp_c_lu(10,10)
 	
 c	print *,xi0/1e14
 c   first calculate the current temperature of the cell	
+	if (xi0.lt.1e-20) then
+		t_1=1e4
+	else
+		
+		
 		
 		
 	t_01=e_0*(2.0/3.0)/((rho/(mu*mp))*boltz)
@@ -122,8 +127,8 @@ c     + zfunc(t_l),zfunc(t_u)
 		 if (code==0) then
  			print *,"Failure in zbrent for cell ",i,j,"xi=",xi1,
      + " t_l=",t_l," t_old=",t_01," t_u=",t_u," dens=",rho,"e_0=",e_0
-			call exit(5)
-		
+	 print *,"Setting temperature to old temperature"
+	 t_1=t_01
 		endif
 
 c we will call heatcool one last time to compute the heating and cooling rates for the new temperature	
@@ -150,9 +155,12 @@ c	  print *,"Finialised, calling one last time"
 c	print *,hc_test,hc_01
 
 
+
 c now we have a new temperature, we will return the new internal energy. 
 	e_1=t_1*1.5*n1*boltz
 c	call exit()
+	endif
+
 
 	end
 
