@@ -45,6 +45,8 @@ c	print *,dfloor*d0
 	 if (tfloor.lt.lu_temp(1)) then
 		 tfloor=lu_temp(1)
 	 endif
+	 tfloor=1e4
+
 		 if (e(i,j) .le. (3.0*d(i,j)*boltz*tfloor)/(2.0*mp*mu)) then
 			 e(i,j)=(3.0*d(i,j)*boltz*tfloor)/(2.0*mp*mu)
 		 endif
@@ -52,10 +54,10 @@ c	print *,dfloor*d0
        enddo 
 
        do  i=is,ie
-		   if (x1b(i).lt.2.*48.246764e10) then
+c		   if (x1b(i).lt.2.*48.246764e10) then
         d(i,je)=djop1(i)  
 		
-			endif
+c			endif
         v1(i,je)=0.0
         v3(i,je)=v3jop1(i)
 c         if (e(i,je).le.ejop1(i)) e(i,je)=ejop1(i) 
