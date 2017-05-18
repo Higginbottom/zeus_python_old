@@ -351,6 +351,21 @@ c
 	  
 	  
 c
+c  python flux
+c
+      do 147 j=js,je
+        do 157 i=is,ie
+          data((j-js)*nx1z + i -is+1) = real(py_Fx(i,j))
+157     continue
+147   continue
+      write(string,"('PY_FLUX AT TIME=',1pe14.6,'   ')") time
+      ret = dssdast(string,' ',' ',coordsys)
+      ret = dsadata(filename,rank,shape,data)	  
+	  
+	  
+	  
+	  
+c
 c  net heating/cooling
 c
       do 144 j=js,je

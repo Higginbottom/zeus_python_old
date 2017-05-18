@@ -40,7 +40,7 @@ c-------------------------
       integer nfield1,nfield2,nfield3,nfield4,nfield5,nfield6,nfieldr
       parameter(nfield1= 5*in*jn)
 #ifdef PYHYDRO
-	  parameter(nfield6= 29*in*jn)
+	  parameter(nfield6= 30*in*jn)
 #else
 	  parameter(nfield6= 0)
 #endif
