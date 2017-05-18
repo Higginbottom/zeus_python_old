@@ -89,6 +89,11 @@ c			 print *,comp_pre0,xray_pre0,line_pre0,brem_pre0
 	  	v2(i,j)=v20
 	  	v3(i,j)=sqrt((guniv*ptmass*sin(x2b(j))*sin(x2b(j)))/x1b(i))
 c	d(i,j)=d0*1e-4
+		
+		
+c initialise py_Fx to a value that makes it clear we havent set it yet
+		
+		py_Fx(i,j)=-1.0		
 
 
 c            d(i,j)=dmax1(d0*1e-4,            

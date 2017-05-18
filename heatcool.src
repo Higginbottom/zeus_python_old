@@ -335,8 +335,10 @@ c     + n_lu_xi,log_lu_xi,comp_h_lu,lt,lxi,delta)*ne*nh
    
 		  real r,theta,c_heat,x_heat,b_heat,l_heat,c_cool,x_cool,py_xi
           real b_cool,l_cool,n1,py_temp,py_ne,py_vol,ne,nh
-          real comp_c_pre_old,comp_h_pre_old,xray_pre_old,line_pre_old,
-     +     brem_pre_old,ratio,py_rho,py_nh
+c          real comp_c_pre_old,comp_h_pre_old,xray_pre_old,line_pre_old,
+c     +     brem_pre_old,ratio,py_rho,py_nh
+      real comp_c_pre_star,comp_h_pre_star,line_pre_star,xray_pre_star,brem_pre_star
+	  real h_comp_new,c_comp_new,h_xray_new,c_brem_new,c_line_new
 	 integer pre_limit,pre_limit_tmp
 	 
 	 pre_limit_tmp=0
@@ -375,45 +377,51 @@ c     &   c_cool,l_cool,b_cool,py_xi
 				nh=d(ir,jt)/(1.43*mp)
 				ne=nh*1.21
 				
-c		  print *,hc_xray(i+2,j+3),x_heat/(n1*n1*1.2),x_cool/(n1*n1*1.2),
-c     &   x_heat/(n1*n1*1.2)-x_cool/(n1*n1*1.2)
-c		  do 10 i=is,ie
-c			  do 20 j=js,je
-c		  print *,is,i+2,ie,x1b(i+2)/r,js,j+3,je,x2b(j+3)/
-c     &  (theta)
-				comp_c_pre_old=comp_c_pre(ir,jt) 
-                comp_h_pre_old=comp_h_pre(ir,jt)
-                xray_pre_old=xray_pre(ir,jt)
-                line_pre_old=line_pre(ir,jt)
-                brem_pre_old=brem_pre(ir,jt)      
+				
+				py_Fx(ir,jt)=py_xi*nh/4./pi
+				
+				
+c compute the blondin formulae heating and cooling rates using the new value of xi - py_temp is the current temperature		
+			
+      h_comp_new=8.9e-36*py_xi*tx*ne*nh
+      c_comp_new=8.9e-36*py_xi*(4.0*py_temp)*ne*nh
+      h_xray_new=1.5e-21*(sqrt(py_xi/py_temp))*(1-(py_temp/tx))*ne*nh	
+      c_line_new=(1.7e-18*exp(-1.3e5/py_temp)/(py_xi*sqrt(py_temp))+
+     +1e-24)*ne*nh
+      c_brem_new=3.3e-27*sqrt(py_temp)*ne*nh
+	  
+	  
+c now work out what the prefactors would have to be to keep the heating and cooling rates the same	  
+	  
+	  comp_c_pre_star=c_comp(ir,jt)/c_comp_new
+	  comp_h_pre_star=h_comp(ir,jt)/h_comp_new
+	  line_c_pre_star=c_line(ir,jt)/c_line_new
+	  brem_c_pre_star=c_brem(ir,jt)/c_brem_new
+	  xray_h_pre_star=h_xray(ir,jt)/h_xray_new
+	  
+				
+	  
+c  we no longer need to store the old prefactors - they are irrelevant
+
+c				comp_c_pre_old=comp_c_pre(ir,jt) 
+c                comp_h_pre_old=comp_h_pre(ir,jt)
+c                xray_pre_old=xray_pre(ir,jt)
+c                line_pre_old=line_pre(ir,jt)
+c                brem_pre_old=brem_pre(ir,jt)      
                         
                         
-                        
+c We now compute the 'ideal' prefactors, which make the heating and cooling rates (computed using the new xi) equal to the python rates                     
                         
                          
-		 comp_h_pre(ir,jt)=comp_h_pre(ir,jt)*(c_heat)/
-     &   ((h_comp(ir,jt))+1d-99)
-		 comp_c_pre(ir,jt)=comp_c_pre(ir,jt)*(c_cool)/
-     &   ((c_comp(ir,jt))+1d-99)
-	 
-
+		 comp_h_pre(ir,jt)=(c_heat/h_comp_new)+1d-99
+		 comp_c_pre(ir,jt)=(c_cool/c_comp_new)+1d-99
+		 xray_pre(ir,jt)=(x_heat/h_xray_new)+1d-99
+		 line_pre(ir,jt)=(l_cool/c_line_new)+1d-99
+		 brem_pre(ir,jt)=(b_cool/c_brem_new)+1d-99
 		 
-c	 if (i.eq.1) then
-c	  print *,"COMP test",i,j,comp_c_pre(i+2,j+3),
-c     &   c_comp(i+2,j+3),ne*nh*c_comp(i+2,j+3),c_cool,ne,nh,
-c     &    xi(i+2,j+3),d(i+2,j+3),
-c     &   e(i+2,j+3)*(2.0/3.0)/((d(i+2,j+3)/(mu*mp))*boltz)
-c        endif
-		 xray_pre(ir,jt)=xray_pre(ir,jt)*x_heat/
-     &   ((h_xray(ir,jt))+1d-99)
- 		 line_pre(ir,jt)=line_pre(ir,jt)*l_cool/
-     &   ((c_line(ir,jt))+1d-99)
- 		 brem_pre(ir,jt)=brem_pre(ir,jt)*b_cool/
-     &   ((c_brem(ir,jt))+1d-99)
+		 
 	 
 	 
-	 
-
 	 
 	 
         if (hc_lim.gt.0.0) then
@@ -422,36 +430,36 @@ c        endif
 	  
 c hc_lim is negative, which means we dont want to limit hc changes	  
 c	  print *,"CHECKING ",i,j
-      if (comp_h_pre(ir,jt)/comp_h_pre_old .lt. ratio) then
+      if (comp_h_pre(ir,jt)/comp_h_pre_star .lt. ratio) then
 c		  print *,"comp_h_pre=",comp_h_pre(i+2,j+3),' LIMITING LO'
-           comp_h_pre(ir,jt)=comp_h_pre_old*ratio
+           comp_h_pre(ir,jt)=comp_h_pre_star*ratio
 		   pre_limit_tmp=pre_limit_tmp+1
       endif
-      if (comp_c_pre(ir,jt)/comp_c_pre_old .lt. ratio) then
+      if (comp_c_pre(ir,jt)/comp_c_pre_star .lt. ratio) then
 c		  print *,"comp_c_pre=",comp_c_pre(i+2,j+3),' LIMITING LO'
 		  
-           comp_c_pre(ir,jt)=comp_c_pre_old*ratio
+           comp_c_pre(ir,jt)=comp_c_pre_star*ratio
 		   pre_limit_tmp=pre_limit_tmp+1
 		   
       endif
-      if (xray_pre(ir,jt)/xray_pre_old .lt. ratio) then
+      if (xray_pre(ir,jt)/xray_pre_star .lt. ratio) then
 c		  print *,"xray_pre=",xray_pre(i+2,j+3),' LIMITING LO'
 		  
-           xray_pre(ir,jt)=xray_pre_old*ratio
+           xray_pre(ir,jt)=xray_pre_star*ratio
 		   pre_limit_tmp=pre_limit_tmp+1
 		   
       endif
-      if (line_pre(ir,jt)/line_pre_old .lt. ratio) then
+      if (line_pre(ir,jt)/line_pre_star .lt. ratio) then
 c		  print *,"line_pre=",line_pre(i+2,j+3),' LIMITING LO'
 		  
-            line_pre(ir,jt)=line_pre_old*ratio
+            line_pre(ir,jt)=line_pre_star*ratio
  		   pre_limit_tmp=pre_limit_tmp+1
 			
       endif
-      if (brem_pre(ir,jt)/brem_pre_old .lt. ratio) then
+      if (brem_pre(ir,jt)/brem_pre_star .lt. ratio) then
 c		  print *,"brem_pre=",brem_pre(i+2,j+3),' LIMITING LO'
 		  
-            brem_pre(ir,jt)=brem_pre_old*ratio
+            brem_pre(ir,jt)=brem_pre_star*ratio
  		   pre_limit_tmp=pre_limit_tmp+1
 			
       endif
@@ -459,36 +467,36 @@ c		  print *,"brem_pre=",brem_pre(i+2,j+3),' LIMITING LO'
       
       ratio=1.0/hc_lim
      
-      if (comp_h_pre(ir,jt)/comp_h_pre_old .gt. ratio) then
+      if (comp_h_pre(ir,jt)/comp_h_pre_star .gt. ratio) then
 c		  print *,"comp_h_pre=",comp_h_pre(i+2,j+3),' LIMITING HI'
 		  
-           comp_h_pre(ir,jt)=comp_h_pre_old*ratio
+           comp_h_pre(ir,jt)=comp_h_pre_star*ratio
 		   pre_limit_tmp=pre_limit_tmp+1
 		   
       endif
-      if (comp_c_pre(ir,jt)/comp_c_pre_old .gt. ratio) then
+      if (comp_c_pre(ir,jt)/comp_c_pre_star .gt. ratio) then
 c		  print *,"comp_h_pre=",comp_c_pre(i+2,j+3),' LIMITING HI'
 		  
-           comp_c_pre(ir,jt)=comp_c_pre_old*ratio
+           comp_c_pre(ir,jt)=comp_c_pre_star*ratio
 		   pre_limit_tmp=pre_limit_tmp+1
 		   
       endif
-      if (xray_pre(ir,jt)/xray_pre_old .gt. ratio) then
-		   xray_pre(ir,jt)=xray_pre_old*ratio
+      if (xray_pre(ir,jt)/xray_pre_star .gt. ratio) then
+		   xray_pre(ir,jt)=xray_pre_star*ratio
 		   pre_limit_tmp=pre_limit_tmp+1
 		   
       endif
-      if (line_pre(ir,jt)/line_pre_old .gt. ratio) then
+      if (line_pre(ir,jt)/line_pre_star .gt. ratio) then
 c		  print *,"line_pre=",line_pre(i+2,j+3),' LIMITING HI'
 		  
-            line_pre(ir,jt)=line_pre_old*ratio
+            line_pre(ir,jt)=line_pre_star*ratio
  		   pre_limit_tmp=pre_limit_tmp+1
 			
       endif
-      if (brem_pre(ir,jt)/brem_pre_old .gt. ratio) then
+      if (brem_pre(ir,jt)/brem_pre_star .gt. ratio) then
 c		  print *,"brem_pre=",brem_pre(i+2,j+3),' LIMITING HI'
 		  
-            brem_pre(ir,jt)=brem_pre_old*ratio		
+            brem_pre(ir,jt)=brem_pre_star*ratio		
 			   pre_limit_tmp=pre_limit_tmp+1
 
       endif

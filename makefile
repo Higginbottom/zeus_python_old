@@ -122,11 +122,11 @@ clean:
 
 
 
-compile: zeus2d.src ${EXEDIR}zeus2d_lu_trunc.exe
+compile: zeus2d.src ${EXEDIR}zeus2d_lu_trunc_xi.exe
 
 zeus2d.src: zeus2d.def
 	touch *.src *.c
 
-${EXEDIR}zeus2d_lu_trunc.exe: ${OBJ}  ${ADDN}
-	${LDR} -o ${EXEDIR}zeus2d_lu_trunc.exe ${OBJ}  ${ADDN} ${LIB}
+${EXEDIR}zeus2d_lu_trunc_xi.exe: ${OBJ}  ${ADDN}
+	${LDR} -o ${EXEDIR}zeus2d_lu_trunc_xi.exe ${OBJ}  ${ADDN} ${LIB}
 
