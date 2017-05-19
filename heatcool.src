@@ -398,6 +398,8 @@ c now work out what the prefactors would have to be to keep the heating and cool
 	  line_c_pre_star=c_line(ir,jt)/c_line_new
 	  brem_c_pre_star=c_brem(ir,jt)/c_brem_new
 	  xray_h_pre_star=h_xray(ir,jt)/h_xray_new
+        
+
 	  
 				
 	  
@@ -442,24 +444,24 @@ c		  print *,"comp_c_pre=",comp_c_pre(i+2,j+3),' LIMITING LO'
 		   pre_limit_tmp=pre_limit_tmp+1
 		   
       endif
-      if (xray_pre(ir,jt)/xray_pre_star .lt. ratio) then
+      if (xray_pre(ir,jt)/xray_h_pre_star .lt. ratio) then
 c		  print *,"xray_pre=",xray_pre(i+2,j+3),' LIMITING LO'
 		  
-           xray_pre(ir,jt)=xray_pre_star*ratio
+           xray_pre(ir,jt)=xray_h_pre_star*ratio
 		   pre_limit_tmp=pre_limit_tmp+1
 		   
       endif
-      if (line_pre(ir,jt)/line_pre_star .lt. ratio) then
+      if (line_pre(ir,jt)/line_c_pre_star .lt. ratio) then
 c		  print *,"line_pre=",line_pre(i+2,j+3),' LIMITING LO'
 		  
-            line_pre(ir,jt)=line_pre_star*ratio
+            line_pre(ir,jt)=line_c_pre_star*ratio
  		   pre_limit_tmp=pre_limit_tmp+1
 			
       endif
-      if (brem_pre(ir,jt)/brem_pre_star .lt. ratio) then
+      if (brem_pre(ir,jt)/brem_c_pre_star .lt. ratio) then
 c		  print *,"brem_pre=",brem_pre(i+2,j+3),' LIMITING LO'
 		  
-            brem_pre(ir,jt)=brem_pre_star*ratio
+            brem_pre(ir,jt)=brem_c_pre_star*ratio
  		   pre_limit_tmp=pre_limit_tmp+1
 			
       endif
@@ -481,22 +483,22 @@ c		  print *,"comp_h_pre=",comp_c_pre(i+2,j+3),' LIMITING HI'
 		   pre_limit_tmp=pre_limit_tmp+1
 		   
       endif
-      if (xray_pre(ir,jt)/xray_pre_star .gt. ratio) then
-		   xray_pre(ir,jt)=xray_pre_star*ratio
+      if (xray_pre(ir,jt)/xray_h_pre_star .gt. ratio) then
+		   xray_pre(ir,jt)=xray_h_pre_star*ratio
 		   pre_limit_tmp=pre_limit_tmp+1
 		   
       endif
-      if (line_pre(ir,jt)/line_pre_star .gt. ratio) then
+      if (line_pre(ir,jt)/line_c_pre_star .gt. ratio) then
 c		  print *,"line_pre=",line_pre(i+2,j+3),' LIMITING HI'
 		  
-            line_pre(ir,jt)=line_pre_star*ratio
+            line_pre(ir,jt)=line_c_pre_star*ratio
  		   pre_limit_tmp=pre_limit_tmp+1
 			
       endif
-      if (brem_pre(ir,jt)/brem_pre_star .gt. ratio) then
+      if (brem_pre(ir,jt)/brem_c_pre_star .gt. ratio) then
 c		  print *,"brem_pre=",brem_pre(i+2,j+3),' LIMITING HI'
 		  
-            brem_pre(ir,jt)=brem_pre_star*ratio		
+            brem_pre(ir,jt)=brem_c_pre_star*ratio		
 			   pre_limit_tmp=pre_limit_tmp+1
 
       endif
