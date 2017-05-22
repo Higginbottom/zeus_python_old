@@ -5,27 +5,27 @@
 		real*8 function bl_comp_h(xi1,tx)
 		real*8 xi1,tx
 		bl_comp_h=8.9e-36*xi1*tx
-	end 
+	end function
 
 	real*8 function bl_comp_c(xi1,temp1)
 	real*8 xi1,temp1
 	bl_comp_c=8.9e-36*xi1*4.0*temp1
-	end 
+	end function
 
 	real*8 function bl_xray_h(sqsqxi1,st1,temp1,tx)
 	real*8 sqsqxi1,st1,temp1,tx
 	bl_xray_h=1.5e-21*(sqsqxi1/st1)*(1-(temp1/tx))
-	end
+	end function
 
 	real*8 function bl_line_c(xi1,st,temp)
 	real*8 xi1,st,temp
 	bl_line_c=(1.7e-18*exp(-1.3e5/temp)/(xi1*st)+1e-24)
-	end
+	end function
 
 	real*8 function bl_brem_c(st)
 	real*8 st
 	bl_brem_c=3.3e-27*st
-	end 
+	end function
 
 	end module blondin
 	
