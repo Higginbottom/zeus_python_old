@@ -168,6 +168,7 @@ c	call exit()
 
       double precision function heatcool(temp)
   	use interpolation
+	use blondin
 	  
       implicit NONE
 #include "cons.h"
@@ -184,6 +185,7 @@ c	  REAL interpolate
 	  REAL     lxi,lt,heat,cool
 	  integer   i_ind,j_ind
 	common /hc_data/ xi0,e_0,hc_0,sqsqxi,n,i,j,nh,ne,mode,j_ind
+	
 
 
 
@@ -262,16 +264,19 @@ c     + n_lu_xi,log_lu_xi,comp_h_lu,lt,lxi,delta)*ne*nh
 	
 	if (mode.eq.3) then
 		st=sqrt(temp)
-		
 	
-	h_comp(i,j)=comp_h_pre(i,j)*8.9e-36*xi0*tx*ne*nh
-	c_comp(i,j)=comp_c_pre(i,j)*8.9e-36*xi0*(4.0*temp)*ne*nh
+	h_comp(i,j)=comp_h_pre(i,j)*bl_comp_h(xi0,tx)*ne*nh
 	
-	h_xray(i,j)=xray_pre(i,j)*1.5e-21*(sqsqxi/st)*(1-(temp/tx))*ne*nh
+	c_comp(i,j)=comp_c_pre(i,j)*bl_comp_c(xi0,temp)*ne*nh
 	
-	l_l=line_pre(i,j)*(1.7e-18*exp(-1.3e5/temp)/(xi0*st)+1e-24)*ne*nh
 	
-	l_b=brem_pre(i,j)*3.3e-27*st*ne*nh
+	
+      h_xray(i,j)=xray_pre(i,j)*bl_xray_h(sqsqxi,st,temp,tx)
+     +*ne*nh
+	
+	l_l=line_pre(i,j)*bl_line_c(xi0,st,temp)*ne*nh
+	
+	l_b=brem_pre(i,j)*bl_brem_c(st)*ne*nh
 	
 	
 	gamma_comp=h_comp(i,j)-c_comp(i,j)
@@ -321,6 +326,8 @@ c     + n_lu_xi,log_lu_xi,comp_h_lu,lt,lxi,delta)*ne*nh
 
 	  
 	  subroutine hc_file_input()
+		  
+		  use blondin
 #include "cons.h"
 #include "param.h"
 #include "grid.h"
@@ -333,12 +340,13 @@ c     + n_lu_xi,log_lu_xi,comp_h_lu,lt,lxi,delta)*ne*nh
 		  
 		  LOGICAL THERE 
    
-		  real r,theta,c_heat,x_heat,b_heat,l_heat,c_cool,x_cool,py_xi
-          real b_cool,l_cool,n1,py_temp,py_ne,py_vol,ne,nh
+      real*8 r,theta,c_heat,x_heat,b_heat,l_heat,c_cool,x_cool,py_xi
+      real*8 b_cool,l_cool,n1,py_temp,py_ne,py_vol,ne,nh
 c          real comp_c_pre_old,comp_h_pre_old,xray_pre_old,line_pre_old,
 c     +     brem_pre_old,ratio,py_rho,py_nh
-      real comp_c_pre_star,comp_h_pre_star,line_pre_star,xray_pre_star,brem_pre_star
-	  real h_comp_new,c_comp_new,h_xray_new,c_brem_new,c_line_new
+      real*8 comp_c_pre_star,comp_h_pre_star,line_c_pre_star
+	  real*8 xray_h_pre_star,brem_c_pre_star
+      real*8 h_comp_new,c_comp_new,h_xray_new,c_brem_new,c_line_new
 	 integer pre_limit,pre_limit_tmp
 	 
 	 pre_limit_tmp=0
@@ -382,13 +390,22 @@ c     &   c_cool,l_cool,b_cool,py_xi
 				
 				
 c compute the blondin formulae heating and cooling rates using the new value of xi - py_temp is the current temperature		
+				
+		  	  if (ir.eq.jt) then
+		  		  print *,"Current xray heating ",h_xray(ir,jt)
+		  	  endif			
+				
 			
-      h_comp_new=8.9e-36*py_xi*tx*ne*nh
-      c_comp_new=8.9e-36*py_xi*(4.0*py_temp)*ne*nh
-      h_xray_new=1.5e-21*(sqrt(py_xi/py_temp))*(1-(py_temp/tx))*ne*nh	
-      c_line_new=(1.7e-18*exp(-1.3e5/py_temp)/(py_xi*sqrt(py_temp))+
-     +1e-24)*ne*nh
-      c_brem_new=3.3e-27*sqrt(py_temp)*ne*nh
+      h_comp_new=bl_comp_h(py_xi,tx)*ne*nh
+      c_comp_new=bl_comp_c(py_xi,py_temp)*ne*nh
+      h_xray_new=bl_xray_h(sqrt(sqrt(py_xi)),sqrt(py_temp),py_temp,
+     +tx)*ne*nh	
+      c_line_new=bl_line_c(py_xi,sqrt(py_temp),py_temp)*ne*nh
+      c_brem_new=bl_brem_c(sqrt(py_temp))*ne*nh
+	  
+	  if (ir.eq.jt) then
+		  print *,"New xray heating ",h_xray_new
+	  endif
 	  
 	  
 c now work out what the prefactors would have to be to keep the heating and cooling rates the same	  
@@ -400,7 +417,9 @@ c now work out what the prefactors would have to be to keep the heating and cool
 	  xray_h_pre_star=h_xray(ir,jt)/h_xray_new
         
 
-	  
+	  if (ir.eq.jt) then
+		  print *,"Prefactor to keep old xray heating ",xray_h_pre_star
+	  endif
 				
 	  
 c  we no longer need to store the old prefactors - they are irrelevant
@@ -421,7 +440,9 @@ c We now compute the 'ideal' prefactors, which make the heating and cooling rate
 		 line_pre(ir,jt)=(l_cool/c_line_new)+1d-99
 		 brem_pre(ir,jt)=(b_cool/c_brem_new)+1d-99
 		 
-		 
+   	  if (ir.eq.jt) then
+   		  print *,"Ideal prefactor ",xray_pre(ir,jt)
+   	  endif 
 	 
 	 
 	 
@@ -516,6 +537,16 @@ c      print *,'LINE_PRE    old=',line_pre_old,
 c     c' new=',line_pre(i+2,j+3)
 c      print *,'BREM_PRE    old=',brem_pre_old,
 c     c' new=',brem_pre(i+2,j+3)  
+	  
+c  Finally, for diagnostic purposes, we compute the new heating and cooling rates - these will be written out in the 'starting' hdf file	  
+	  	  
+      h_comp(ir,jt)=comp_h_pre(ir,jt)*bl_comp_h(py_xi,tx)*ne*nh
+      c_comp(ir,jt)=comp_c_pre(ir,jt)*bl_comp_c(py_xi,py_temp)*ne*nh
+      h_xray(ir,jt)=xray_pre(ir,jt)*bl_xray_h(sqrt(sqrt(py_xi)),
+     +sqrt(py_temp),py_temp,tx)*ne*nh	
+      c_line(ir,jt)=line_pre(ir,jt)*bl_line_c(py_xi,sqrt(py_temp),
+     +py_temp)*ne*nh
+      c_brem(ir,jt)=brem_pre(ir,jt)*bl_brem_c(sqrt(py_temp))*ne*nh
 	 
 	 
      
@@ -547,7 +578,6 @@ c 20 		continue
 		  
 		  RETURN
 	  END
-
-
+	  
 
 

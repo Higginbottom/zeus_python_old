@@ -5,6 +5,7 @@
 #-------------------  object files  ------------------------------------
 #
 OBJ =  	util.o\
+	blondin.o \
      msave.o    \
 	bval.o     \
 	bvalrad.o  \
