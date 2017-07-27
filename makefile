@@ -84,8 +84,10 @@ LDR    = gfortran
 UNAME := $(shell uname)
 UNAME1 := $(shell uname -n)
 
-
-ifeq ($(UNAME), Darwin)
+ifeq ($(UNAME1), uos-15962)
+LIB    = /usr/local/lib/libmfhdf.a /usr/local/lib/libdf.a /usr/local/lib/libjpeg.a /usr/local/opt/zlib/lib/libz.a  
+endif
+ifeq ($(UNAME), nicks-imac.clients.soton.ac.uk)
 LIB    = /usr/local/lib/libmfhdf.a /usr/local/lib/libdf.a /usr/local/lib/libjpeg.a /usr/local/lib/libz.a  
 endif
 ifeq ($(UNAME1), endjinn)
