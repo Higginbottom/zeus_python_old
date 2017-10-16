@@ -1,5 +1,6 @@
 #include "zeus2d.def"
 #include "options.h"
+#include "version.h"
 c=======================================================================
 c/////////////////////////  ZEUS2D MAIN PROGRAM  \\\\\\\\\\\\\\\\\\\\\\\
 c
@@ -46,6 +47,10 @@ c
       write(6,"(10x,'  REVISED AND ENHANCED BY R.A. FIEDLER')")
       write(6,"(10x,'     ZEUS-2D V2.0.3 - RELEASED 2/95')")
       write(6,"()")
+	  write(6,*) GIT_BRANCH
+	  write(6,*) GIT_COMMIT_HASH 
+      write(6,"()")
+	  
       write(6,"(1x,'The following problem is being initialized:')")
 c
       write(6, GEOMETRY_OPTION  )

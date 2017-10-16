@@ -84,6 +84,10 @@ LDR    = gfortran
 UNAME := $(shell uname)
 UNAME1 := $(shell uname -n)
 
+GIT_COMMIT_HASH := $(shell expr `git rev-parse HEAD`)
+GIT_BRANCH := $(shell git for-each-ref --format='%(objectname) %(refname:short)' refs/heads | awk "/^$$(git rev-parse HEAD)/ {print \$$2}")
+
+
 ifeq ($(UNAME1), uos-15962)
 LIB    = /usr/local/lib/libmfhdf.a /usr/local/lib/libdf.a /usr/local/lib/libjpeg.a /usr/local/opt/zlib/lib/libz.a  
 endif
@@ -120,10 +124,16 @@ clean:
 #	${LDR} -o  ${EXEDIR}zeus2d.exe ${OBJ}   ${LIB}
 
 
+startup:
+	echo "#define GIT_COMMIT_HASH" \"$(GIT_COMMIT_HASH)\" > version.h
+	echo "#define GIT_BRANCH" \"$(GIT_BRANCH)\" >> version.h
+	
+#	zeus2d.src ${EXEDIR}zeus2d_lu_trunc.exe
+	
 
 
-
-compile: zeus2d.src ${EXEDIR}zeus2d_lu_trunc.exe
+compile: startup zeus2d.src ${EXEDIR}zeus2d_lu_trunc.exe
+	
 
 zeus2d.src: zeus2d.def
 	touch *.src *.c
